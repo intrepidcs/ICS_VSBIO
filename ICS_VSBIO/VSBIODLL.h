@@ -22,7 +22,7 @@ typedef void * ReadHandle;
 typedef void * WriteHandle;
 
 #ifndef SWIG
-#include "Hardware/icsnVC40.h"
+#include "VSBIO/VSBStruct.h"
 #endif
 
 #ifdef __cplusplus

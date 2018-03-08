@@ -4,3 +4,4 @@ VSBIO.egg-info
 .vscode
 /VSBIO/VSBIOInterface.py
 /VSBIO/VSBIODLL_wrap.cpp
+ICS_VSBIO.egg-info

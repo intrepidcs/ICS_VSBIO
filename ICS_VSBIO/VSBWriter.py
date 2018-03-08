@@ -1,4 +1,4 @@
-from VSBIO  import VSBIOInterface as vsb
+from ICS_VSBIO  import VSBIOInterface as vsb
 import os 
 
 class VSBWriter:

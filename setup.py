@@ -23,25 +23,32 @@ elif platform.system() == 'Linux':
 define_macros += [('PYD', None)]
 
 module1 = Extension('_VSBIOInterface',
-				sources=['VSBIO/StandardLibrary/src/OFile.cpp',
-						 'VSBIO/StandardLibrary/src/OSAbstraction.cpp',
-						 'VSBIO/VSBIO/src/VSBIO.cpp',
-						 'VSBIO/VSBIO/src/MessageTimeDecoderVSB.cpp',
-						 'VSBIO/VSBIODLL.cpp',
-						 'VSBIO/VSBIODLL.i'],
+				sources=['ICS_VSBIO/StandardLibrary/src/OFile.cpp',
+						 'ICS_VSBIO/StandardLibrary/src/OSAbstraction.cpp',
+						 'ICS_VSBIO/VSBIO/src/VSBIO.cpp',
+						 'ICS_VSBIO/VSBIO/src/MessageTimeDecoderVSB.cpp',
+						 'ICS_VSBIO/VSBIODLL.cpp',
+						 'ICS_VSBIO/VSBIOInterface.i',
+						 'ICS_VSBIO/VSBIOFlags.i'],
 				swig_opts=['-c++', '-py3'],
-				include_dirs=['VSBIO/VSBIO/include', 'VSBIO/StandardLibrary/include', 'VSBIO/Hardware/include', 'VSBIO/Core/include'],
+				include_dirs=['ICS_VSBIO/VSBIO/include', 'ICS_VSBIO/StandardLibrary/include', 'ICS_VSBIO/Hardware/include', 'ICS_VSBIO/Core/include'],
 				define_macros= define_macros)
 
-setup(  name            = 'VSBIO',
+module2 = Extension('_VSBIOFlags',
+				sources=['ICS_VSBIO/VSBIOFlags.i'],
+				swig_opts=['-c++', '-py3'],
+				include_dirs=['ICS_VSBIO/VSBIO/include', 'ICS_VSBIO/StandardLibrary/include', 'ICS_VSBIO/Hardware/include', 'ICS_VSBIO/Core/include'],
+				define_macros= define_macros)
+
+setup(  name            = 'ICS_VSBIO',
 		version         = '0.0.1',
 		author          = 'Zaid Nackasha',
 		author_email    = 'znackasha@intrepidcs.com',
 		description     = '',
 		url             = '',
 		platforms       = ['x86_64'],
-		packages        = ['VSBIO'],
-		package_dir     = {'VSBIO': 'VSBIO'},
+		packages        = ['ICS_VSBIO'],
+		package_dir     = {'ICS_VSBIO': 'ICS_VSBIO'},
 		cmdclass		= {'build': CustomBuild, 'install': CustomInstall},		
-		ext_modules     = [module1],
-		py_modules		= ['module1'] )
+		ext_modules     = [module1, module2],
+		py_modules		= ['module1', 'module2'] )

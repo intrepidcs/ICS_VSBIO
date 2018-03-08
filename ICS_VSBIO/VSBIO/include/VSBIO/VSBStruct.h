@@ -1,19 +1,7 @@
-/*VSBIODLL.i*/
-%module VSBIOInterface
-%{
-	#include "VSBIODLL.h"
-%}
+#ifndef _VSBStruct
+#define _VSBStruct
 
-%typemap(in,numinputs=0,noblock=1) size_t *len  {
-  size_t templen;
-  $1 = &templen;
-}
-
-%typemap(out) char* GetEDP {
-  int i;
-  $result = PyByteArray_FromStringAndSize($1, templen);
-}
-
+// Visual studio has extremely poor support for C99 pre-2010
 typedef signed char int8_t;
 typedef short int16_t;
 typedef int int32_t;
@@ -57,30 +45,6 @@ typedef struct _icsSpyMessageVSB
 	uint8_t MiscData;
 	uint8_t Reserved[3];
 } icsSpyMessageVSB;
+#define icsSpyMessageVSB_SIZE 64
 
-%apply int *OUTPUT {unsigned int * lengthOfMessageReturned};
-
-%include "VSBIODLL.h"
-
-%inline %{
-
-	typedef	enum  _VSBRtnValues{
-		eSuccess = 0,
-		eEndOfFile = 1,
-		eError = 2,
-		eBufferToSmall = 3
-	} VSBRtnValues;
-
-	char * GetEDP(icsSpyMessageVSB * message, size_t *len)
-	{
-		char * edpreturn =  ((char *)(message) + sizeof(icsSpyMessageVSB));
-		*len = ((icsSpyMessageVSB *)message)->ExtraDataPtr ;
-		return edpreturn;
-	}
-%}
-
-
-
-
-
-
+#endif

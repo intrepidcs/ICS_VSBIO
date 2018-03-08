@@ -1,5 +1,11 @@
-from VSBIO import VSBIOInterface as vsb
+from ICS_VSBIO import VSBIOInterface as vsb
+
 import os
+
+class ReadStatus:
+	eSuccess = vsb.eSuccess
+	eEndOfFile = vsb.eEndOfFile
+	eError = vsb.eError
 
 class VSBReader:
 	def __init__(self, filename):

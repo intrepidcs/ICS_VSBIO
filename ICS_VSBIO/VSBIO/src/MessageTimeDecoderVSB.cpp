@@ -6,7 +6,8 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 
-#include "Hardware/neoVI.h"
+#include "VSBIO/VSBStruct.h"
+#include "VSBIO/VSBFlags.h"
 #include <cstring> //for memcpy
 
 
