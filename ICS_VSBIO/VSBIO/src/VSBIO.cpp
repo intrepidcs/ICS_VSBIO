@@ -3,8 +3,6 @@
 #pragma hdrstop
 
 #include "VSBIO/VSBIO.h"
-#include "StandardLibrary/cicsDir.h"
-#include "StandardLibrary/OSAbstraction.h"
 #ifndef linux
 #include <direct.h>
 #define GetCurrentDir _getcwd
@@ -51,12 +49,6 @@ int VSBIORead::GetProgress()
 	return (float)(mCurrentMsgLocation - mMsgStartLocation) / (float)(mCurrentFileSize - mMsgStartLocation) * 100;
 }
 
-std::wstring VSBIORead::GetProgressString()
-{
-	wchar_t warr[500];
-	OsprintfW(warr, 500, L"%ls: Read %d%% of File\n", mFileName.c_str(), GetProgress());
-	return warr;
-}
 
 VSBIORead::enumFileCondition VSBIORead::ReadNextMessage()
 {
@@ -386,13 +378,6 @@ int VSBIOReadMultiple::GetProgress()
 		persent += (*it)->GetProgress();
 	}
 	return persent / IOReadList.size();
-}
-
-std::wstring VSBIOReadMultiple::GetProgressString()
-{
-	wchar_t warr[500];
-	OsprintfW(warr, 500, L"%d%% Read of All Files\n", GetProgress());
-	return warr;
 }
 
 VSBIORead::enumFileCondition VSBIOReadMultiple::ReadNextMessage(std::vector<unsigned char> &message)

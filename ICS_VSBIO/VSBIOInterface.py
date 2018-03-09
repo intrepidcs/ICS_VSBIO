@@ -116,10 +116,6 @@ def GetProgress(handle: 'ReadHandle') -> "int":
     return _VSBIOInterface.GetProgress(handle)
 GetProgress = _VSBIOInterface.GetProgress
 
-def GetProgressString(handle: 'ReadHandle') -> "char const *":
-    return _VSBIOInterface.GetProgressString(handle)
-GetProgressString = _VSBIOInterface.GetProgressString
-
 def GetDisplayMessage(handle: 'ReadHandle') -> "char const *":
     return _VSBIOInterface.GetDisplayMessage(handle)
 GetDisplayMessage = _VSBIOInterface.GetDisplayMessage

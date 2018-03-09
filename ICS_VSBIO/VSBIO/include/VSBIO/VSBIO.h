@@ -99,7 +99,6 @@ public:
 	enumFileCondition ReadNextMessage(std::vector<unsigned char>& message); //the size of the vector indicates the size of the message.
 
 	int GetProgress();
-	std::wstring GetProgressString();
 	std::wstring GetDisplayMessage() { return mDisplayOut; }
 	std::wstring GetErrorMessage() { return mErrorOut; }
 	void UpdateUIOutput(VSBIO & vsbio);
@@ -135,7 +134,6 @@ public:
 	VSBIORead::enumFileCondition ReadNextMessage(std::vector<unsigned char>& message); //the size of the vector indicates the size of the message.
 
 	int GetProgress();
-	std::wstring GetProgressString();
 	std::wstring GetDisplayMessage() { return mDisplayOut; }
 	std::wstring GetErrorMessage() { return mErrorOut; }
 	void UpdateUIOutput(VSBIO &vsbio);

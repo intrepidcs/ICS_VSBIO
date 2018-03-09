@@ -4,7 +4,7 @@ from distutils.core import setup, Extension
 import distutils 
 import platform
 
-version = '0.0.3.3'
+version = '0.0.3.4'
 
 def which(program):
     import os
@@ -41,9 +41,8 @@ elif platform.system() == 'Linux':
 	define_macros = [('LINUXSO', None)]
 define_macros += [('PYD', None)]
 
-if which('swig'):
+if which('swig') or which('swig.exe') :
 	sources=['ICS_VSBIO/StandardLibrary/src/OFile.cpp',
-		'ICS_VSBIO/StandardLibrary/src/OSAbstraction.cpp',
 		'ICS_VSBIO/VSBIO/src/VSBIO.cpp',
 		'ICS_VSBIO/VSBIO/src/MessageTimeDecoderVSB.cpp',
 		'ICS_VSBIO/VSBIODLL.cpp',

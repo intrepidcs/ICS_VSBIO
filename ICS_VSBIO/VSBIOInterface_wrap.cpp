@@ -3808,26 +3808,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_GetProgressString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  ReadHandle arg1 = (ReadHandle) 0 ;
-  int res1 ;
-  PyObject * obj0 = 0 ;
-  char *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:GetProgressString",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0,SWIG_as_voidptrptr(&arg1), 0, 0);
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GetProgressString" "', argument " "1"" of type '" "ReadHandle""'"); 
-  }
-  result = (char *)GetProgressString(arg1);
-  resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_GetDisplayMessage(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   ReadHandle arg1 = (ReadHandle) 0 ;
@@ -5415,7 +5395,6 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"ReadNextMessage", _wrap_ReadNextMessage, METH_VARARGS, NULL},
 	 { (char *)"ReadClose", _wrap_ReadClose, METH_VARARGS, NULL},
 	 { (char *)"GetProgress", _wrap_GetProgress, METH_VARARGS, NULL},
-	 { (char *)"GetProgressString", _wrap_GetProgressString, METH_VARARGS, NULL},
 	 { (char *)"GetDisplayMessage", _wrap_GetDisplayMessage, METH_VARARGS, NULL},
 	 { (char *)"GetErrorMessage", _wrap_GetErrorMessage, METH_VARARGS, NULL},
 	 { (char *)"WriteVSBW", _wrap_WriteVSBW, METH_VARARGS, NULL},
