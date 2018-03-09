@@ -34,6 +34,11 @@ VSBIODLL_API ReadHandle ReadVSBW(const wchar_t * filename);
 VSBIODLL_API ReadHandle ReadVSB(const char * filename);
 VSBIODLL_API int ReadNextMessage(ReadHandle handle, icsSpyMessageVSB * message, unsigned int size, unsigned int * lengthOfMessageReturned);
 VSBIODLL_API void ReadClose(ReadHandle handle);
+VSBIODLL_API void ReadClose(ReadHandle handle);
+
+VSBIODLL_API int GetProgress(ReadHandle handle);
+VSBIODLL_API const char * GetDisplayMessage(ReadHandle handle);
+VSBIODLL_API const char * GetErrorMessage(ReadHandle handle);
 
 VSBIODLL_API WriteHandle WriteVSBW(const wchar_t * filename);
 VSBIODLL_API WriteHandle WriteVSB(const char * filename);

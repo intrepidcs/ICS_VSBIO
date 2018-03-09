@@ -18,13 +18,13 @@ The module contains two Classes ```VSBRead``` and ```VSBWrite```.
 ### Reading From File
 
 ```
-from VSBIO import VSBReader  as reader
+from ICS_VSBIO  import VSBReader as reader
 
 vsbread = reader.VSBReader("example.vsb")
 val = vsbread.read_next_message()
 
 if val["status"] == reader.ReadStatus.eSuccess:
-	print(val["Msg"].Protocol)
+	print(valMsg"].Protocol)
 	print(val["Msg"].NetworkID)
 	if (val["Msg"].ExtraDataPtr):
 		print(val["EDP"])

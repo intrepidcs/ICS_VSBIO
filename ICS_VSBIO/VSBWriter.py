@@ -11,8 +11,4 @@ class VSBWriter:
         vsb.WriteClose(self.handle)
 
     def write_msg(self, val):
-        if "Msg" in val and "sizeOfMsg" in val:
-            vsb.WriteMessage(self.handle, val["Msg"], val["sizeOfMsg"])
-            return True
-        else:
-            return False
+        vsb.WriteMessage(self.handle, val.Msg, val.sizeOfMsg)

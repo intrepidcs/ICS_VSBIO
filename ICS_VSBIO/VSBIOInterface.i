@@ -1,5 +1,6 @@
 /*VSBIODLL.i*/
 %module VSBIOInterface
+%include "std_wstring.i"
 %{
 	#include "VSBIODLL.h"
 %}
@@ -15,6 +16,7 @@
 }
 
 %apply int *OUTPUT {unsigned int * lengthOfMessageReturned};
+
 
 %include "VSBIODLL.h"
 %include "VSBIO/include/VSBIO/VSBStruct.h"

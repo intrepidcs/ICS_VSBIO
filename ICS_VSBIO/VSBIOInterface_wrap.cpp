@@ -3123,7 +3123,83 @@ namespace swig {
 }
 
 
+#if PY_VERSION_HEX >= 0x03020000
+# define SWIGPY_UNICODE_ARG(obj) ((PyObject*) (obj))
+#else
+# define SWIGPY_UNICODE_ARG(obj) ((PyUnicodeObject*) (obj))
+#endif
+
+
+#include <cwchar>
+
+
+#include <string>
+
+
 	#include "VSBIODLL.h"
+
+
+#include <wchar.h>
+#include <limits.h>
+#ifndef WCHAR_MIN
+#  define WCHAR_MIN 0
+#endif
+#ifndef WCHAR_MAX
+#  define WCHAR_MAX 65535
+#endif
+
+
+SWIGINTERN swig_type_info*
+SWIG_pwchar_descriptor()
+{
+  static int init = 0;
+  static swig_type_info* info = 0;
+  if (!init) {
+    info = SWIG_TypeQuery("_p_wchar_t");
+    init = 1;
+  }
+  return info;
+}
+
+
+SWIGINTERN int
+SWIG_AsWCharPtrAndSize(PyObject *obj, wchar_t **cptr, size_t *psize, int *alloc)
+{
+  PyObject *tmp = 0;
+  int isunicode = PyUnicode_Check(obj);
+#if PY_VERSION_HEX < 0x03000000 && !defined(SWIG_PYTHON_STRICT_UNICODE_WCHAR)
+  if (!isunicode && PyString_Check(obj)) {
+    obj = tmp = PyUnicode_FromObject(obj);
+    isunicode = 1;
+  }
+#endif
+  if (isunicode) {
+    Py_ssize_t len = PyUnicode_GetSize(obj);
+    if (cptr) {
+      *cptr = (new wchar_t[len + 1]());
+      PyUnicode_AsWideChar(SWIGPY_UNICODE_ARG(obj), *cptr, len);
+      (*cptr)[len] = 0;
+    }
+    if (psize) *psize = (size_t) len + 1;
+    if (alloc) *alloc = cptr ? SWIG_NEWOBJ : 0;
+    Py_XDECREF(tmp);
+    return SWIG_OK;
+  } else {
+    swig_type_info* pwchar_descriptor = SWIG_pwchar_descriptor();
+    if (pwchar_descriptor) {
+      void * vptr = 0;
+      if (SWIG_ConvertPtr(obj, &vptr, pwchar_descriptor, 0) == SWIG_OK) {
+	if (cptr) *cptr = (wchar_t *)vptr;
+	if (psize) *psize = vptr ? (wcslen((wchar_t *)vptr) + 1) : 0;
+	return SWIG_OK;
+      }
+    }
+  }
+  return SWIG_TypeError;
+}
+
+
+
 
 
 SWIGINTERN swig_type_info*
@@ -3418,6 +3494,42 @@ SWIGINTERNINLINE PyObject*
 }
 
 
+SWIGINTERNINLINE PyObject *
+SWIG_FromCharPtrAndSize(const char* carray, size_t size)
+{
+  if (carray) {
+    if (size > INT_MAX) {
+      swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
+      return pchar_descriptor ? 
+	SWIG_InternalNewPointerObj(const_cast< char * >(carray), pchar_descriptor, 0) : SWIG_Py_Void();
+    } else {
+#if PY_VERSION_HEX >= 0x03000000
+#if defined(SWIG_PYTHON_STRICT_BYTE_CHAR)
+      return PyBytes_FromStringAndSize(carray, static_cast< Py_ssize_t >(size));
+#else
+#if PY_VERSION_HEX >= 0x03010000
+      return PyUnicode_DecodeUTF8(carray, static_cast< Py_ssize_t >(size), "surrogateescape");
+#else
+      return PyUnicode_FromStringAndSize(carray, static_cast< Py_ssize_t >(size));
+#endif
+#endif
+#else
+      return PyString_FromStringAndSize(carray, static_cast< Py_ssize_t >(size));
+#endif
+    }
+  } else {
+    return SWIG_Py_Void();
+  }
+}
+
+
+SWIGINTERNINLINE PyObject * 
+SWIG_FromCharPtr(const char *cptr)
+{ 
+  return SWIG_FromCharPtrAndSize(cptr, (cptr ? strlen(cptr) : 0));
+}
+
+
 SWIGINTERN int
 SWIG_AsVal_long (PyObject *obj, long* val)
 {
@@ -3562,21 +3674,24 @@ extern "C" {
 SWIGINTERN PyObject *_wrap_ReadVSBW(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   wchar_t *arg1 = (wchar_t *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  int res1 ;
+  wchar_t *buf1 = 0 ;
+  int alloc1 = 0 ;
   PyObject * obj0 = 0 ;
   ReadHandle result;
   
   if (!PyArg_ParseTuple(args,(char *)"O:ReadVSBW",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_wchar_t, 0 |  0 );
+  res1 = SWIG_AsWCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ReadVSBW" "', argument " "1"" of type '" "wchar_t const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ReadVSBW" "', argument " "1"" of type '" "wchar_t const *""'");
   }
-  arg1 = reinterpret_cast< wchar_t * >(argp1);
+  arg1 = reinterpret_cast< wchar_t * >(buf1);
   result = (ReadHandle)ReadVSBW((wchar_t const *)arg1);
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
   return resultobj;
 fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
   return NULL;
 }
 
@@ -3673,24 +3788,107 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_GetProgress(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  ReadHandle arg1 = (ReadHandle) 0 ;
+  int res1 ;
+  PyObject * obj0 = 0 ;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:GetProgress",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0,SWIG_as_voidptrptr(&arg1), 0, 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GetProgress" "', argument " "1"" of type '" "ReadHandle""'"); 
+  }
+  result = (int)GetProgress(arg1);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_GetProgressString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  ReadHandle arg1 = (ReadHandle) 0 ;
+  int res1 ;
+  PyObject * obj0 = 0 ;
+  char *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:GetProgressString",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0,SWIG_as_voidptrptr(&arg1), 0, 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GetProgressString" "', argument " "1"" of type '" "ReadHandle""'"); 
+  }
+  result = (char *)GetProgressString(arg1);
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_GetDisplayMessage(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  ReadHandle arg1 = (ReadHandle) 0 ;
+  int res1 ;
+  PyObject * obj0 = 0 ;
+  char *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:GetDisplayMessage",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0,SWIG_as_voidptrptr(&arg1), 0, 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GetDisplayMessage" "', argument " "1"" of type '" "ReadHandle""'"); 
+  }
+  result = (char *)GetDisplayMessage(arg1);
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_GetErrorMessage(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  ReadHandle arg1 = (ReadHandle) 0 ;
+  int res1 ;
+  PyObject * obj0 = 0 ;
+  char *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:GetErrorMessage",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0,SWIG_as_voidptrptr(&arg1), 0, 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GetErrorMessage" "', argument " "1"" of type '" "ReadHandle""'"); 
+  }
+  result = (char *)GetErrorMessage(arg1);
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_WriteVSBW(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   wchar_t *arg1 = (wchar_t *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  int res1 ;
+  wchar_t *buf1 = 0 ;
+  int alloc1 = 0 ;
   PyObject * obj0 = 0 ;
   WriteHandle result;
   
   if (!PyArg_ParseTuple(args,(char *)"O:WriteVSBW",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_wchar_t, 0 |  0 );
+  res1 = SWIG_AsWCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WriteVSBW" "', argument " "1"" of type '" "wchar_t const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WriteVSBW" "', argument " "1"" of type '" "wchar_t const *""'");
   }
-  arg1 = reinterpret_cast< wchar_t * >(argp1);
+  arg1 = reinterpret_cast< wchar_t * >(buf1);
   result = (WriteHandle)WriteVSBW((wchar_t const *)arg1);
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
   return resultobj;
 fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
   return NULL;
 }
 
@@ -5216,6 +5414,10 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"ReadVSB", _wrap_ReadVSB, METH_VARARGS, NULL},
 	 { (char *)"ReadNextMessage", _wrap_ReadNextMessage, METH_VARARGS, NULL},
 	 { (char *)"ReadClose", _wrap_ReadClose, METH_VARARGS, NULL},
+	 { (char *)"GetProgress", _wrap_GetProgress, METH_VARARGS, NULL},
+	 { (char *)"GetProgressString", _wrap_GetProgressString, METH_VARARGS, NULL},
+	 { (char *)"GetDisplayMessage", _wrap_GetDisplayMessage, METH_VARARGS, NULL},
+	 { (char *)"GetErrorMessage", _wrap_GetErrorMessage, METH_VARARGS, NULL},
 	 { (char *)"WriteVSBW", _wrap_WriteVSBW, METH_VARARGS, NULL},
 	 { (char *)"WriteVSB", _wrap_WriteVSB, METH_VARARGS, NULL},
 	 { (char *)"WriteMessage", _wrap_WriteMessage, METH_VARARGS, NULL},

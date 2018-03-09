@@ -112,6 +112,22 @@ def ReadClose(handle: 'ReadHandle') -> "void":
     return _VSBIOInterface.ReadClose(handle)
 ReadClose = _VSBIOInterface.ReadClose
 
+def GetProgress(handle: 'ReadHandle') -> "int":
+    return _VSBIOInterface.GetProgress(handle)
+GetProgress = _VSBIOInterface.GetProgress
+
+def GetProgressString(handle: 'ReadHandle') -> "char const *":
+    return _VSBIOInterface.GetProgressString(handle)
+GetProgressString = _VSBIOInterface.GetProgressString
+
+def GetDisplayMessage(handle: 'ReadHandle') -> "char const *":
+    return _VSBIOInterface.GetDisplayMessage(handle)
+GetDisplayMessage = _VSBIOInterface.GetDisplayMessage
+
+def GetErrorMessage(handle: 'ReadHandle') -> "char const *":
+    return _VSBIOInterface.GetErrorMessage(handle)
+GetErrorMessage = _VSBIOInterface.GetErrorMessage
+
 def WriteVSBW(filename: 'wchar_t const *') -> "WriteHandle":
     return _VSBIOInterface.WriteVSBW(filename)
 WriteVSBW = _VSBIOInterface.WriteVSBW

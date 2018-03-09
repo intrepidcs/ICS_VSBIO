@@ -1,25 +1,28 @@
 from ICS_VSBIO import VSBReader  as reader
 from ICS_VSBIO import VSBWriter  as writer
 from ICS_VSBIO import VSBIOFlags as flags
+import binascii
 
-vsbread = reader.VSBReader("example.vsb")
-vsbwrite = writer.VSBWriter("example2.vsb")
+vsbread = reader.VSBReader("input.vsb")
+vsbwrite = writer.VSBWriter("ouput.vsb")
 
+count = 0
 print('start')
-while True:
-	val = vsbread.read_next_message()
-	if val["status"] == reader.ReadStatus.eSuccess:
-		print('protocol: ', val["Msg"].Protocol, ' Network: ', val["Msg"].NetworkID )
-		if val["Msg"].NetworkID == flags.NETID_HSCAN:
-			if (val["Msg"].ExtraDataPtr):
-				print(val["EDP"])
-				import binascii
-				print( binascii.hexlify(val["EDP"]))
+try:
+	for msg in vsbread:
+		count += 1
+		if not count % 2000:
+			print('{0}% of file read'.format(vsbread.getProgress()))
+		if msg.Msg.NetworkID == flags.NETID_HSCAN:
+			if (msg.Msg.ExtraDataPtr):
+				print(binascii.hexlify(msg.EDP))
+			vsbwrite.write_msg(msg)
+			
+except ValueError as e:
+	print(str(e))
+except:
+	print('an unknown error has occurred')
+else:
+	print('Success')
 
-			vsbwrite.write_msg(val)
-			print('Network copied')
-		else:
-			print('network skipped')
-	else:
-		break;
-print('end with a status of ', val["status"])
+

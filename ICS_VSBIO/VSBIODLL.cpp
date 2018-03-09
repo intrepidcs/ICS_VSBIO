@@ -4,6 +4,7 @@
 #include "VSBIODLL.h"
 #include "VSBIO/VSBIO.h"
 #include <string>
+#include <locale>
 
 using namespace std;
 #ifndef _WIN32
@@ -11,8 +12,8 @@ using namespace std;
 
 wstring widestring(const string &text)
 {
-    if (text.size() == 0)
-        return L"";
+	if (text.size() == 0)
+		return L"";
   wstring result;
   result.resize(text.length());
   mbstowcs(&result[0], &text[0], text.length());
@@ -21,8 +22,8 @@ wstring widestring(const string &text)
 
 string mbstring(const wstring &text)
 {
-    if (text.size() == 0)
-        return "";
+	if (text.size() == 0)
+		return "";
   string result;
   result.resize(text.length());
   wcstombs(&result[0], &text[0], text.length());
@@ -31,21 +32,21 @@ string mbstring(const wstring &text)
 #else
 wstring widestring(const string &text)
 {
-    if (text.size() == 0)
-        return L"";
-    int size_needed = MultiByteToWideChar(CP_UTF8, 0, &text[0], (int)text.size(), NULL, 0);
-    std::wstring strTo(size_needed, 0);
-    MultiByteToWideChar(CP_UTF8, 0, &text[0], (int)text.size(), &strTo[0], size_needed);
-    return strTo;
+	if (text.size() == 0)
+		return L"";
+	int size_needed = MultiByteToWideChar(CP_UTF8, 0, &text[0], (int)text.size(), NULL, 0);
+	std::wstring strTo(size_needed, 0);
+	MultiByteToWideChar(CP_UTF8, 0, &text[0], (int)text.size(), &strTo[0], size_needed);
+	return strTo;
 }
 string mbstring(const wstring &text)
 {
-    if (text.size() == 0)
-        return "";
-    int size_needed = WideCharToMultiByte(CP_UTF8, 0, &text[0], (int)text.size(), NULL, 0, NULL, NULL);
-    std::string strTo(size_needed, 0);
-    WideCharToMultiByte(CP_UTF8, 0, &text[0], (int)text.size(), &strTo[0], size_needed, NULL, NULL);
-    return strTo;
+	if (text.size() == 0)
+		return "";
+	int size_needed = WideCharToMultiByte(CP_UTF8, 0, &text[0], (int)text.size(), NULL, 0, NULL, NULL);
+	std::string strTo(size_needed, 0);
+	WideCharToMultiByte(CP_UTF8, 0, &text[0], (int)text.size(), &strTo[0], size_needed, NULL, NULL);
+	return strTo;
 }
 #endif
 
@@ -67,6 +68,31 @@ extern "C" VSBIODLL_API int ReadNextMessage(ReadHandle handle, icsSpyMessageVSB 
 extern "C" VSBIODLL_API void ReadClose(ReadHandle handle)
 {
 	delete ((VSBIORead *)handle);
+}
+
+extern "C" VSBIODLL_API int GetProgress(ReadHandle handle)
+{
+	return ((VSBIORead *)handle)->GetProgress();
+}
+
+std::string ws2s(const std::wstring& wstr)
+{
+    return std::string(wstr.begin(), wstr.end());
+}
+
+extern "C" VSBIODLL_API const char * GetDisplayMessage(ReadHandle handle)
+{
+	std::wstring & wstr = ((VSBIORead *)handle)->GetDisplayMessage();
+	static std::string str;
+	str = ws2s(wstr);
+	return str.c_str();
+}
+extern "C" VSBIODLL_API const char * GetErrorMessage(ReadHandle handle)
+{
+	std::wstring & wstr = ((VSBIORead *)handle)->GetErrorMessage();
+	static std::string str;
+	str = ws2s(wstr);
+	return str.c_str();
 }
 
 extern "C" VSBIODLL_API WriteHandle WriteVSB(const char * filename)
