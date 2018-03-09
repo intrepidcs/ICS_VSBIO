@@ -10,5 +10,6 @@ class VSBWriter:
     def __del__(self):
         vsb.WriteClose(self.handle)
 
-    def write_msg(self, val):
-        vsb.WriteMessage(self.handle, val.Msg, val.sizeOfMsg)
+    def write_msg(self, vsbMessage):
+        ''' writes vsb message to file.'''
+        vsb.WriteMessage(self.handle, vsbMessage.info, vsbMessage.sizeOfMsg)

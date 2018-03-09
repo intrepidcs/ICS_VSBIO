@@ -12,8 +12,8 @@ class ReadStatus:
 
 class VSBMessage:
 	def __init__(self, Msg, EDP, sizeOfMsg):
-		self.Msg = Msg
-		self.EDP = EDP
+		self.info = Msg
+		self.exData = EDP
 		self.sizeOfMsg = sizeOfMsg
 
 class VSBReader:
@@ -64,21 +64,36 @@ class VSBReader:
 			self.size = size
 			return self.read_next_message()
 
-	def getProgress(self):
+	def get_progress(self):
+		'''
+		returns the progress as a integer percentage
+		'''
 		return vsb.GetProgress(self.handle)
 
-	def getErrorMessage(self):
+	def get_error_message(self):
+		'''
+		return Error messages if any.
+		'''
 		return vsb.GetErrorMessage(self.handle)
 
-	def getDisplayMessage(self):
+	def get_display_message(self):
+		'''
+		return Display messages if any
+		'''
 		return vsb.GetDisplayMessage(self.handle)
 
-	def getStatus(self):
+	def get_status(self):
+		'''
+		returns the current state
+		'''
 		return self.state
 
-	def getStatusAsString(self):
+	def get_status_as_string(self):
+		'''
+		returns the current state in string format
+		'''
 		if self.state == ReadStatus.eSuccess:
-			return 'Success'
+			return 'Messages read successfully'
 		elif self.state == ReadStatus.eError:
 			return 'Error'
 		elif self.state == ReadStatus.eEndOfFile:
