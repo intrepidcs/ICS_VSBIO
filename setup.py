@@ -4,7 +4,7 @@ from distutils.core import setup, Extension
 import distutils 
 import platform
 
-version = '0.0.4'
+version = '0.0.4.2'
 
 def which(program):
     import os
@@ -50,7 +50,6 @@ if which('swig') or which('swig.exe') :
 		'ICS_VSBIO/VSBIOFlags.i']	
 else:
 	sources=['ICS_VSBIO/StandardLibrary/src/OFile.cpp',
-		'ICS_VSBIO/StandardLibrary/src/OSAbstraction.cpp',
 		'ICS_VSBIO/VSBIO/src/VSBIO.cpp',
 		'ICS_VSBIO/VSBIO/src/MessageTimeDecoderVSB.cpp',
 		'ICS_VSBIO/VSBIODLL.cpp',
