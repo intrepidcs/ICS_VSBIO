@@ -32,7 +32,8 @@ class VSBReader:
  
 	def __del__(self):
 		vsb.VSBIOFree(self.message)
-		vsb.ReadClose(self.handle)
+		if self.state != vsb.eEndOfFile :
+			vsb.ReadClose(self.handle)
 
 	def __iter__(self):
 		if self.state == ReadStatus.eInit:

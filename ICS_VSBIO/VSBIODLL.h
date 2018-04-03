@@ -1,6 +1,8 @@
 #pragma once
 
-#if defined(_WINDLL)
+#if SWIG
+#	define VSBIODLL_API extern
+#elif defined(_WINDLL)
 #	ifdef VSBIODLL_EXPORTS
 #		ifdef PYD
 #			define VSBIODLL_API __declspec(dllexport) 
@@ -12,8 +14,6 @@
 #	endif
 #elif defined(LINUXSO)
 #	define VSBIODLL_API 
-#elif SWIG
-#	define VSBIODLL_API extern
 #else
 #	define VSBIODLL_API 
 #endif

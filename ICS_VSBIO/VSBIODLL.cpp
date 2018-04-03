@@ -9,6 +9,7 @@
 using namespace std;
 #ifndef _WIN32
 #include <dirent.h>
+#include <cstdlib>
 
 wstring widestring(const string &text)
 {
@@ -16,7 +17,7 @@ wstring widestring(const string &text)
 		return L"";
   wstring result;
   result.resize(text.length());
-  mbstowcs(&result[0], &text[0], text.length());
+  std::mbstowcs(&result[0], &text[0], text.length());
   return result;
 }
 
@@ -26,7 +27,7 @@ string mbstring(const wstring &text)
 		return "";
   string result;
   result.resize(text.length());
-  wcstombs(&result[0], &text[0], text.length());
+  std::wcstombs(&result[0], &text[0], text.length());
   return result;
 }
 #else

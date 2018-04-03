@@ -3004,17 +3004,21 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 /* -------- TYPES TABLE (BEGIN) -------- */
 
 #define SWIGTYPE_p__VSBRtnValues swig_types[0]
-#define SWIGTYPE_p__icsSpyMessageVSB swig_types[1]
-#define SWIGTYPE_p_char swig_types[2]
-#define SWIGTYPE_p_int16_t swig_types[3]
-#define SWIGTYPE_p_size_t swig_types[4]
-#define SWIGTYPE_p_uint32_t swig_types[5]
-#define SWIGTYPE_p_uint8_t swig_types[6]
-#define SWIGTYPE_p_unsigned_int swig_types[7]
-#define SWIGTYPE_p_void swig_types[8]
-#define SWIGTYPE_p_wchar_t swig_types[9]
-static swig_type_info *swig_types[11];
-static swig_module_info swig_module = {swig_types, 10, 0, 0, 0, 0};
+#define SWIGTYPE_p___int64 swig_types[1]
+#define SWIGTYPE_p__icsSpyMessageVSB swig_types[2]
+#define SWIGTYPE_p_char swig_types[3]
+#define SWIGTYPE_p_int swig_types[4]
+#define SWIGTYPE_p_short swig_types[5]
+#define SWIGTYPE_p_signed_char swig_types[6]
+#define SWIGTYPE_p_size_t swig_types[7]
+#define SWIGTYPE_p_unsigned___int64 swig_types[8]
+#define SWIGTYPE_p_unsigned_char swig_types[9]
+#define SWIGTYPE_p_unsigned_int swig_types[10]
+#define SWIGTYPE_p_unsigned_short swig_types[11]
+#define SWIGTYPE_p_void swig_types[12]
+#define SWIGTYPE_p_wchar_t swig_types[13]
+static swig_type_info *swig_types[15];
+static swig_module_info swig_module = {swig_types, 14, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3585,6 +3589,70 @@ SWIG_AsVal_int (PyObject * obj, int *val)
 }
 
 
+SWIGINTERNINLINE PyObject*
+  SWIG_From_unsigned_SS_int  (unsigned int value)
+{
+  return PyInt_FromSize_t((size_t) value);
+}
+
+
+SWIGINTERN int
+SWIG_AsVal_unsigned_SS_char (PyObject * obj, unsigned char *val)
+{
+  unsigned long v;
+  int res = SWIG_AsVal_unsigned_SS_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v > UCHAR_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = static_cast< unsigned char >(v);
+    }
+  }  
+  return res;
+}
+
+
+  #define SWIG_From_long   PyInt_FromLong 
+
+
+SWIGINTERNINLINE PyObject* 
+SWIG_From_unsigned_SS_long  (unsigned long value)
+{
+  return (value > LONG_MAX) ?
+    PyLong_FromUnsignedLong(value) : PyInt_FromLong(static_cast< long >(value));
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_From_unsigned_SS_char  (unsigned char value)
+{    
+  return SWIG_From_unsigned_SS_long  (value);
+}
+
+
+SWIGINTERN int
+SWIG_AsVal_short (PyObject * obj, short *val)
+{
+  long v;
+  int res = SWIG_AsVal_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v < SHRT_MIN || v > SHRT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = static_cast< short >(v);
+    }
+  }  
+  return res;
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_From_short  (short value)
+{    
+  return SWIG_From_long  (value);
+}
+
+
 
 	typedef	enum  _VSBRtnValues{
 		eSuccess = 0,
@@ -3936,8 +4004,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_StatusBitField_set(PyObject *SWIGUNU
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -3947,19 +4015,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_StatusBitField_set(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_StatusBitField_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_StatusBitField_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_StatusBitField_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      uint32_t * temp = reinterpret_cast< uint32_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_StatusBitField_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = static_cast< uint32_t >(val2);
   if (arg1) (arg1)->StatusBitField = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -3982,8 +4042,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_StatusBitField_get(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_StatusBitField_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->StatusBitField);
-  resultobj = SWIG_NewPointerObj((new uint32_t(static_cast< const uint32_t& >(result))), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->StatusBitField);
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
   return resultobj;
 fail:
   return NULL;
@@ -3996,8 +4056,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_StatusBitField2_set(PyObject *SWIGUN
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4007,19 +4067,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_StatusBitField2_set(PyObject *SWIGUN
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_StatusBitField2_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_StatusBitField2_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_StatusBitField2_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      uint32_t * temp = reinterpret_cast< uint32_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_StatusBitField2_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = static_cast< uint32_t >(val2);
   if (arg1) (arg1)->StatusBitField2 = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4042,8 +4094,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_StatusBitField2_get(PyObject *SWIGUN
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_StatusBitField2_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->StatusBitField2);
-  resultobj = SWIG_NewPointerObj((new uint32_t(static_cast< const uint32_t& >(result))), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->StatusBitField2);
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4056,8 +4108,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeHardware_set(PyObject *SWIGUNUSE
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4067,19 +4119,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeHardware_set(PyObject *SWIGUNUSE
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_TimeHardware_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_TimeHardware_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_TimeHardware_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      uint32_t * temp = reinterpret_cast< uint32_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_TimeHardware_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = static_cast< uint32_t >(val2);
   if (arg1) (arg1)->TimeHardware = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4102,8 +4146,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeHardware_get(PyObject *SWIGUNUSE
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_TimeHardware_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->TimeHardware);
-  resultobj = SWIG_NewPointerObj((new uint32_t(static_cast< const uint32_t& >(result))), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->TimeHardware);
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4116,8 +4160,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeHardware2_set(PyObject *SWIGUNUS
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4127,19 +4171,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeHardware2_set(PyObject *SWIGUNUS
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_TimeHardware2_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_TimeHardware2_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_TimeHardware2_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      uint32_t * temp = reinterpret_cast< uint32_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_TimeHardware2_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = static_cast< uint32_t >(val2);
   if (arg1) (arg1)->TimeHardware2 = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4162,8 +4198,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeHardware2_get(PyObject *SWIGUNUS
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_TimeHardware2_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->TimeHardware2);
-  resultobj = SWIG_NewPointerObj((new uint32_t(static_cast< const uint32_t& >(result))), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->TimeHardware2);
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4176,8 +4212,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeSystem_set(PyObject *SWIGUNUSEDP
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4187,19 +4223,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeSystem_set(PyObject *SWIGUNUSEDP
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_TimeSystem_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_TimeSystem_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_TimeSystem_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      uint32_t * temp = reinterpret_cast< uint32_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_TimeSystem_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = static_cast< uint32_t >(val2);
   if (arg1) (arg1)->TimeSystem = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4222,8 +4250,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeSystem_get(PyObject *SWIGUNUSEDP
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_TimeSystem_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->TimeSystem);
-  resultobj = SWIG_NewPointerObj((new uint32_t(static_cast< const uint32_t& >(result))), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->TimeSystem);
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4236,8 +4264,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeSystem2_set(PyObject *SWIGUNUSED
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4247,19 +4275,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeSystem2_set(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_TimeSystem2_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_TimeSystem2_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_TimeSystem2_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      uint32_t * temp = reinterpret_cast< uint32_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_TimeSystem2_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = static_cast< uint32_t >(val2);
   if (arg1) (arg1)->TimeSystem2 = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4282,8 +4302,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeSystem2_get(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_TimeSystem2_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->TimeSystem2);
-  resultobj = SWIG_NewPointerObj((new uint32_t(static_cast< const uint32_t& >(result))), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->TimeSystem2);
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4296,8 +4316,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeStampHardwareID_set(PyObject *SW
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4307,19 +4327,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeStampHardwareID_set(PyObject *SW
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_TimeStampHardwareID_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_TimeStampHardwareID_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_TimeStampHardwareID_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      uint8_t * temp = reinterpret_cast< uint8_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_TimeStampHardwareID_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
   if (arg1) (arg1)->TimeStampHardwareID = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4342,8 +4354,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeStampHardwareID_get(PyObject *SW
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_TimeStampHardwareID_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->TimeStampHardwareID);
-  resultobj = SWIG_NewPointerObj((new uint8_t(static_cast< const uint8_t& >(result))), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->TimeStampHardwareID);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4356,8 +4368,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeStampSystemID_set(PyObject *SWIG
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4367,19 +4379,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeStampSystemID_set(PyObject *SWIG
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_TimeStampSystemID_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_TimeStampSystemID_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_TimeStampSystemID_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      uint8_t * temp = reinterpret_cast< uint8_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_TimeStampSystemID_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
   if (arg1) (arg1)->TimeStampSystemID = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4402,8 +4406,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_TimeStampSystemID_get(PyObject *SWIG
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_TimeStampSystemID_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->TimeStampSystemID);
-  resultobj = SWIG_NewPointerObj((new uint8_t(static_cast< const uint8_t& >(result))), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->TimeStampSystemID);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4416,8 +4420,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_NetworkID_set(PyObject *SWIGUNUSEDPA
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4427,19 +4431,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_NetworkID_set(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_NetworkID_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_NetworkID_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_NetworkID_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      uint8_t * temp = reinterpret_cast< uint8_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_NetworkID_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
   if (arg1) (arg1)->NetworkID = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4462,8 +4458,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_NetworkID_get(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_NetworkID_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->NetworkID);
-  resultobj = SWIG_NewPointerObj((new uint8_t(static_cast< const uint8_t& >(result))), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->NetworkID);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4476,8 +4472,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_NodeID_set(PyObject *SWIGUNUSEDPARM(
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4487,19 +4483,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_NodeID_set(PyObject *SWIGUNUSEDPARM(
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_NodeID_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_NodeID_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_NodeID_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      uint8_t * temp = reinterpret_cast< uint8_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_NodeID_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
   if (arg1) (arg1)->NodeID = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4522,8 +4510,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_NodeID_get(PyObject *SWIGUNUSEDPARM(
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_NodeID_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->NodeID);
-  resultobj = SWIG_NewPointerObj((new uint8_t(static_cast< const uint8_t& >(result))), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->NodeID);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4536,8 +4524,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_Protocol_set(PyObject *SWIGUNUSEDPAR
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4547,19 +4535,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_Protocol_set(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_Protocol_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_Protocol_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_Protocol_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      uint8_t * temp = reinterpret_cast< uint8_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_Protocol_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
   if (arg1) (arg1)->Protocol = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4582,8 +4562,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_Protocol_get(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_Protocol_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->Protocol);
-  resultobj = SWIG_NewPointerObj((new uint8_t(static_cast< const uint8_t& >(result))), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->Protocol);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4596,8 +4576,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_MessagePieceID_set(PyObject *SWIGUNU
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4607,19 +4587,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_MessagePieceID_set(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_MessagePieceID_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_MessagePieceID_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_MessagePieceID_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      uint8_t * temp = reinterpret_cast< uint8_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_MessagePieceID_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
   if (arg1) (arg1)->MessagePieceID = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4642,8 +4614,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_MessagePieceID_get(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_MessagePieceID_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->MessagePieceID);
-  resultobj = SWIG_NewPointerObj((new uint8_t(static_cast< const uint8_t& >(result))), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->MessagePieceID);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4656,8 +4628,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_ExtraDataPtrEnabled_set(PyObject *SW
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4667,19 +4639,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_ExtraDataPtrEnabled_set(PyObject *SW
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_ExtraDataPtrEnabled_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_ExtraDataPtrEnabled_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_ExtraDataPtrEnabled_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      uint8_t * temp = reinterpret_cast< uint8_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_ExtraDataPtrEnabled_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
   if (arg1) (arg1)->ExtraDataPtrEnabled = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4702,8 +4666,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_ExtraDataPtrEnabled_get(PyObject *SW
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_ExtraDataPtrEnabled_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->ExtraDataPtrEnabled);
-  resultobj = SWIG_NewPointerObj((new uint8_t(static_cast< const uint8_t& >(result))), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->ExtraDataPtrEnabled);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4716,8 +4680,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_NumberBytesHeader_set(PyObject *SWIG
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4727,19 +4691,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_NumberBytesHeader_set(PyObject *SWIG
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_NumberBytesHeader_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_NumberBytesHeader_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_NumberBytesHeader_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      uint8_t * temp = reinterpret_cast< uint8_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_NumberBytesHeader_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
   if (arg1) (arg1)->NumberBytesHeader = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4762,8 +4718,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_NumberBytesHeader_get(PyObject *SWIG
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_NumberBytesHeader_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->NumberBytesHeader);
-  resultobj = SWIG_NewPointerObj((new uint8_t(static_cast< const uint8_t& >(result))), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->NumberBytesHeader);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4776,8 +4732,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_NumberBytesData_set(PyObject *SWIGUN
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4787,19 +4743,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_NumberBytesData_set(PyObject *SWIGUN
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_NumberBytesData_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_NumberBytesData_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_NumberBytesData_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      uint8_t * temp = reinterpret_cast< uint8_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_NumberBytesData_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
   if (arg1) (arg1)->NumberBytesData = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4822,8 +4770,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_NumberBytesData_get(PyObject *SWIGUN
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_NumberBytesData_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->NumberBytesData);
-  resultobj = SWIG_NewPointerObj((new uint8_t(static_cast< const uint8_t& >(result))), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->NumberBytesData);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4836,8 +4784,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_NetworkID2_set(PyObject *SWIGUNUSEDP
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4847,19 +4795,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_NetworkID2_set(PyObject *SWIGUNUSEDP
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_NetworkID2_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_NetworkID2_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_NetworkID2_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      uint8_t * temp = reinterpret_cast< uint8_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_NetworkID2_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
   if (arg1) (arg1)->NetworkID2 = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4882,8 +4822,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_NetworkID2_get(PyObject *SWIGUNUSEDP
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_NetworkID2_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->NetworkID2);
-  resultobj = SWIG_NewPointerObj((new uint8_t(static_cast< const uint8_t& >(result))), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->NetworkID2);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4896,8 +4836,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_DescriptionID_set(PyObject *SWIGUNUS
   int16_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  short val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4907,19 +4847,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_DescriptionID_set(PyObject *SWIGUNUS
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_DescriptionID_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_int16_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_DescriptionID_set" "', argument " "2"" of type '" "int16_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_DescriptionID_set" "', argument " "2"" of type '" "int16_t""'");
-    } else {
-      int16_t * temp = reinterpret_cast< int16_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_DescriptionID_set" "', argument " "2"" of type '" "int16_t""'");
+  } 
+  arg2 = static_cast< int16_t >(val2);
   if (arg1) (arg1)->DescriptionID = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4942,8 +4874,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_DescriptionID_get(PyObject *SWIGUNUS
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_DescriptionID_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->DescriptionID);
-  resultobj = SWIG_NewPointerObj((new int16_t(static_cast< const int16_t& >(result))), SWIGTYPE_p_int16_t, SWIG_POINTER_OWN |  0 );
+  result = (int16_t) ((arg1)->DescriptionID);
+  resultobj = SWIG_From_short(static_cast< short >(result));
   return resultobj;
 fail:
   return NULL;
@@ -4956,8 +4888,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_ArbIDOrHeader_set(PyObject *SWIGUNUS
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4967,19 +4899,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_ArbIDOrHeader_set(PyObject *SWIGUNUS
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_ArbIDOrHeader_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_ArbIDOrHeader_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_ArbIDOrHeader_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      uint32_t * temp = reinterpret_cast< uint32_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_ArbIDOrHeader_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = static_cast< uint32_t >(val2);
   if (arg1) (arg1)->ArbIDOrHeader = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -5002,8 +4926,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_ArbIDOrHeader_get(PyObject *SWIGUNUS
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_ArbIDOrHeader_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->ArbIDOrHeader);
-  resultobj = SWIG_NewPointerObj((new uint32_t(static_cast< const uint32_t& >(result))), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->ArbIDOrHeader);
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
   return resultobj;
 fail:
   return NULL;
@@ -5027,7 +4951,7 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_Data_set(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_Data_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_uint8_t, 0 |  0 );
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_unsigned_char, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_Data_set" "', argument " "2"" of type '" "uint8_t [8]""'"); 
   } 
@@ -5062,7 +4986,7 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_Data_get(PyObject *SWIGUNUSEDPARM(se
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
   result = (uint8_t *)(uint8_t *) ((arg1)->Data);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_uint8_t, 0 |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_unsigned_char, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -5075,8 +4999,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_StatusBitField3_set(PyObject *SWIGUN
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -5086,19 +5010,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_StatusBitField3_set(PyObject *SWIGUN
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_StatusBitField3_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_StatusBitField3_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_StatusBitField3_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      uint32_t * temp = reinterpret_cast< uint32_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_StatusBitField3_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = static_cast< uint32_t >(val2);
   if (arg1) (arg1)->StatusBitField3 = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -5121,8 +5037,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_StatusBitField3_get(PyObject *SWIGUN
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_StatusBitField3_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->StatusBitField3);
-  resultobj = SWIG_NewPointerObj((new uint32_t(static_cast< const uint32_t& >(result))), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->StatusBitField3);
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
   return resultobj;
 fail:
   return NULL;
@@ -5135,8 +5051,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_StatusBitField4_set(PyObject *SWIGUN
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -5146,19 +5062,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_StatusBitField4_set(PyObject *SWIGUN
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_StatusBitField4_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_StatusBitField4_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_StatusBitField4_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      uint32_t * temp = reinterpret_cast< uint32_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_StatusBitField4_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = static_cast< uint32_t >(val2);
   if (arg1) (arg1)->StatusBitField4 = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -5181,8 +5089,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_StatusBitField4_get(PyObject *SWIGUN
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_StatusBitField4_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->StatusBitField4);
-  resultobj = SWIG_NewPointerObj((new uint32_t(static_cast< const uint32_t& >(result))), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->StatusBitField4);
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
   return resultobj;
 fail:
   return NULL;
@@ -5206,7 +5114,7 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_AckBytes_set(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_AckBytes_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_uint8_t, 0 |  0 );
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_unsigned_char, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_AckBytes_set" "', argument " "2"" of type '" "uint8_t [8]""'"); 
   } 
@@ -5241,7 +5149,7 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_AckBytes_get(PyObject *SWIGUNUSEDPAR
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
   result = (uint8_t *)(uint8_t *) ((arg1)->AckBytes);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_uint8_t, 0 |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_unsigned_char, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -5254,8 +5162,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_ExtraDataPtr_set(PyObject *SWIGUNUSE
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -5265,19 +5173,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_ExtraDataPtr_set(PyObject *SWIGUNUSE
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_ExtraDataPtr_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_ExtraDataPtr_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_ExtraDataPtr_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      uint32_t * temp = reinterpret_cast< uint32_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_ExtraDataPtr_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = static_cast< uint32_t >(val2);
   if (arg1) (arg1)->ExtraDataPtr = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -5300,8 +5200,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_ExtraDataPtr_get(PyObject *SWIGUNUSE
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_ExtraDataPtr_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->ExtraDataPtr);
-  resultobj = SWIG_NewPointerObj((new uint32_t(static_cast< const uint32_t& >(result))), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->ExtraDataPtr);
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
   return resultobj;
 fail:
   return NULL;
@@ -5314,8 +5214,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_MiscData_set(PyObject *SWIGUNUSEDPAR
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -5325,19 +5225,11 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_MiscData_set(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_MiscData_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_MiscData_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "icsSpyMessageVSB_MiscData_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      uint8_t * temp = reinterpret_cast< uint8_t * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "icsSpyMessageVSB_MiscData_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
   if (arg1) (arg1)->MiscData = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -5360,8 +5252,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_MiscData_get(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_MiscData_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result =  ((arg1)->MiscData);
-  resultobj = SWIG_NewPointerObj((new uint8_t(static_cast< const uint8_t& >(result))), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->MiscData);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
   return resultobj;
 fail:
   return NULL;
@@ -5385,7 +5277,7 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_Reserved_set(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_Reserved_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_uint8_t, 0 |  0 );
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_unsigned_char, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_Reserved_set" "', argument " "2"" of type '" "uint8_t [3]""'"); 
   } 
@@ -5420,7 +5312,7 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_Reserved_get(PyObject *SWIGUNUSEDPAR
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
   result = (uint8_t *)(uint8_t *) ((arg1)->Reserved);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_uint8_t, 0 |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_unsigned_char, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -5572,49 +5464,65 @@ static PyMethodDef SwigMethods[] = {
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
 static swig_type_info _swigt__p__VSBRtnValues = {"_p__VSBRtnValues", "enum _VSBRtnValues *|VSBRtnValues *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p___int64 = {"_p___int64", "__int64 *|int64_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p__icsSpyMessageVSB = {"_p__icsSpyMessageVSB", "_icsSpyMessageVSB *|icsSpyMessageVSB *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_int16_t = {"_p_int16_t", "int16_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_int = {"_p_int", "int *|int32_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_short = {"_p_short", "short *|int16_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_signed_char = {"_p_signed_char", "signed char *|int8_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_size_t = {"_p_size_t", "size_t *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_uint32_t = {"_p_uint32_t", "uint32_t *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_uint8_t = {"_p_uint8_t", "uint8_t *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "unsigned int *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned___int64 = {"_p_unsigned___int64", "unsigned __int64 *|uint64_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "unsigned char *|uint8_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "uint32_t *|unsigned int *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned_short = {"_p_unsigned_short", "unsigned short *|uint16_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_void = {"_p_void", "ReadHandle|WriteHandle|void *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_wchar_t = {"_p_wchar_t", "wchar_t *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p__VSBRtnValues,
+  &_swigt__p___int64,
   &_swigt__p__icsSpyMessageVSB,
   &_swigt__p_char,
-  &_swigt__p_int16_t,
+  &_swigt__p_int,
+  &_swigt__p_short,
+  &_swigt__p_signed_char,
   &_swigt__p_size_t,
-  &_swigt__p_uint32_t,
-  &_swigt__p_uint8_t,
+  &_swigt__p_unsigned___int64,
+  &_swigt__p_unsigned_char,
   &_swigt__p_unsigned_int,
+  &_swigt__p_unsigned_short,
   &_swigt__p_void,
   &_swigt__p_wchar_t,
 };
 
 static swig_cast_info _swigc__p__VSBRtnValues[] = {  {&_swigt__p__VSBRtnValues, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p___int64[] = {  {&_swigt__p___int64, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p__icsSpyMessageVSB[] = {  {&_swigt__p__icsSpyMessageVSB, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_int16_t[] = {  {&_swigt__p_int16_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_short[] = {  {&_swigt__p_short, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_signed_char[] = {  {&_swigt__p_signed_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_size_t[] = {  {&_swigt__p_size_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_uint32_t[] = {  {&_swigt__p_uint32_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_uint8_t[] = {  {&_swigt__p_uint8_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_unsigned___int64[] = {  {&_swigt__p_unsigned___int64, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_unsigned_char[] = {  {&_swigt__p_unsigned_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_int[] = {  {&_swigt__p_unsigned_int, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_unsigned_short[] = {  {&_swigt__p_unsigned_short, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_wchar_t[] = {  {&_swigt__p_wchar_t, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p__VSBRtnValues,
+  _swigc__p___int64,
   _swigc__p__icsSpyMessageVSB,
   _swigc__p_char,
-  _swigc__p_int16_t,
+  _swigc__p_int,
+  _swigc__p_short,
+  _swigc__p_signed_char,
   _swigc__p_size_t,
-  _swigc__p_uint32_t,
-  _swigc__p_uint8_t,
+  _swigc__p_unsigned___int64,
+  _swigc__p_unsigned_char,
   _swigc__p_unsigned_int,
+  _swigc__p_unsigned_short,
   _swigc__p_void,
   _swigc__p_wchar_t,
 };

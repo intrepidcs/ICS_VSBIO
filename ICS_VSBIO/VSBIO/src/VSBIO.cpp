@@ -1,6 +1,5 @@
 // ---------------------------------------------------------------------------
 
-#pragma hdrstop
 
 #include "VSBIO/VSBIO.h"
 #ifndef linux
@@ -21,7 +20,6 @@
 #define VSB_2_3_EDPHEADERSIZE 16
 
 // ---------------------------------------------------------------------------
-#pragma package(smart_init)
 
 VSBIORead::VSBIORead(const std::wstring& sFileNames) : mFullFileName(sFileNames)
 {
@@ -76,7 +74,6 @@ VSBIORead::enumFileCondition VSBIORead::ReadNextMessage(unsigned char * message,
 		return eBufferToSmall;
 
 	unsigned long read;
-	bool error = false;
 	mDisplayOut = L"";
 	if (mCurrentMsgLocation + sizeof(VSBSpyMsgTime) >= mCurrentFileSize)
 	{
@@ -124,7 +121,7 @@ VSBIORead::enumFileCondition VSBIORead::ReadNextMessage(unsigned char * message,
 		mCurrentFileSize = mCurrentFile.FileSizeLarge();
 	}
 
-	enumFileCondition condition;
+	enumFileCondition condition = eError;
 	switch (mCurrentFileType)
 	{
 		case VSBIO101:
@@ -139,6 +136,9 @@ VSBIORead::enumFileCondition VSBIORead::ReadNextMessage(unsigned char * message,
 		case VSBIO104:
 			condition = Read104();
 			break;
+		default:
+			mErrorOut += L"Invalid File Type \n";
+			return eError;
 	}
 	*returnLength = mBufferSizeRequired;
 	return condition;

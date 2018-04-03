@@ -1,10 +1,8 @@
 //---------------------------------------------------------------------------
 
-#pragma hdrstop
 
 #include "VSBIO/MessageTimeDecoderVSB.h"
 //---------------------------------------------------------------------------
-#pragma package(smart_init)
 
 #include "VSBIO/VSBStruct.h"
 #include "VSBIO/VSBFlags.h"

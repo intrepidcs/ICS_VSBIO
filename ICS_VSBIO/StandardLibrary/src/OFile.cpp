@@ -184,7 +184,6 @@ int Owcslen(const wchar_t* str)
 
 void wchar_to_char(char* Dest, const wchar_t* Src)
 {
-	const char* result = Dest;
 	while (1)
 	{
 		if (*Src == 0)
@@ -411,7 +410,6 @@ unsigned long long OFile::FileSizeLarge(void)
 //have to figure this out out later. Might be a linux system call that takes file name or stdlib call I'm not seeing
 bool OFile::GetFileTimeDateModified(int& iDay, int& iMonth, int& iYear, int& iHour, int& iMin, int& iSecond)
 {
-	unsigned long size;
 	struct stat Status_buff;
 	int fd = fileno(m_fp);
 
