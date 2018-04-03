@@ -82,14 +82,14 @@ std::string ws2s(const std::wstring& wstr)
 
 extern "C" VSBIODLL_API const char * GetDisplayMessage(ReadHandle handle)
 {
-	std::wstring & wstr = ((VSBIORead *)handle)->GetDisplayMessage();
+	std::wstring const& wstr = ((VSBIORead *)handle)->GetDisplayMessage();
 	static std::string str;
 	str = ws2s(wstr);
 	return str.c_str();
 }
 extern "C" VSBIODLL_API const char * GetErrorMessage(ReadHandle handle)
 {
-	std::wstring & wstr = ((VSBIORead *)handle)->GetErrorMessage();
+	std::wstring const& wstr = ((VSBIORead *)handle)->GetErrorMessage();
 	static std::string str;
 	str = ws2s(wstr);
 	return str.c_str();

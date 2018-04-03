@@ -147,9 +147,14 @@ bool OFile::GetFileTimeDateModified(int& iDay, int& iMonth, int& iYear, int& iHo
 #include <string.h>
 #include <sys/stat.h>
 
-#include "Core/Defines.h"
+#include <stdio.h>
+#include <inttypes.h>
+#include <time.h>
 #include "StandardLibrary/OFile.h"
-#include "StandardLibrary/OSAbstraction.h"
+
+#define FILE_BEGIN 0
+#define FILE_CURRENT 1
+#define FILE_END 2
 
 #if defined(linux) || defined(QNX_OS)
 
@@ -167,6 +172,56 @@ bool OFile::GetFileTimeDateModified(int& iDay, int& iMonth, int& iYear, int& iHo
 
 
 #endif
+
+int Owcslen(const wchar_t* str)
+{
+	const wchar_t* s = str;
+	for (; *s; ++s)
+		;
+	return (s - str);
+}
+
+
+void wchar_to_char(char* Dest, const wchar_t* Src)
+{
+	const char* result = Dest;
+	while (1)
+	{
+		if (*Src == 0)
+			break;
+		*Dest++ = *Src++;
+	}
+
+	*Dest = 0;
+}
+
+FILE* Owfopen(const wchar_t* file, const wchar_t* mode)
+{
+#if defined(ANDROID) || defined(linux) || defined(QNX_OS)
+	if (file == NULL || mode == NULL)
+		return NULL;
+	int filelen = Owcslen(file);
+	int modelen = Owcslen(mode);
+	char* _file = new char[filelen + 1];
+	char* _mode = new char[modelen + 1];
+	wchar_to_char(_file, file);
+	wchar_to_char(_mode, mode);
+	_file[filelen] = L'\0';
+	_mode[modelen] = L'\0';
+	for (int i = 0; i < filelen; ++i)
+	{
+		if (_file[i] == '\\')
+			_file[i] = '/';
+	}
+	FILE* ret = fopen(_file, _mode);
+	delete[] _file;
+	delete[] _mode;
+	return ret;
+#else
+	return _wfopen(file, mode);
+#endif
+}
+
 
 OFile::OFile()
 {
@@ -398,7 +453,7 @@ long long OFile::GetFilePtrLong()
 
 int OFile::GetFilePtr()
 {
-	DWORD dwCurrentFilePosition;
+	unsigned int dwCurrentFilePosition;
 	dwCurrentFilePosition = SetFilePtr(0, NULL, FILE_CURRENT);
 	return dwCurrentFilePosition;
 }
