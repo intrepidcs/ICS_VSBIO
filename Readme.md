@@ -13,7 +13,7 @@ pip install ICS_VSBIO
 
 ## Usage
 
-The module contains two Classes ```VSBRead``` and ```VSBWrite```.  
+The module contains three Classes ```VSBIOFlags```, ```VSBReader``` and ```VSBWriter```.  
 
 ### Reading From File
 
