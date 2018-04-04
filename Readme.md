@@ -47,7 +47,7 @@ else:
 ```
 
 #### VSBRead functions
-```Init``` Takes filename to initialize process 
+```__init__``` Takes filename to initialize process 
 
 ```get_progress()``` returns the progress as a integer percentage
 
@@ -60,7 +60,7 @@ else:
 ```get_status_as_string()``` returns the current state in string format
 
 #### VSBWrite functions
-```Init``` Takes filename to initialize process 
+```__init__``` Takes filename to initialize process 
 
 ```write_msg(message)``` writes vsb message to file.  
 
