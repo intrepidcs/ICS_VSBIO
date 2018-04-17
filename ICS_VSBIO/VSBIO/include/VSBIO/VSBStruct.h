@@ -14,7 +14,13 @@ typedef unsigned int uint32_t;
 typedef unsigned __int64 uint64_t;
 #else
 #include <inttypes.h>
+#include <stddef.h>
 #endif
+
+template <typename Type, size_t N>
+struct wrapped_array {
+	Type data[N];
+};
 
 typedef struct _icsSpyMessageVSB
 {
@@ -36,18 +42,18 @@ typedef struct _icsSpyMessageVSB
 	uint8_t NetworkID2;
 	int16_t DescriptionID;
 	uint32_t ArbIDOrHeader;
-	uint8_t Data[8];
+	wrapped_array<uint8_t, 8> Data;
 	union {
 		struct
 		{
 			uint32_t StatusBitField3;
 			uint32_t StatusBitField4;
 		};
-		uint8_t AckBytes[8];
+		wrapped_array<uint8_t, 8> AckBytes;
 	};
 	uint32_t ExtraDataPtr;
 	uint8_t MiscData;
-	uint8_t Reserved[3];
+	wrapped_array<uint8_t, 3> Reserved;
 } icsSpyMessageVSB;
 #define icsSpyMessageVSB_SIZE 64
 

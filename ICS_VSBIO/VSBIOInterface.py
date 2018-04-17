@@ -274,6 +274,72 @@ eBufferToSmall = _VSBIOInterface.eBufferToSmall
 def GetEDP(message: 'icsSpyMessageVSB') -> "char *":
     return _VSBIOInterface.GetEDP(message)
 GetEDP = _VSBIOInterface.GetEDP
+
+def GetByteFromData(message: 'icsSpyMessageVSB', index: 'size_t') -> "unsigned char":
+    return _VSBIOInterface.GetByteFromData(message, index)
+GetByteFromData = _VSBIOInterface.GetByteFromData
+class intArray8(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, intArray8, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, intArray8, name)
+    __repr__ = _swig_repr
+    __swig_setmethods__["data"] = _VSBIOInterface.intArray8_data_set
+    __swig_getmethods__["data"] = _VSBIOInterface.intArray8_data_get
+    if _newclass:
+        data = _swig_property(_VSBIOInterface.intArray8_data_get, _VSBIOInterface.intArray8_data_set)
+
+    def __len__(self) -> "size_t":
+        return _VSBIOInterface.intArray8___len__(self)
+
+    def __getitem__(self, i: 'size_t') -> "unsigned char const &":
+        return _VSBIOInterface.intArray8___getitem__(self, i)
+
+    def __setitem__(self, i: 'size_t', v: 'unsigned char const &') -> "void":
+        return _VSBIOInterface.intArray8___setitem__(self, i, v)
+
+    def __init__(self):
+        this = _VSBIOInterface.new_intArray8()
+        try:
+            self.this.append(this)
+        except __builtin__.Exception:
+            self.this = this
+    __swig_destroy__ = _VSBIOInterface.delete_intArray8
+    __del__ = lambda self: None
+intArray8_swigregister = _VSBIOInterface.intArray8_swigregister
+intArray8_swigregister(intArray8)
+
+class intArray3(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, intArray3, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, intArray3, name)
+    __repr__ = _swig_repr
+    __swig_setmethods__["data"] = _VSBIOInterface.intArray3_data_set
+    __swig_getmethods__["data"] = _VSBIOInterface.intArray3_data_get
+    if _newclass:
+        data = _swig_property(_VSBIOInterface.intArray3_data_get, _VSBIOInterface.intArray3_data_set)
+
+    def __len__(self) -> "size_t":
+        return _VSBIOInterface.intArray3___len__(self)
+
+    def __getitem__(self, i: 'size_t') -> "unsigned char const &":
+        return _VSBIOInterface.intArray3___getitem__(self, i)
+
+    def __setitem__(self, i: 'size_t', v: 'unsigned char const &') -> "void":
+        return _VSBIOInterface.intArray3___setitem__(self, i, v)
+
+    def __init__(self):
+        this = _VSBIOInterface.new_intArray3()
+        try:
+            self.this.append(this)
+        except __builtin__.Exception:
+            self.this = this
+    __swig_destroy__ = _VSBIOInterface.delete_intArray3
+    __del__ = lambda self: None
+intArray3_swigregister = _VSBIOInterface.intArray3_swigregister
+intArray3_swigregister(intArray3)
+
 # This file is compatible with both classic and new-style classes.
 
 

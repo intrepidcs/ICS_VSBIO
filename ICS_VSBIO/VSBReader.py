@@ -16,6 +16,11 @@ class VSBMessage:
 		self.exData = EDP
 		self.sizeOfMsg = sizeOfMsg
 
+	def get_byte_from_data(self, index):
+		if index > self.sizeOfMsg:
+			raise ValueError("index greater then size")
+		return vsb.GetByteFromData(self.info, index)
+
 class VSBReader:
 	def __init__(self, filename):
 		self.size = 64
@@ -58,7 +63,7 @@ class VSBReader:
 			vsb.ReadClose(self.handle)
 			raise StopIteration()
 		elif self.state == vsb.eError:
-			raise ValueError(self.getErrorMessage())
+			raise ValueError(self.get_error_message())
 		elif self.state == vsb.eBufferToSmall:
 			vsb.VSBIOFree(self.message)
 			self.message = vsb.VSBIOMalloc(size)

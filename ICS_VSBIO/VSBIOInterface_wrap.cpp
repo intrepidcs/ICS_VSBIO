@@ -3017,8 +3017,10 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_unsigned_short swig_types[11]
 #define SWIGTYPE_p_void swig_types[12]
 #define SWIGTYPE_p_wchar_t swig_types[13]
-static swig_type_info *swig_types[15];
-static swig_module_info swig_module = {swig_types, 14, 0, 0, 0, 0};
+#define SWIGTYPE_p_wrapped_arrayT_unsigned_char_3_t swig_types[14]
+#define SWIGTYPE_p_wrapped_arrayT_unsigned_char_8_t swig_types[15]
+static swig_type_info *swig_types[17];
+static swig_module_info swig_module = {swig_types, 16, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3668,6 +3670,135 @@ SWIG_From_short  (short value)
 		return edpreturn;
 	}
 
+  unsigned char GetByteFromData(icsSpyMessageVSB * message, size_t index)
+  {
+    if (index > 8)
+      return 0;
+    else
+      return (unsigned char)(message->Data.data[index]);
+  }
+
+
+
+
+#if defined(LLONG_MAX) && !defined(SWIG_LONG_LONG_AVAILABLE)
+#  define SWIG_LONG_LONG_AVAILABLE
+#endif
+
+
+#ifdef SWIG_LONG_LONG_AVAILABLE
+SWIGINTERN int
+SWIG_AsVal_unsigned_SS_long_SS_long (PyObject *obj, unsigned long long *val)
+{
+  int res = SWIG_TypeError;
+  if (PyLong_Check(obj)) {
+    unsigned long long v = PyLong_AsUnsignedLongLong(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_OK;
+    } else {
+      PyErr_Clear();
+      res = SWIG_OverflowError;
+    }
+  } else {
+    unsigned long v;
+    res = SWIG_AsVal_unsigned_SS_long (obj,&v);
+    if (SWIG_IsOK(res)) {
+      if (val) *val = v;
+      return res;
+    }
+  }
+#ifdef SWIG_PYTHON_CAST_MODE
+  {
+    const double mant_max = 1LL << DBL_MANT_DIG;
+    double d;
+    res = SWIG_AsVal_double (obj,&d);
+    if (SWIG_IsOK(res) && !SWIG_CanCastAsInteger(&d, 0, mant_max))
+      return SWIG_OverflowError;
+    if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, 0, mant_max)) {
+      if (val) *val = (unsigned long long)(d);
+      return SWIG_AddCast(res);
+    }
+    res = SWIG_TypeError;
+  }
+#endif
+  return res;
+}
+#endif
+
+
+SWIGINTERNINLINE int
+SWIG_AsVal_size_t (PyObject * obj, size_t *val)
+{
+  int res = SWIG_TypeError;
+#ifdef SWIG_LONG_LONG_AVAILABLE
+  if (sizeof(size_t) <= sizeof(unsigned long)) {
+#endif
+    unsigned long v;
+    res = SWIG_AsVal_unsigned_SS_long (obj, val ? &v : 0);
+    if (SWIG_IsOK(res) && val) *val = static_cast< size_t >(v);
+#ifdef SWIG_LONG_LONG_AVAILABLE
+  } else if (sizeof(size_t) <= sizeof(unsigned long long)) {
+    unsigned long long v;
+    res = SWIG_AsVal_unsigned_SS_long_SS_long (obj, val ? &v : 0);
+    if (SWIG_IsOK(res) && val) *val = static_cast< size_t >(v);
+  }
+#endif
+  return res;
+}
+
+
+#include <typeinfo>
+#include <stdexcept>
+
+SWIGINTERN size_t wrapped_array_Sl_uint8_t_Sc_8_Sg____len__(wrapped_array< uint8_t,8 > const *self){ return 8; }
+
+#ifdef SWIG_LONG_LONG_AVAILABLE
+SWIGINTERNINLINE PyObject* 
+SWIG_From_unsigned_SS_long_SS_long  (unsigned long long value)
+{
+  return (value > LONG_MAX) ?
+    PyLong_FromUnsignedLongLong(value) : PyInt_FromLong(static_cast< long >(value));
+}
+#endif
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_From_size_t  (size_t value)
+{    
+#ifdef SWIG_LONG_LONG_AVAILABLE
+  if (sizeof(size_t) <= sizeof(unsigned long)) {
+#endif
+    return SWIG_From_unsigned_SS_long  (static_cast< unsigned long >(value));
+#ifdef SWIG_LONG_LONG_AVAILABLE
+  } else {
+    /* assume sizeof(size_t) <= sizeof(unsigned long long) */
+    return SWIG_From_unsigned_SS_long_SS_long  (static_cast< unsigned long long >(value));
+  }
+#endif
+}
+
+SWIGINTERN unsigned char const &wrapped_array_Sl_uint8_t_Sc_8_Sg____getitem__(wrapped_array< uint8_t,8 > const *self,size_t i){
+    if (i >= 8 || i < 0)
+      throw std::out_of_range("out of bounds access");
+    return self->data[i];
+  }
+SWIGINTERN void wrapped_array_Sl_uint8_t_Sc_8_Sg____setitem__(wrapped_array< uint8_t,8 > *self,size_t i,unsigned char const &v){
+    if (i >= 8 || i < 0)
+      throw std::out_of_range("out of bounds access");
+    self->data[i] = v;
+  }
+SWIGINTERN size_t wrapped_array_Sl_uint8_t_Sc_3_Sg____len__(wrapped_array< uint8_t,3 > const *self){ return 3; }
+SWIGINTERN unsigned char const &wrapped_array_Sl_uint8_t_Sc_3_Sg____getitem__(wrapped_array< uint8_t,3 > const *self,size_t i){
+    if (i >= 3 || i < 0)
+      throw std::out_of_range("out of bounds access");
+    return self->data[i];
+  }
+SWIGINTERN void wrapped_array_Sl_uint8_t_Sc_3_Sg____setitem__(wrapped_array< uint8_t,3 > *self,size_t i,unsigned char const &v){
+    if (i >= 3 || i < 0)
+      throw std::out_of_range("out of bounds access");
+    self->data[i] = v;
+  }
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -4937,7 +5068,7 @@ fail:
 SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_Data_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   _icsSpyMessageVSB *arg1 = (_icsSpyMessageVSB *) 0 ;
-  uint8_t *arg2 ;
+  wrapped_array< uint8_t,8 > *arg2 = (wrapped_array< uint8_t,8 > *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -4951,19 +5082,12 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_Data_set(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_Data_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_unsigned_char, 0 |  0 );
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_wrapped_arrayT_unsigned_char_8_t, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_Data_set" "', argument " "2"" of type '" "uint8_t [8]""'"); 
-  } 
-  arg2 = reinterpret_cast< uint8_t * >(argp2);
-  {
-    if (arg2) {
-      size_t ii = 0;
-      for (; ii < (size_t)8; ++ii) *(uint8_t *)&arg1->Data[ii] = *((uint8_t *)arg2 + ii);
-    } else {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""Data""' of type '""uint8_t [8]""'");
-    }
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_Data_set" "', argument " "2"" of type '" "wrapped_array< uint8_t,8 > *""'"); 
   }
+  arg2 = reinterpret_cast< wrapped_array< uint8_t,8 > * >(argp2);
+  if (arg1) (arg1)->Data = *arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -4977,7 +5101,7 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_Data_get(PyObject *SWIGUNUSEDPARM(se
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  uint8_t *result = 0 ;
+  wrapped_array< uint8_t,8 > *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)"O:icsSpyMessageVSB_Data_get",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p__icsSpyMessageVSB, 0 |  0 );
@@ -4985,8 +5109,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_Data_get(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_Data_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result = (uint8_t *)(uint8_t *) ((arg1)->Data);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_unsigned_char, 0 |  0 );
+  result = (wrapped_array< uint8_t,8 > *)& ((arg1)->Data);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_wrapped_arrayT_unsigned_char_8_t, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -5100,7 +5224,7 @@ fail:
 SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_AckBytes_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   _icsSpyMessageVSB *arg1 = (_icsSpyMessageVSB *) 0 ;
-  uint8_t *arg2 ;
+  wrapped_array< uint8_t,8 > *arg2 = (wrapped_array< uint8_t,8 > *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -5114,19 +5238,12 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_AckBytes_set(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_AckBytes_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_unsigned_char, 0 |  0 );
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_wrapped_arrayT_unsigned_char_8_t, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_AckBytes_set" "', argument " "2"" of type '" "uint8_t [8]""'"); 
-  } 
-  arg2 = reinterpret_cast< uint8_t * >(argp2);
-  {
-    if (arg2) {
-      size_t ii = 0;
-      for (; ii < (size_t)8; ++ii) *(uint8_t *)&arg1->AckBytes[ii] = *((uint8_t *)arg2 + ii);
-    } else {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""AckBytes""' of type '""uint8_t [8]""'");
-    }
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_AckBytes_set" "', argument " "2"" of type '" "wrapped_array< uint8_t,8 > *""'"); 
   }
+  arg2 = reinterpret_cast< wrapped_array< uint8_t,8 > * >(argp2);
+  if (arg1) (arg1)->AckBytes = *arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -5140,7 +5257,7 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_AckBytes_get(PyObject *SWIGUNUSEDPAR
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  uint8_t *result = 0 ;
+  wrapped_array< uint8_t,8 > *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)"O:icsSpyMessageVSB_AckBytes_get",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p__icsSpyMessageVSB, 0 |  0 );
@@ -5148,8 +5265,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_AckBytes_get(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_AckBytes_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result = (uint8_t *)(uint8_t *) ((arg1)->AckBytes);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_unsigned_char, 0 |  0 );
+  result = (wrapped_array< uint8_t,8 > *)& ((arg1)->AckBytes);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_wrapped_arrayT_unsigned_char_8_t, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -5263,7 +5380,7 @@ fail:
 SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_Reserved_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   _icsSpyMessageVSB *arg1 = (_icsSpyMessageVSB *) 0 ;
-  uint8_t *arg2 ;
+  wrapped_array< uint8_t,3 > *arg2 = (wrapped_array< uint8_t,3 > *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -5277,19 +5394,12 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_Reserved_set(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_Reserved_set" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_unsigned_char, 0 |  0 );
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_wrapped_arrayT_unsigned_char_3_t, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_Reserved_set" "', argument " "2"" of type '" "uint8_t [3]""'"); 
-  } 
-  arg2 = reinterpret_cast< uint8_t * >(argp2);
-  {
-    if (arg2) {
-      size_t ii = 0;
-      for (; ii < (size_t)3; ++ii) *(uint8_t *)&arg1->Reserved[ii] = *((uint8_t *)arg2 + ii);
-    } else {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""Reserved""' of type '""uint8_t [3]""'");
-    }
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "icsSpyMessageVSB_Reserved_set" "', argument " "2"" of type '" "wrapped_array< uint8_t,3 > *""'"); 
   }
+  arg2 = reinterpret_cast< wrapped_array< uint8_t,3 > * >(argp2);
+  if (arg1) (arg1)->Reserved = *arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -5303,7 +5413,7 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_Reserved_get(PyObject *SWIGUNUSEDPAR
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  uint8_t *result = 0 ;
+  wrapped_array< uint8_t,3 > *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)"O:icsSpyMessageVSB_Reserved_get",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p__icsSpyMessageVSB, 0 |  0 );
@@ -5311,8 +5421,8 @@ SWIGINTERN PyObject *_wrap_icsSpyMessageVSB_Reserved_get(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "icsSpyMessageVSB_Reserved_get" "', argument " "1"" of type '" "_icsSpyMessageVSB *""'"); 
   }
   arg1 = reinterpret_cast< _icsSpyMessageVSB * >(argp1);
-  result = (uint8_t *)(uint8_t *) ((arg1)->Reserved);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_unsigned_char, 0 |  0 );
+  result = (wrapped_array< uint8_t,3 > *)& ((arg1)->Reserved);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_wrapped_arrayT_unsigned_char_3_t, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -5388,6 +5498,449 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_GetByteFromData(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  icsSpyMessageVSB *arg1 = (icsSpyMessageVSB *) 0 ;
+  size_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  unsigned char result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:GetByteFromData",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p__icsSpyMessageVSB, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GetByteFromData" "', argument " "1"" of type '" "icsSpyMessageVSB *""'"); 
+  }
+  arg1 = reinterpret_cast< icsSpyMessageVSB * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "GetByteFromData" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  result = (unsigned char)GetByteFromData(arg1,arg2);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_intArray8_data_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wrapped_array< uint8_t,8 > *arg1 = (wrapped_array< uint8_t,8 > *) 0 ;
+  unsigned char *arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:intArray8_data_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_wrapped_arrayT_unsigned_char_8_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intArray8_data_set" "', argument " "1"" of type '" "wrapped_array< uint8_t,8 > *""'"); 
+  }
+  arg1 = reinterpret_cast< wrapped_array< uint8_t,8 > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_unsigned_char, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "intArray8_data_set" "', argument " "2"" of type '" "unsigned char [8]""'"); 
+  } 
+  arg2 = reinterpret_cast< unsigned char * >(argp2);
+  {
+    if (arg2) {
+      size_t ii = 0;
+      for (; ii < (size_t)8; ++ii) *(unsigned char *)&arg1->data[ii] = *((unsigned char *)arg2 + ii);
+    } else {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""data""' of type '""unsigned char [8]""'");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_intArray8_data_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wrapped_array< uint8_t,8 > *arg1 = (wrapped_array< uint8_t,8 > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  unsigned char *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:intArray8_data_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_wrapped_arrayT_unsigned_char_8_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intArray8_data_get" "', argument " "1"" of type '" "wrapped_array< uint8_t,8 > *""'"); 
+  }
+  arg1 = reinterpret_cast< wrapped_array< uint8_t,8 > * >(argp1);
+  result = (unsigned char *)(unsigned char *) ((arg1)->data);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_unsigned_char, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_intArray8___len__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wrapped_array< uint8_t,8 > *arg1 = (wrapped_array< uint8_t,8 > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  size_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:intArray8___len__",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_wrapped_arrayT_unsigned_char_8_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intArray8___len__" "', argument " "1"" of type '" "wrapped_array< uint8_t,8 > const *""'"); 
+  }
+  arg1 = reinterpret_cast< wrapped_array< uint8_t,8 > * >(argp1);
+  result = wrapped_array_Sl_uint8_t_Sc_8_Sg____len__((wrapped_array< unsigned char,8 > const *)arg1);
+  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_intArray8___getitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wrapped_array< uint8_t,8 > *arg1 = (wrapped_array< uint8_t,8 > *) 0 ;
+  size_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  unsigned char *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:intArray8___getitem__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_wrapped_arrayT_unsigned_char_8_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intArray8___getitem__" "', argument " "1"" of type '" "wrapped_array< uint8_t,8 > const *""'"); 
+  }
+  arg1 = reinterpret_cast< wrapped_array< uint8_t,8 > * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "intArray8___getitem__" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  try {
+    result = (unsigned char *) &wrapped_array_Sl_uint8_t_Sc_8_Sg____getitem__((wrapped_array< unsigned char,8 > const *)arg1,arg2);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_intArray8___setitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wrapped_array< uint8_t,8 > *arg1 = (wrapped_array< uint8_t,8 > *) 0 ;
+  size_t arg2 ;
+  unsigned char *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  unsigned char temp3 ;
+  unsigned char val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:intArray8___setitem__",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_wrapped_arrayT_unsigned_char_8_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intArray8___setitem__" "', argument " "1"" of type '" "wrapped_array< uint8_t,8 > *""'"); 
+  }
+  arg1 = reinterpret_cast< wrapped_array< uint8_t,8 > * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "intArray8___setitem__" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  ecode3 = SWIG_AsVal_unsigned_SS_char(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "intArray8___setitem__" "', argument " "3"" of type '" "unsigned char""'");
+  } 
+  temp3 = static_cast< unsigned char >(val3);
+  arg3 = &temp3;
+  try {
+    wrapped_array_Sl_uint8_t_Sc_8_Sg____setitem__(arg1,arg2,(unsigned char const &)*arg3);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_intArray8(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wrapped_array< uint8_t,8 > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_intArray8")) SWIG_fail;
+  result = (wrapped_array< uint8_t,8 > *)new wrapped_array< uint8_t,8 >();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_wrapped_arrayT_unsigned_char_8_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_intArray8(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wrapped_array< uint8_t,8 > *arg1 = (wrapped_array< uint8_t,8 > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_intArray8",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_wrapped_arrayT_unsigned_char_8_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_intArray8" "', argument " "1"" of type '" "wrapped_array< uint8_t,8 > *""'"); 
+  }
+  arg1 = reinterpret_cast< wrapped_array< uint8_t,8 > * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *intArray8_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char *)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_wrapped_arrayT_unsigned_char_8_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_intArray3_data_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wrapped_array< uint8_t,3 > *arg1 = (wrapped_array< uint8_t,3 > *) 0 ;
+  unsigned char *arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:intArray3_data_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_wrapped_arrayT_unsigned_char_3_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intArray3_data_set" "', argument " "1"" of type '" "wrapped_array< uint8_t,3 > *""'"); 
+  }
+  arg1 = reinterpret_cast< wrapped_array< uint8_t,3 > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_unsigned_char, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "intArray3_data_set" "', argument " "2"" of type '" "unsigned char [3]""'"); 
+  } 
+  arg2 = reinterpret_cast< unsigned char * >(argp2);
+  {
+    if (arg2) {
+      size_t ii = 0;
+      for (; ii < (size_t)3; ++ii) *(unsigned char *)&arg1->data[ii] = *((unsigned char *)arg2 + ii);
+    } else {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""data""' of type '""unsigned char [3]""'");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_intArray3_data_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wrapped_array< uint8_t,3 > *arg1 = (wrapped_array< uint8_t,3 > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  unsigned char *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:intArray3_data_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_wrapped_arrayT_unsigned_char_3_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intArray3_data_get" "', argument " "1"" of type '" "wrapped_array< uint8_t,3 > *""'"); 
+  }
+  arg1 = reinterpret_cast< wrapped_array< uint8_t,3 > * >(argp1);
+  result = (unsigned char *)(unsigned char *) ((arg1)->data);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_unsigned_char, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_intArray3___len__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wrapped_array< uint8_t,3 > *arg1 = (wrapped_array< uint8_t,3 > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  size_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:intArray3___len__",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_wrapped_arrayT_unsigned_char_3_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intArray3___len__" "', argument " "1"" of type '" "wrapped_array< uint8_t,3 > const *""'"); 
+  }
+  arg1 = reinterpret_cast< wrapped_array< uint8_t,3 > * >(argp1);
+  result = wrapped_array_Sl_uint8_t_Sc_3_Sg____len__((wrapped_array< unsigned char,3 > const *)arg1);
+  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_intArray3___getitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wrapped_array< uint8_t,3 > *arg1 = (wrapped_array< uint8_t,3 > *) 0 ;
+  size_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  unsigned char *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:intArray3___getitem__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_wrapped_arrayT_unsigned_char_3_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intArray3___getitem__" "', argument " "1"" of type '" "wrapped_array< uint8_t,3 > const *""'"); 
+  }
+  arg1 = reinterpret_cast< wrapped_array< uint8_t,3 > * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "intArray3___getitem__" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  try {
+    result = (unsigned char *) &wrapped_array_Sl_uint8_t_Sc_3_Sg____getitem__((wrapped_array< unsigned char,3 > const *)arg1,arg2);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_intArray3___setitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wrapped_array< uint8_t,3 > *arg1 = (wrapped_array< uint8_t,3 > *) 0 ;
+  size_t arg2 ;
+  unsigned char *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  unsigned char temp3 ;
+  unsigned char val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:intArray3___setitem__",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_wrapped_arrayT_unsigned_char_3_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "intArray3___setitem__" "', argument " "1"" of type '" "wrapped_array< uint8_t,3 > *""'"); 
+  }
+  arg1 = reinterpret_cast< wrapped_array< uint8_t,3 > * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "intArray3___setitem__" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  ecode3 = SWIG_AsVal_unsigned_SS_char(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "intArray3___setitem__" "', argument " "3"" of type '" "unsigned char""'");
+  } 
+  temp3 = static_cast< unsigned char >(val3);
+  arg3 = &temp3;
+  try {
+    wrapped_array_Sl_uint8_t_Sc_3_Sg____setitem__(arg1,arg2,(unsigned char const &)*arg3);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_intArray3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wrapped_array< uint8_t,3 > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_intArray3")) SWIG_fail;
+  result = (wrapped_array< uint8_t,3 > *)new wrapped_array< uint8_t,3 >();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_wrapped_arrayT_unsigned_char_3_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_intArray3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wrapped_array< uint8_t,3 > *arg1 = (wrapped_array< uint8_t,3 > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_intArray3",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_wrapped_arrayT_unsigned_char_3_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_intArray3" "', argument " "1"" of type '" "wrapped_array< uint8_t,3 > *""'"); 
+  }
+  arg1 = reinterpret_cast< wrapped_array< uint8_t,3 > * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *intArray3_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char *)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_wrapped_arrayT_unsigned_char_3_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"SWIG_PyInstanceMethod_New", (PyCFunction)SWIG_PyInstanceMethod_New, METH_O, NULL},
 	 { (char *)"ReadVSBW", _wrap_ReadVSBW, METH_VARARGS, NULL},
@@ -5457,6 +6010,23 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"delete_icsSpyMessageVSB", _wrap_delete_icsSpyMessageVSB, METH_VARARGS, NULL},
 	 { (char *)"icsSpyMessageVSB_swigregister", icsSpyMessageVSB_swigregister, METH_VARARGS, NULL},
 	 { (char *)"GetEDP", _wrap_GetEDP, METH_VARARGS, NULL},
+	 { (char *)"GetByteFromData", _wrap_GetByteFromData, METH_VARARGS, NULL},
+	 { (char *)"intArray8_data_set", _wrap_intArray8_data_set, METH_VARARGS, NULL},
+	 { (char *)"intArray8_data_get", _wrap_intArray8_data_get, METH_VARARGS, NULL},
+	 { (char *)"intArray8___len__", _wrap_intArray8___len__, METH_VARARGS, NULL},
+	 { (char *)"intArray8___getitem__", _wrap_intArray8___getitem__, METH_VARARGS, NULL},
+	 { (char *)"intArray8___setitem__", _wrap_intArray8___setitem__, METH_VARARGS, NULL},
+	 { (char *)"new_intArray8", _wrap_new_intArray8, METH_VARARGS, NULL},
+	 { (char *)"delete_intArray8", _wrap_delete_intArray8, METH_VARARGS, NULL},
+	 { (char *)"intArray8_swigregister", intArray8_swigregister, METH_VARARGS, NULL},
+	 { (char *)"intArray3_data_set", _wrap_intArray3_data_set, METH_VARARGS, NULL},
+	 { (char *)"intArray3_data_get", _wrap_intArray3_data_get, METH_VARARGS, NULL},
+	 { (char *)"intArray3___len__", _wrap_intArray3___len__, METH_VARARGS, NULL},
+	 { (char *)"intArray3___getitem__", _wrap_intArray3___getitem__, METH_VARARGS, NULL},
+	 { (char *)"intArray3___setitem__", _wrap_intArray3___setitem__, METH_VARARGS, NULL},
+	 { (char *)"new_intArray3", _wrap_new_intArray3, METH_VARARGS, NULL},
+	 { (char *)"delete_intArray3", _wrap_delete_intArray3, METH_VARARGS, NULL},
+	 { (char *)"intArray3_swigregister", intArray3_swigregister, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 
@@ -5477,6 +6047,8 @@ static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "uint32_t *|u
 static swig_type_info _swigt__p_unsigned_short = {"_p_unsigned_short", "unsigned short *|uint16_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_void = {"_p_void", "ReadHandle|WriteHandle|void *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_wchar_t = {"_p_wchar_t", "wchar_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_wrapped_arrayT_unsigned_char_3_t = {"_p_wrapped_arrayT_unsigned_char_3_t", "wrapped_array< unsigned char,3 > *|wrapped_array< uint8_t,3 > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_wrapped_arrayT_unsigned_char_8_t = {"_p_wrapped_arrayT_unsigned_char_8_t", "wrapped_array< unsigned char,8 > *|wrapped_array< uint8_t,8 > *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p__VSBRtnValues,
@@ -5493,6 +6065,8 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_unsigned_short,
   &_swigt__p_void,
   &_swigt__p_wchar_t,
+  &_swigt__p_wrapped_arrayT_unsigned_char_3_t,
+  &_swigt__p_wrapped_arrayT_unsigned_char_8_t,
 };
 
 static swig_cast_info _swigc__p__VSBRtnValues[] = {  {&_swigt__p__VSBRtnValues, 0, 0, 0},{0, 0, 0, 0}};
@@ -5509,6 +6083,8 @@ static swig_cast_info _swigc__p_unsigned_int[] = {  {&_swigt__p_unsigned_int, 0,
 static swig_cast_info _swigc__p_unsigned_short[] = {  {&_swigt__p_unsigned_short, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_wchar_t[] = {  {&_swigt__p_wchar_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_wrapped_arrayT_unsigned_char_3_t[] = {  {&_swigt__p_wrapped_arrayT_unsigned_char_3_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_wrapped_arrayT_unsigned_char_8_t[] = {  {&_swigt__p_wrapped_arrayT_unsigned_char_8_t, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p__VSBRtnValues,
@@ -5525,6 +6101,8 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_unsigned_short,
   _swigc__p_void,
   _swigc__p_wchar_t,
+  _swigc__p_wrapped_arrayT_unsigned_char_3_t,
+  _swigc__p_wrapped_arrayT_unsigned_char_8_t,
 };
 
 
