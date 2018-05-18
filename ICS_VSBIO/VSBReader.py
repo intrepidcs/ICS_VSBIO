@@ -1,5 +1,4 @@
 from ICS_VSBIO import VSBIOInterface as vsb
-
 import os
 
 class ReadStatus:
@@ -42,16 +41,16 @@ class VSBReader:
 
 	def __iter__(self):
 		if self.state == ReadStatus.eInit:
-			raise 
+			raise ValueError('VSBReader has not been initialized')
 		elif self.state == ReadStatus.eEndOfFile:
 			self.__fileOpen(self.filename)
 			if self.state != ReadStatus.eFileOpened:
-				raise
+				raise ValueError('VSB file has not been opened')
 		elif self.state == ReadStatus.eError:
 			vsb.ReadClose(self.handle)
 			self.__fileOpen(self.filename)
 			if self.state != ReadStatus.eFileOpened:
-				raise
+				raise ValueError('VSB file has not been opened')
 		return self
 
 	def __next__(self):
@@ -68,7 +67,7 @@ class VSBReader:
 			vsb.VSBIOFree(self.message)
 			self.message = vsb.VSBIOMalloc(size)
 			self.size = size
-			return self.read_next_message()
+			return self.__next__()
 
 	def get_progress(self):
 		'''
@@ -106,5 +105,5 @@ class VSBReader:
 			return 'End Of File'
 		elif self.state == ReadStatus.eFileOpened:
 			return 'File Opened'
-		elif self.state == ReadStature.eInit:
+		elif self.state == ReadStatus.eInit:
 			return 'Init'
