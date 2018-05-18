@@ -4,7 +4,7 @@ from distutils.core import setup, Extension
 import distutils 
 import platform
 
-version = '0.0.4.6'
+version = '0.0.4.7'
 
 def which(program):
     import os
