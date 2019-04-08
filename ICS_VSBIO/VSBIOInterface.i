@@ -1,4 +1,5 @@
 /*VSBIODLL.i*/
+%include "stdint.i"
 %module VSBIOInterface
 %include "std_wstring.i"
 %{

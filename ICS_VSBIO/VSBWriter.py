@@ -1,5 +1,5 @@
 from ICS_VSBIO  import VSBIOInterface as vsb
-import os 
+import os
 
 class VSBWriter:
     def __init__(self, filename):

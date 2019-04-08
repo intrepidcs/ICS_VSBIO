@@ -3004,16 +3004,16 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 /* -------- TYPES TABLE (BEGIN) -------- */
 
 #define SWIGTYPE_p__VSBRtnValues swig_types[0]
-#define SWIGTYPE_p___int64 swig_types[1]
-#define SWIGTYPE_p__icsSpyMessageVSB swig_types[2]
-#define SWIGTYPE_p_char swig_types[3]
-#define SWIGTYPE_p_int swig_types[4]
+#define SWIGTYPE_p__icsSpyMessageVSB swig_types[1]
+#define SWIGTYPE_p_char swig_types[2]
+#define SWIGTYPE_p_int swig_types[3]
+#define SWIGTYPE_p_long_long swig_types[4]
 #define SWIGTYPE_p_short swig_types[5]
 #define SWIGTYPE_p_signed_char swig_types[6]
 #define SWIGTYPE_p_size_t swig_types[7]
-#define SWIGTYPE_p_unsigned___int64 swig_types[8]
-#define SWIGTYPE_p_unsigned_char swig_types[9]
-#define SWIGTYPE_p_unsigned_int swig_types[10]
+#define SWIGTYPE_p_unsigned_char swig_types[8]
+#define SWIGTYPE_p_unsigned_int swig_types[9]
+#define SWIGTYPE_p_unsigned_long_long swig_types[10]
 #define SWIGTYPE_p_unsigned_short swig_types[11]
 #define SWIGTYPE_p_void swig_types[12]
 #define SWIGTYPE_p_wchar_t swig_types[13]
@@ -3123,6 +3123,9 @@ namespace swig {
     }
   };
 }
+
+
+#include <stdint.h>		// Use the C99 official header
 
 
 #if PY_VERSION_HEX >= 0x03020000
@@ -6034,17 +6037,17 @@ static PyMethodDef SwigMethods[] = {
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
 static swig_type_info _swigt__p__VSBRtnValues = {"_p__VSBRtnValues", "enum _VSBRtnValues *|VSBRtnValues *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p___int64 = {"_p___int64", "__int64 *|int64_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p__icsSpyMessageVSB = {"_p__icsSpyMessageVSB", "_icsSpyMessageVSB *|icsSpyMessageVSB *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_int = {"_p_int", "int *|int32_t *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_short = {"_p_short", "short *|int16_t *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_signed_char = {"_p_signed_char", "signed char *|int8_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_int = {"_p_int", "intptr_t *|int *|int_least32_t *|int_fast32_t *|int32_t *|int_fast16_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_long_long = {"_p_long_long", "int_least64_t *|int_fast64_t *|int64_t *|long long *|intmax_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_short = {"_p_short", "short *|int_least16_t *|int16_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_signed_char = {"_p_signed_char", "signed char *|int_least8_t *|int_fast8_t *|int8_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_size_t = {"_p_size_t", "size_t *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_unsigned___int64 = {"_p_unsigned___int64", "unsigned __int64 *|uint64_t *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "unsigned char *|uint8_t *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "uint32_t *|unsigned int *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_unsigned_short = {"_p_unsigned_short", "unsigned short *|uint16_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "unsigned char *|uint_least8_t *|uint_fast8_t *|uint8_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "uintptr_t *|uint_least32_t *|uint_fast32_t *|uint32_t *|unsigned int *|uint_fast16_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned_long_long = {"_p_unsigned_long_long", "uint_least64_t *|uint_fast64_t *|uint64_t *|unsigned long long *|uintmax_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned_short = {"_p_unsigned_short", "unsigned short *|uint_least16_t *|uint16_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_void = {"_p_void", "ReadHandle|WriteHandle|void *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_wchar_t = {"_p_wchar_t", "wchar_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_wrapped_arrayT_unsigned_char_3_t = {"_p_wrapped_arrayT_unsigned_char_3_t", "wrapped_array< unsigned char,3 > *|wrapped_array< uint8_t,3 > *", 0, 0, (void*)0, 0};
@@ -6052,16 +6055,16 @@ static swig_type_info _swigt__p_wrapped_arrayT_unsigned_char_8_t = {"_p_wrapped_
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p__VSBRtnValues,
-  &_swigt__p___int64,
   &_swigt__p__icsSpyMessageVSB,
   &_swigt__p_char,
   &_swigt__p_int,
+  &_swigt__p_long_long,
   &_swigt__p_short,
   &_swigt__p_signed_char,
   &_swigt__p_size_t,
-  &_swigt__p_unsigned___int64,
   &_swigt__p_unsigned_char,
   &_swigt__p_unsigned_int,
+  &_swigt__p_unsigned_long_long,
   &_swigt__p_unsigned_short,
   &_swigt__p_void,
   &_swigt__p_wchar_t,
@@ -6070,16 +6073,16 @@ static swig_type_info *swig_type_initial[] = {
 };
 
 static swig_cast_info _swigc__p__VSBRtnValues[] = {  {&_swigt__p__VSBRtnValues, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p___int64[] = {  {&_swigt__p___int64, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p__icsSpyMessageVSB[] = {  {&_swigt__p__icsSpyMessageVSB, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_long_long[] = {  {&_swigt__p_long_long, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_short[] = {  {&_swigt__p_short, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_signed_char[] = {  {&_swigt__p_signed_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_size_t[] = {  {&_swigt__p_size_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_unsigned___int64[] = {  {&_swigt__p_unsigned___int64, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_char[] = {  {&_swigt__p_unsigned_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_int[] = {  {&_swigt__p_unsigned_int, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_unsigned_long_long[] = {  {&_swigt__p_unsigned_long_long, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_short[] = {  {&_swigt__p_unsigned_short, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_wchar_t[] = {  {&_swigt__p_wchar_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -6088,16 +6091,16 @@ static swig_cast_info _swigc__p_wrapped_arrayT_unsigned_char_8_t[] = {  {&_swigt
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p__VSBRtnValues,
-  _swigc__p___int64,
   _swigc__p__icsSpyMessageVSB,
   _swigc__p_char,
   _swigc__p_int,
+  _swigc__p_long_long,
   _swigc__p_short,
   _swigc__p_signed_char,
   _swigc__p_size_t,
-  _swigc__p_unsigned___int64,
   _swigc__p_unsigned_char,
   _swigc__p_unsigned_int,
+  _swigc__p_unsigned_long_long,
   _swigc__p_unsigned_short,
   _swigc__p_void,
   _swigc__p_wchar_t,
