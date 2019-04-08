@@ -6,7 +6,7 @@ from setuptools.command.install import install
 from distutils.core import setup, Extension
 import platform
 
-VERSION = '0.4.8'
+VERSION = '0.4.9'
 
 def which(program):
     '''
