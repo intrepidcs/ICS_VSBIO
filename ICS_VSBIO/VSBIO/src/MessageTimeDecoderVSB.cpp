@@ -44,6 +44,10 @@ secs_t CMessageTimeDecoderVSB::CalcTimeStamp(const icsSpyMessageVSB& obMsg)
 	{
 		memcpy(&retval, &obMsg.TimeHardware, sizeof(double));
 	}
+	else
+	{
+		retval = ((double)obMsg.TimeSystem) / 1000;
+	}
 
 	return retval;
 }
