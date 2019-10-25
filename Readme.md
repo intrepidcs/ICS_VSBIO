@@ -32,7 +32,7 @@ try:
     for message in vsbread:
         count += 1
         if not count % 2000:
-            print('{0}% of file read'.format(vsbread.getProgress()))
+            print('{0}% of file read'.format(vsbread.get_progress()))
         if message.info.NetworkID == flags.NETID_HSCAN:
             if (message.info.ExtraDataPtr):
                 print(binascii.hexlify(message.exData))
