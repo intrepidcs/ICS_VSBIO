@@ -1,15 +1,17 @@
 // ---------------------------------------------------------------------------
 
 
-#include "VSBIO/VSBIO.h"
+#include "VSBIO.h"
 #ifndef linux
 #include <direct.h>
 #define GetCurrentDir _getcwd
-#define DASH L"\\"
 #else
 #include <unistd.h>
 #define GetCurrentDir getcwd
-#define DASH L"/"
+#endif
+
+#ifdef WIN32 
+#define snprintf _snprintf
 #endif
 
 #include <stdio.h>
@@ -21,13 +23,16 @@
 
 // ---------------------------------------------------------------------------
 
-VSBIORead::VSBIORead(const std::wstring& sFileNames) : mFullFileName(sFileNames)
+VSBIORead::VSBIORead(const std::string& sFileNames) : mFullFileName(sFileNames)
 {
 	mCurrentMsgLocation = 0;
 	mCurrentFileSize = 50000;// number over 64 so the first message does not closefile
-	mDisplayOut = L"";
-	int npos = mFullFileName.rfind(DASH) + std::wstring(DASH).length();
-	mFileName = mFullFileName.substr(npos, mFullFileName.length() - npos);
+	mDisplayOut = "";
+
+    std::string sDirectory, sName, sExtension;
+    SplitPath(mFileName, sDirectory, sName, sExtension);
+	mFileName = sName + sExtension;
+
 	mCurrentFileType = VSBIONone;
 }
 
@@ -44,7 +49,7 @@ VSBIORead::~VSBIORead()
 
 int VSBIORead::GetProgress()
 {
-	return (float)(mCurrentMsgLocation - mMsgStartLocation) / (float)(mCurrentFileSize - mMsgStartLocation) * 100;
+	return (int)((float)(mCurrentMsgLocation - mMsgStartLocation) / (float)(mCurrentFileSize - mMsgStartLocation) * 100);
 }
 
 
@@ -53,31 +58,32 @@ VSBIORead::enumFileCondition VSBIORead::ReadNextMessage()
 	return ReadNextMessage(vecMessage);
 } 
 
-VSBIORead::enumFileCondition VSBIORead::ReadNextMessage(std::vector<unsigned char>& message)
+VSBIORead::enumFileCondition VSBIORead::ReadNextMessage(std::vector<unsigned char>& msg)
 {
 	enumFileCondition returnvalue;
-	if (message.size() <  sizeof(VSBSpyMessage))
-		message.resize(sizeof(VSBSpyMessage));
+	if (msg.size() <  sizeof(VSBSpyMessage))
+		msg.resize(sizeof(VSBSpyMessage));
 	size_t retval;
-	while ((returnvalue = ReadNextMessage(&message[0], message.size(), &retval)) == eBufferToSmall)	
-		message.resize(retval);	
-	message.resize(retval); //should always make the vector smaller
+	while ((returnvalue = ReadNextMessage(&msg[0], msg.size(), &retval)) == eBufferToSmall)	
+		msg.resize(retval);	
+	msg.resize(retval); //should always make the vector smaller
 	return returnvalue;
 }
 
-VSBIORead::enumFileCondition VSBIORead::ReadNextMessage(unsigned char * message, size_t messageBufferSize, size_t * returnLength )
+VSBIORead::enumFileCondition VSBIORead::ReadNextMessage(unsigned char * msg, size_t msgBufferSize, size_t * returnLength )
 {
-	this->message = message;
-	this->messageBufferSize = messageBufferSize;
-	*returnLength = mBufferSizeRequired = sizeof(VSBSpyMessage);
+	this->message = msg;
+	this->messageBufferSize = msgBufferSize;
+	mBufferSizeRequired = sizeof(VSBSpyMessage);
+    *returnLength = (size_t)mBufferSizeRequired;
 	if (mBufferSizeRequired < sizeof(VSBSpyMessage))
 		return eBufferToSmall;
 
 	unsigned long read;
-	mDisplayOut = L"";
+	mDisplayOut = "";
 	if (mCurrentMsgLocation + sizeof(VSBSpyMsgTime) >= mCurrentFileSize)
 	{
-		mDisplayOut += mFileName + L": Closed\n";
+		mDisplayOut += mFileName + ": Closed\n";
 		mCurrentFile.CloseFile();//we ignore the time stamp at the end of 0x103 since 0x104 does not have it
 		return eEndOfFile;
 	}
@@ -86,7 +92,7 @@ VSBIORead::enumFileCondition VSBIORead::ReadNextMessage(unsigned char * message,
 	{
 		if (!mCurrentFile.OpenFile(mFullFileName.c_str(), false, false))
 		{
-			mErrorOut += mFileName + L": Could Not Open\n";
+			mErrorOut += mFileName + ": Could Not Open\n";
 			mCurrentFile.CloseFile();
 			return eError;
 		}
@@ -95,7 +101,7 @@ VSBIORead::enumFileCondition VSBIORead::ReadNextMessage(unsigned char * message,
 		mCurrentFile.Read(id, 6, read);
 		if ((read != 6) || (memcmp(id, "icsbin", 6) != 0))
 		{
-			mErrorOut += mFileName + L": Invalid vsb file\n";
+			mErrorOut += mFileName + ": Invalid vsb file\n";
 			mCurrentFile.CloseFile();
 			return eError;
 		}
@@ -113,11 +119,11 @@ VSBIORead::enumFileCondition VSBIORead::ReadNextMessage(unsigned char * message,
 			Init104();
 		else
 		{
-			mErrorOut += mFileName + L": Invalid version\n";
+			mErrorOut += mFileName + ": Invalid version\n";
 			mCurrentFile.CloseFile();
 			return eError;
 		}
-		mDisplayOut += mFileName + L": Opened\n";
+		mDisplayOut += mFileName + ": Opened\n";
 		mCurrentFileSize = mCurrentFile.FileSizeLarge();
 	}
 
@@ -137,10 +143,10 @@ VSBIORead::enumFileCondition VSBIORead::ReadNextMessage(unsigned char * message,
 			condition = Read104();
 			break;
 		default:
-			mErrorOut += L"Invalid File Type \n";
+			mErrorOut += "Invalid File Type \n";
 			return eError;
 	}
-	*returnLength = mBufferSizeRequired;
+	*returnLength = (size_t)mBufferSizeRequired;
 	return condition;
 }
 
@@ -159,12 +165,12 @@ bool VSBIORead::Init102()
 {
 	mCurrentFileType = VSBIO102;
 	static const char* EDP_SECTION = "EDP_SECTION";
-	static unsigned int EDP_SECTION_LEN = strlen(EDP_SECTION);
+	const unsigned int EDP_SECTION_LEN = 11; // strlen(EDP_SECTION);
 
 	mCurrentEDPIndex = 1;
 	unsigned long read;
 	unsigned int EDPSize;
-	unsigned long locationBefore = mCurrentFile.GetFilePtrLong();
+	unsigned long locationBefore = (unsigned long)mCurrentFile.GetFilePtrLong();
 	mCurrentFile.Read(&EDPSize, 4, read);
 	if (EDPSize > 0)
 	{
@@ -326,9 +332,9 @@ VSBIORead::enumFileCondition VSBIORead::GetEDP(unsigned int requestedEDP)
 
 //---------------------------------------------------------------------------------------------------------------------------
 
-VSBIOReadMultiple::VSBIOReadMultiple(const std::vector<std::wstring> &files)
+VSBIOReadMultiple::VSBIOReadMultiple(const std::vector<std::string> &files)
 {
-	for (std::vector<std::wstring>::const_iterator it = files.begin(); it != files.end(); ++it)
+	for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it)
 	{
 		VSBIORead* read = new VSBIORead(*it);
 		VSBIORead::enumFileCondition readState = read->ReadNextMessage();
@@ -351,7 +357,7 @@ VSBIOReadMultiple::VSBIOReadMultiple(const std::vector<std::wstring> &files)
 					delete latestTimestamp.top().second;
 					latestTimestamp.pop();
 				}
-				mDisplayOut += L"Terminated incorectly, a Error has occurred.\n";
+				mDisplayOut += "Terminated incorectly, an Error has occurred.\n";
 				mInitError = true;
 			}
 		}
@@ -373,26 +379,26 @@ void VSBIOReadMultiple::UpdateUIOutput(VSBIO &vsbio)
 
 int VSBIOReadMultiple::GetProgress()
 {
-	int persent = 0;
+	int percent = 0;
 	for (ReadList::iterator it = IOReadList.begin(); it != IOReadList.end(); ++it) {
-		persent += (*it)->GetProgress();
+		percent += (*it)->GetProgress();
 	}
-	return persent / IOReadList.size();
+	return percent / (int)IOReadList.size();
 }
 
-VSBIORead::enumFileCondition VSBIOReadMultiple::ReadNextMessage(std::vector<unsigned char> &message)
+VSBIORead::enumFileCondition VSBIOReadMultiple::ReadNextMessage(std::vector<unsigned char> &msg)
 {
 	VSBIORead::enumFileCondition returnvalue;
-	if (message.size() <  sizeof(VSBSpyMessage))
-		message.resize(sizeof(VSBSpyMessage));
+	if (msg.size() <  sizeof(VSBSpyMessage))
+		msg.resize(sizeof(VSBSpyMessage));
 	size_t retval;
-	while ((returnvalue = ReadNextMessage(&message[0], message.size(), &retval)) == VSBIORead::eBufferToSmall)
-		message.resize(retval);
-	message.resize(retval); //should always make the vector smaller
+	while ((returnvalue = ReadNextMessage(&msg[0], msg.size(), &retval)) == VSBIORead::eBufferToSmall)
+		msg.resize(retval);
+	msg.resize(retval); //should always make the vector smaller
 	return returnvalue;
 }
 
-VSBIORead::enumFileCondition VSBIOReadMultiple::ReadNextMessage(unsigned char * message, size_t sizeOfBuffer, size_t * returnLength)
+VSBIORead::enumFileCondition VSBIOReadMultiple::ReadNextMessage(unsigned char * msg, size_t sizeOfBuffer, size_t * returnLength)
 {
 	*returnLength = 0;
 	if (mInitError)
@@ -408,7 +414,7 @@ VSBIORead::enumFileCondition VSBIOReadMultiple::ReadNextMessage(unsigned char * 
 		}
 		latestTimestamp.pop();
 
-		memcpy(message, pair.second->GetMessage(), pair.second->GetMessageSize());
+		memcpy(msg, pair.second->GetMessage(), pair.second->GetMessageSize());
 		(*returnLength) = pair.second->GetMessageSize();
 
 		VSBIORead::enumFileCondition readState = pair.second->ReadNextMessage();
@@ -425,7 +431,7 @@ VSBIORead::enumFileCondition VSBIOReadMultiple::ReadNextMessage(unsigned char * 
 				delete latestTimestamp.top().second;
 				latestTimestamp.pop();
 			}
-			mDisplayOut += L"Terminated incorectly, a Error has occurred.";
+			mDisplayOut += "Terminated incorectly, an Error has occurred.";
 			return readState;
 		}
 		return VSBIORead::eSuccess;
@@ -446,7 +452,7 @@ VSBIOWrite::~VSBIOWrite()
 		mCurrentFP.CloseFile();
 }
 
-bool VSBIOWrite::Init(const std::wstring& fileName)
+bool VSBIOWrite::Init(const std::string& fileName)
 {
 	unsigned long read;
 	mFileName = fileName;
@@ -455,9 +461,9 @@ bool VSBIOWrite::Init(const std::wstring& fileName)
 	if (!mCurrentFP.OpenFile(mFileName.c_str(), true, true))
 	{
 		mCurrentFP.CloseFile();
-		DisplayOut = L"Could not open/Create ";
+		DisplayOut = "Could not open/Create ";
 		DisplayOut += mFileName;
-		DisplayOut += L" output file!\n";
+		DisplayOut += " output file!\n";
 		return false;
 	}
 	mFileOpen = true;
@@ -469,7 +475,7 @@ bool VSBIOWrite::Init(const std::wstring& fileName)
 
 bool VSBIOWrite::WriteMessage(const std::vector<unsigned char>& message)
 {
-	return WriteMessage(&message[0], message.size());
+	return WriteMessage(&message[0], (unsigned int)message.size());
 }
 
 bool VSBIOWrite::WriteMessage(const unsigned char *  message, const unsigned int& size)
@@ -478,3 +484,64 @@ bool VSBIOWrite::WriteMessage(const unsigned char *  message, const unsigned int
 	mCurrentFP.Write(message, size, read);
 	return true;
 }
+
+bool VSBIOWrite::Concatenate(std::vector<std::string> &sInputFileList, ProgressFunc prog)
+{
+	VSBIOReadMultiple read(sInputFileList);
+
+	unsigned long long counter = 1;
+	std::vector<unsigned char> message;
+
+	while (read.ReadNextMessage(message) == VSBIORead::eSuccess)
+	{
+		if (prog && !(counter++ % 100000))
+        {
+		    if (!prog(read.GetProgress()))
+                break;
+        }
+
+		WriteMessage(message);
+	}
+    return true;
+}
+
+bool VSBIOWrite::ConcatenateFromDirectory(const std::string &sInputFilePath, ProgressFunc prog)
+{
+    std::vector<std::string> sInputFileList = GetFilesInDirectory(sInputFilePath, "*.vsb");
+    std::stable_sort(sInputFileList.begin(), sInputFileList.end());
+    return Concatenate(sInputFileList, prog);
+}
+
+bool VSBIORead::Split(const uint64_t& nMessagesPerFile, const std::string& sOutputLocation, ProgressFunc prog)
+{
+	VSBIOWrite write;
+
+    std::string sDirectory, sName, sExtension;
+    SplitPath(mFileName, sDirectory, sName, sExtension);
+
+	unsigned long long counter = 0;
+	unsigned int currentFileNumber = 0;
+	std::string outputFileName;
+	std::vector<unsigned char> msg;
+	char szBuffer[81];
+	while (ReadNextMessage(msg) == VSBIORead::eSuccess)
+	{
+		if (prog && !((counter + 1) % 100000))
+        {
+		    if (!prog(GetProgress()))
+                break;
+        }
+
+		if (!(counter++ % nMessagesPerFile))
+		{
+			outputFileName = CombinePath(sOutputLocation, sName);
+			snprintf(szBuffer, 81, "_%05d", (int)(currentFileNumber++));
+			outputFileName += szBuffer;
+			outputFileName += sExtension;
+			write.Init(outputFileName);
+		}
+		write.WriteMessage(msg);
+	}
+    return true;
+}
+

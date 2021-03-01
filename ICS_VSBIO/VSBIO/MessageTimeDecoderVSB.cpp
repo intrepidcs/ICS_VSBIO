@@ -1,11 +1,11 @@
 //---------------------------------------------------------------------------
 
 
-#include "VSBIO/MessageTimeDecoderVSB.h"
+#include "MessageTimeDecoderVSB.h"
 //---------------------------------------------------------------------------
 
-#include "VSBIO/VSBStruct.h"
-#include "VSBIO/VSBFlags.h"
+#include "VSBStruct.h"
+#include "VSBFlags.h"
 #include <cstring> //for memcpy
 
 
@@ -55,5 +55,5 @@ secs_t CMessageTimeDecoderVSB::CalcTimeStamp(const icsSpyMessageVSB& obMsg)
 
 int CMessageTimeDecoderVSB::GetSpyTimeType(const icsSpyMessageVSB& msg)
 {
-	return (msg.TimeStampHardwareID & 0x80)?-1.0:msg.TimeStampHardwareID & 0x7F;
+	return (msg.TimeStampHardwareID & 0x80) ? -1 : (msg.TimeStampHardwareID & 0x7F);
 }

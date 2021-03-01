@@ -7,58 +7,15 @@
 #include <locale>
 
 using namespace std;
-#ifndef _WIN32
-#include <dirent.h>
-#include <cstdlib>
-
-wstring widestring(const string &text)
-{
-	if (text.size() == 0)
-		return L"";
-  wstring result;
-  result.resize(text.length());
-  std::mbstowcs(&result[0], &text[0], text.length());
-  return result;
-}
-
-string mbstring(const wstring &text)
-{
-	if (text.size() == 0)
-		return "";
-  string result;
-  result.resize(text.length());
-  std::wcstombs(&result[0], &text[0], text.length());
-  return result;
-}
-#else
-wstring widestring(const string &text)
-{
-	if (text.size() == 0)
-		return L"";
-	int size_needed = MultiByteToWideChar(CP_UTF8, 0, &text[0], (int)text.size(), NULL, 0);
-	std::wstring strTo(size_needed, 0);
-	MultiByteToWideChar(CP_UTF8, 0, &text[0], (int)text.size(), &strTo[0], size_needed);
-	return strTo;
-}
-string mbstring(const wstring &text)
-{
-	if (text.size() == 0)
-		return "";
-	int size_needed = WideCharToMultiByte(CP_UTF8, 0, &text[0], (int)text.size(), NULL, 0, NULL, NULL);
-	std::string strTo(size_needed, 0);
-	WideCharToMultiByte(CP_UTF8, 0, &text[0], (int)text.size(), &strTo[0], size_needed, NULL, NULL);
-	return strTo;
-}
-#endif
 
 extern "C" VSBIODLL_API ReadHandle ReadVSBW(const wchar_t * filename)
 {
-	return new VSBIORead(filename);
+	return new VSBIORead(mbstring(filename).c_str());
 }
 
 extern "C" VSBIODLL_API ReadHandle ReadVSB(const char * filename)
 {
-	return new VSBIORead(widestring(filename).c_str());
+	return new VSBIORead(filename);
 }
 
 extern "C" VSBIODLL_API int ReadNextMessage(ReadHandle handle, icsSpyMessageVSB * message, unsigned int size, unsigned int * lengthOfMessageReturned)
@@ -76,32 +33,18 @@ extern "C" VSBIODLL_API int GetProgress(ReadHandle handle)
 	return ((VSBIORead *)handle)->GetProgress();
 }
 
-std::string ws2s(const std::wstring& wstr)
-{
-    return std::string(wstr.begin(), wstr.end());
-}
-
 extern "C" VSBIODLL_API const char * GetDisplayMessage(ReadHandle handle)
 {
-	std::wstring const& wstr = ((VSBIORead *)handle)->GetDisplayMessage();
-	static std::string str;
-	str = ws2s(wstr);
+	std::string const& str = ((VSBIORead *)handle)->GetDisplayMessage();
 	return str.c_str();
 }
 extern "C" VSBIODLL_API const char * GetErrorMessage(ReadHandle handle)
 {
-	std::wstring const& wstr = ((VSBIORead *)handle)->GetErrorMessage();
-	static std::string str;
-	str = ws2s(wstr);
+	std::string const& str = ((VSBIORead *)handle)->GetErrorMessage();
 	return str.c_str();
 }
 
 extern "C" VSBIODLL_API WriteHandle WriteVSB(const char * filename)
-{
-	return WriteVSBW(widestring(filename).c_str());
-}
-
-extern "C" VSBIODLL_API WriteHandle WriteVSBW(const wchar_t * filename)
 {
 	VSBIOWrite * write = new VSBIOWrite();
 
@@ -109,6 +52,11 @@ extern "C" VSBIODLL_API WriteHandle WriteVSBW(const wchar_t * filename)
 		return write;
 	delete write;
 	return NULL;
+}
+
+extern "C" VSBIODLL_API WriteHandle WriteVSBW(const wchar_t * filename)
+{
+	return WriteVSB(mbstring(filename).c_str());
 }
 
 extern "C" VSBIODLL_API int WriteMessage(WriteHandle handle, icsSpyMessageVSB * message, unsigned int size)
@@ -129,6 +77,29 @@ extern "C" VSBIODLL_API void VSBIOFree(icsSpyMessageVSB * message)
 extern "C" VSBIODLL_API icsSpyMessageVSB * VSBIOMalloc(int nBytes)
 {
 	return (icsSpyMessageVSB *)new unsigned char[nBytes];
+}
+
+extern "C" VSBIODLL_API bool ConcatenateW(const wchar_t * inputFilePath, const wchar_t * outputFileName, ProgressFunc prog)
+{
+    return Concatenate(mbstring(inputFilePath).c_str(), mbstring(outputFileName).c_str(), prog);
+}
+
+extern "C" VSBIODLL_API bool Concatenate(const char * inputFilePath, const char * outputFileName, ProgressFunc prog)
+{
+    VSBIOWrite write;
+    write.Init(outputFileName);
+    return write.ConcatenateFromDirectory(inputFilePath, prog);
+}
+
+extern "C" VSBIODLL_API bool SplitW(const wchar_t *sFileName, unsigned int nMessagesPerFile, const wchar_t *OutputLocation, ProgressFunc prog)
+{
+    return Split(mbstring(sFileName).c_str(), nMessagesPerFile, mbstring(OutputLocation).c_str(), prog);
+}
+
+extern "C" VSBIODLL_API bool Split(const char *sFileName, unsigned int nMessagesPerFile, const char *OutputLocation, ProgressFunc prog)
+{
+    VSBIORead read(sFileName);
+    return read.Split(nMessagesPerFile, OutputLocation, prog);
 }
 
 

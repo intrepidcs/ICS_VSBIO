@@ -6,9 +6,9 @@
 
 #include <vector>
 #include <string>
-#include "StandardLibrary/OFile.h"
+#include "OFile.h"
 #include <queue>
-#include "VSBIO/MessageTimeDecoderVSB.h"
+#include "MessageTimeDecoderVSB.h"
 
 #define NUM_MSGS_TO_READ 500000
 #define MSG_BUFFER_SIZE 50000//arbitrary number of messages
@@ -55,8 +55,8 @@ private:
 		VSBIO103,
 		VSBIO104,
 	};
-	std::wstring mFileName;
-	std::wstring mFullFileName;
+	std::string mFileName;
+	std::string mFullFileName;
 
 	std::vector<unsigned char> vecMessage;
 	unsigned char * message;
@@ -93,19 +93,21 @@ private:
 	friend VSBIOReadMultiple;
 public:
 
-	VSBIORead(const std::wstring& sFileNames);
+	VSBIORead(const std::string& sFileNames);
 	~VSBIORead();
 	enumFileCondition ReadNextMessage(unsigned char * message, size_t sizeOfBuffer, size_t * returnLength); //used by DLL
 	enumFileCondition ReadNextMessage(std::vector<unsigned char>& message); //the size of the vector indicates the size of the message.
 
 	int GetProgress();
-	std::wstring GetDisplayMessage() { return mDisplayOut; }
-	std::wstring GetErrorMessage() { return mErrorOut; }
+	std::string GetDisplayMessage() { return mDisplayOut; }
+	std::string GetErrorMessage() { return mErrorOut; }
 	void UpdateUIOutput(VSBIO & vsbio);
 
+    bool Split(const uint64_t& nMessagesPerFile, const std::string& OutputLocation, ProgressFunc prog);
+
 protected:
-	std::wstring mErrorOut;
-	std::wstring mDisplayOut;
+	std::string mErrorOut;
+	std::string mDisplayOut;
 };
 
 class VSBIOReadMultiple
@@ -123,70 +125,67 @@ class VSBIOReadMultiple
 	typedef std::priority_queue<std::pair<VSBSpyMessage*, VSBIORead*>, vector<std::pair<VSBSpyMessage*, VSBIORead*> >, cmp> PriorityQueue;
 	PriorityQueue latestTimestamp;
 
-	std::wstring mDisplayOut, mErrorOut;
+	std::string mDisplayOut, mErrorOut;
 	std::vector<unsigned char> vecMessage;
 	unsigned char* message;
 	bool mInitError;
 public:
-	VSBIOReadMultiple(const std::vector<std::wstring>& sFileNames);
+	VSBIOReadMultiple(const std::vector<std::string>& sFileNames);
 	~VSBIOReadMultiple();
 	VSBIORead::enumFileCondition ReadNextMessage(unsigned char * message, size_t sizeOfBuffer, size_t * returnLength); //used by DLL
 	VSBIORead::enumFileCondition ReadNextMessage(std::vector<unsigned char>& message); //the size of the vector indicates the size of the message.
 
 	int GetProgress();
-	std::wstring GetDisplayMessage() { return mDisplayOut; }
-	std::wstring GetErrorMessage() { return mErrorOut; }
+	std::string GetDisplayMessage() { return mDisplayOut; }
+	std::string GetErrorMessage() { return mErrorOut; }
 	void UpdateUIOutput(VSBIO &vsbio);
 };
 
 class VSBIOWrite
 {
 private:
-	std::wstring mFileName;
+	std::string mFileName;
 	OFile mCurrentFP;
 	bool mFileOpen;
 
 public:
 	VSBIOWrite();	
 	~VSBIOWrite();
-	bool Init(const std::wstring& fileName);
+	bool Init(const std::string& fileName);
 	bool WriteMessage(const unsigned char *  message, const unsigned int& size);
 	bool WriteMessage(const std::vector<unsigned char>& message);
-	std::wstring GetDisplayMessage() { return DisplayOut; }
+	std::string GetDisplayMessage() { return DisplayOut; }
 	bool FileOpen(){return mFileOpen;}
+    bool Concatenate(std::vector<std::string> &sInputFileList, ProgressFunc prog);
+    bool ConcatenateFromDirectory(const std::string &sInputFilePath, ProgressFunc prog);
 protected:
-	std::wstring DisplayOut;
+	std::string DisplayOut;
 };
 
 class VSBIO
 {
 public:
-	std::wstring GetError() { return mErrorOut; }
-	std::wstring GetOutput() { return mOutput; }
+	std::string GetError() { return mErrorOut; }
+	std::string GetOutput() { return mOutput; }
 	virtual bool IsRunning() { return mIsRunning; }
-	VSBIO() : mIsRunning(true), mOutput(L""), mErrorOut(L"") {}
-	virtual std::wstring GetType() = 0;
+	VSBIO() : mIsRunning(true), mOutput(""), mErrorOut(""), mProgress(0) {}
+	virtual std::string GetType() = 0;
 protected:
 
 #ifdef VSBIOCMD
-#ifdef _WIN32
-	void AppendOutput(std::wstring text) {wprintf(L"%s", text.c_str());}
-	void AppendError(std::wstring text) {fwprintf(stderr, L"%s", text.c_str());}
+	void AppendOutput(std::string text) {}
+	void AppendError(std::string text) {}
 #else
-	void AppendOutput(std::wstring text) {}
-	void AppendError(std::wstring text) {}
-#endif
-#else
-	void AppendOutput(std::wstring text) {mOutput += text; }
-	void AppendError(std::wstring text) {mOutput += text; mErrorOut += text; }
+	void AppendOutput(std::string text) {mOutput += text; }
+	void AppendError(std::string text) {mOutput += text; mErrorOut += text; }
 #endif
 	void SetRunning(bool running) {mIsRunning = running; }
 
-
  private:
 	bool mIsRunning;
-	std::wstring mOutput;
-	std::wstring mErrorOut;
+	std::string mOutput;
+	std::string mErrorOut;
+    int mProgress;
 
 	friend void VSBIORead::UpdateUIOutput(VSBIO & vsbio);
 	friend void VSBIOReadMultiple::UpdateUIOutput(VSBIO & vsbio);

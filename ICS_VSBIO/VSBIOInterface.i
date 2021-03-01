@@ -20,7 +20,7 @@
 
 
 %include "VSBIODLL.h"
-%include "VSBIO/include/VSBIO/VSBStruct.h"
+%include "VSBIO/VSBStruct.h"
 
 %inline %{
 

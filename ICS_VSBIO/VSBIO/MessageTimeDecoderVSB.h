@@ -6,8 +6,8 @@
 #ifndef MessageTimeDecoder_h
 #define MessageTimeDecoder_h
 
-#include "VSBIO/VSBStruct.h"
-#include "VSBIO/VSBFlags.h"
+#include "VSBStruct.h"
+#include "VSBFlags.h"
 
 class CMessageTimeDecoderVSB
 {

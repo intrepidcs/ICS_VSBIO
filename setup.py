@@ -6,7 +6,7 @@ from setuptools.command.install import install
 from distutils.core import setup, Extension
 import platform
 
-VERSION = '0.4.9'
+VERSION = '0.5.0'
 
 def which(program):
     '''
@@ -49,18 +49,18 @@ DEFINE_MACROS += [('PYD', None)]
 if which('swig') or which('swig.exe'):
     SWIG_OPTS = ['-c++', '-py3']
     FLAGS_SOURCES = ['ICS_VSBIO/VSBIOFlags.i']
-    INTERFACE_SOURCES = ['ICS_VSBIO/StandardLibrary/src/OFile.cpp',
-                         'ICS_VSBIO/VSBIO/src/VSBIO.cpp',
-                         'ICS_VSBIO/VSBIO/src/MessageTimeDecoderVSB.cpp',
+    INTERFACE_SOURCES = ['ICS_VSBIO/VSBIO/OFile.cpp',
+                         'ICS_VSBIO/VSBIO/VSBIO.cpp',
+                         'ICS_VSBIO/VSBIO/MessageTimeDecoderVSB.cpp',
                          'ICS_VSBIO/VSBIODLL.cpp',
                          'ICS_VSBIO/VSBIOInterface.i',
                          'ICS_VSBIO/VSBIOFlags.i']
 else:
     SWIG_OPTS = None
     FLAGS_SOURCES = ['ICS_VSBIO/VSBIOFlags_wrap.cpp']
-    INTERFACE_SOURCES = ['ICS_VSBIO/StandardLibrary/src/OFile.cpp',
-                         'ICS_VSBIO/VSBIO/src/VSBIO.cpp',
-                         'ICS_VSBIO/VSBIO/src/MessageTimeDecoderVSB.cpp',
+    INTERFACE_SOURCES = ['ICS_VSBIO/VSBIO/OFile.cpp',
+                         'ICS_VSBIO/VSBIO/VSBIO.cpp',
+                         'ICS_VSBIO/VSBIO/MessageTimeDecoderVSB.cpp',
                          'ICS_VSBIO/VSBIODLL.cpp',
                          'ICS_VSBIO/VSBIOInterface_wrap.cpp',
                          'ICS_VSBIO/VSBIOFlags_wrap.cpp']
@@ -72,25 +72,19 @@ if SWIG_OPTS is not None:
 VSBIO_INTERFACE = Extension('_VSBIOInterface',
                             sources=INTERFACE_SOURCES,
                             swig_opts=SWIG_OPTS,
-                            include_dirs=['ICS_VSBIO/VSBIO/include',
-                                          'ICS_VSBIO/StandardLibrary/include',
-                                          'ICS_VSBIO/Hardware/include',
-                                          'ICS_VSBIO/Core/include'],
+                            include_dirs=['ICS_VSBIO/VSBIO'],
                             define_macros=DEFINE_MACROS)
 
 VSBIO_FLAGS = Extension('_VSBIOFlags',
                         sources=FLAGS_SOURCES,
                         swig_opts=SWIG_OPTS,
-                        include_dirs=['ICS_VSBIO/VSBIO/include',
-                                      'ICS_VSBIO/StandardLibrary/include',
-                                      'ICS_VSBIO/Hardware/include',
-                                      'ICS_VSBIO/Core/include'],
+                        include_dirs=['ICS_VSBIO/VSBIO'],
                         define_macros=DEFINE_MACROS)
 
 setup(name='ICS_VSBIO',
       version=VERSION,
       author='Zaid Nackasha',
-      author_email='znackasha@intrepidcs.com',
+      author_email='support@intrepidcs.com',
       description='Python package to help users read and write Intrepid\'s vsb files',
       url='https://github.com/intrepidcs/ICS_VSBIO',
       download_url='https://github.com/intrepidcs/ICS_VSBIO/archive/' + VERSION + '.tar.gz',

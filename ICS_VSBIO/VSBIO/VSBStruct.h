@@ -48,13 +48,15 @@ typedef struct _icsSpyMessageVSB
 		{
 			uint32_t StatusBitField3;
 			uint32_t StatusBitField4;
-		};
+		} statusBits;
 		wrapped_array<uint8_t, 8> AckBytes;
-	};
+	} statusInfo;
 	uint32_t ExtraDataPtr;
 	uint8_t MiscData;
 	wrapped_array<uint8_t, 3> Reserved;
 } icsSpyMessageVSB;
 #define icsSpyMessageVSB_SIZE 64
+
+typedef bool (*ProgressFunc)(int);
 
 #endif

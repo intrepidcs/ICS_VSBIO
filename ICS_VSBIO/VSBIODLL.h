@@ -48,6 +48,11 @@ VSBIODLL_API void WriteClose(WriteHandle handle);
 VSBIODLL_API void VSBIOFree(icsSpyMessageVSB * message);
 VSBIODLL_API icsSpyMessageVSB * VSBIOMalloc(int nBytes);
 
+VSBIODLL_API bool ConcatenateW(const wchar_t * inputFileList, const wchar_t * outputFileName, ProgressFunc prog);
+VSBIODLL_API bool Concatenate(const char * inputFileList, const char * outputFileName, ProgressFunc prog);
+VSBIODLL_API bool SplitW(const wchar_t *sFileName, unsigned int nMessagesPerFile, const wchar_t *OutputLocation, ProgressFunc prog);
+VSBIODLL_API bool Split(const char *sFileName, unsigned int nMessagesPerFile, const char *OutputLocation, ProgressFunc prog);
+
 #ifdef __cplusplus
 }
 #endif
