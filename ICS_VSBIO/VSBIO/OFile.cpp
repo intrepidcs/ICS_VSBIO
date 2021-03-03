@@ -66,10 +66,12 @@ bool OFile::OpenFile(const char* sUtf8FileName, bool bCreateNew, bool bWritable,
 #include <inttypes.h>
 #include <time.h>
 
-#include "StandardLibrary/OFile.h"
+#include "OFile.h"
 
 #include <dirent.h>
 #include <cstdlib>
+
+#define FILE_CURRENT 1
 
 std::wstring widestring(const std::string &text)
 {
@@ -91,7 +93,7 @@ std::string mbstring(const std::wstring &text)
   return result;
 }
 
-#if defined(linux) || defined(QNX_OS)
+#if defined(__linux__) || defined(QNX_OS)
 #if defined(ANDROID) || defined(__APPLE__)
 
 #define _fseeki64 fseek
@@ -179,11 +181,13 @@ bool OFile::Read(void* buffer, unsigned long bytesToRead, unsigned long& bytesRe
 }
 
 
+#ifdef _WIN32
 bool OFile::Write(const void* buffer, unsigned long bytesToWrite, unsigned long& bytesWritten, LPOVERLAPPED overlap)
 {
-#ifdef _WIN32
 	return WriteFile(hFile, buffer, bytesToWrite, &bytesWritten, overlap) ? true : false;
 #else
+bool OFile::Write(const void* buffer, unsigned long bytesToWrite, unsigned long& bytesWritten)
+{
 	if (m_fp)
     {
 	    bytesWritten = (unsigned long)fwrite(buffer, 1, bytesToWrite, m_fp);
@@ -295,7 +299,7 @@ bool FileExists(const std::string& sPath)
 	DWORD dwAttrib = GetFileAttributesW(widestring(sPath).c_str());
 	return ((dwAttrib != INVALID_FILE_ATTRIBUTES) && ((dwAttrib & FILE_ATTRIBUTE_DIRECTORY) == 0));
 #else
-#ifdef linux
+#ifdef __linux__
 	struct stat buf;
 	if (stat(sPath.c_str(), &buf) == 0)
 #else
@@ -313,7 +317,7 @@ bool IsDirectory(const std::string& sPath)
 	DWORD dwAttrib = GetFileAttributesW(widestring(sPath).c_str());
 	return ((dwAttrib != INVALID_FILE_ATTRIBUTES) && ((dwAttrib & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY));
 #else
-#ifdef linux
+#ifdef __linux__
 	struct stat buf;
 	if (stat(sPath.c_str(), &buf) == 0)
 #else
@@ -396,13 +400,13 @@ std::vector<std::string> GetFilesInDirectory(const std::string& sPath, const std
         ::FindClose(hFind); 
     } 
 #else
-    std::string dir, sName;
+    std::string dirName, sName;
     size_t pos = GetLastSlash(sPath);
     if (sPath.size() && (pos == sPath.size() - 1))
-        dir = sPath.substr(0, pos);
+        dirName = sPath.substr(0, pos);
     else
-        dir = sPath;
-	DIR* dir = opendir(dir.c_str());
+        dirName = sPath;
+	DIR* dir = opendir(dirName.c_str());
 	if (dir)
     {
 	    struct dirent* ent = readdir(dir);

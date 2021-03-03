@@ -12,7 +12,7 @@ class OFile
 {
 public:
 
-    OFile::OFile() : m_bReadOnly(false)
+    OFile() : m_bReadOnly(false)
     {
 #ifdef _WIN32
 	    hFile = NULL;
@@ -21,7 +21,7 @@ public:
 #endif
     }
 
-    OFile::~OFile() { CloseFile(); }
+    ~OFile() { CloseFile(); }
 
 	bool OpenFile(const char* sFileName, bool bCreateNew, bool bWriteable, bool bOverlapped = false);
 	bool CloseFile(void);

@@ -2,12 +2,10 @@
 
 
 #include "VSBIO.h"
-#ifndef linux
+#ifdef _WIN32
 #include <direct.h>
-#define GetCurrentDir _getcwd
 #else
 #include <unistd.h>
-#define GetCurrentDir getcwd
 #endif
 
 #ifdef WIN32 
@@ -17,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <limits>
+#include <algorithm>
 
 #define VSB_HEADERSIZE 10
 #define VSB_2_3_EDPHEADERSIZE 16

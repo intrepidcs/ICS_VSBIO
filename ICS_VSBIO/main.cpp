@@ -1,5 +1,4 @@
 #include "VSBIODLL.h"
-#include <tchar.h>
 #include "OFile.h"
 
 extern "C" bool ShowProgressFunc(int nPctDone)
@@ -17,7 +16,6 @@ void ShowUsage()
 #if defined(_WIN32)
 int wmain(int argc, _TCHAR* argv[])
 #else
-#define _T(x) x
 int main(int argc, const char** argv)
 #endif
 {
