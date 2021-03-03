@@ -349,7 +349,7 @@ size_t GetLastSlash(const std::string& sFilePath)
     else
     {
         size_t pos2 = sFilePath.rfind('/');
-        if (pos2 > pos)  // Also handles npos which is large
+        if ((pos2 == std::string::npos) || (pos > pos2))
             return pos;
         else
             return pos2;

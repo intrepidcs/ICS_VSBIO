@@ -1,10 +1,10 @@
 # ICS_VSBIO
 This module is designed to help users read Intrepid Control Systems VSB file. The file consists of messages that have been logged on the network. 
 
-## Instillation 
+## Installation 
 The module can be installed using ```pip``` or can simply be installed from the git repo directly. 
 
-### Pip Instillation
+### Pip Installation
 
 To install with ```pip``` simply enter the following in the terminal. 
 ```

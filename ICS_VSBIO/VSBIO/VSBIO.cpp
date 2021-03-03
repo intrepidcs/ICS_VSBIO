@@ -30,7 +30,7 @@ VSBIORead::VSBIORead(const std::string& sFileNames) : mFullFileName(sFileNames)
 	mDisplayOut = "";
 
     std::string sDirectory, sName, sExtension;
-    SplitPath(mFileName, sDirectory, sName, sExtension);
+    SplitPath(mFullFileName, sDirectory, sName, sExtension);
 	mFileName = sName + sExtension;
 
 	mCurrentFileType = VSBIONone;
