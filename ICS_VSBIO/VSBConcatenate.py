@@ -17,4 +17,4 @@ class VSBConcatenate:
         self.process = False
 
     def concatenate(self):
-        vsb.Concatenate(self.foldername, self.outputFile, self.progFunc)
+        vsb.Concatenate(self.foldername, self.outputFile, None)

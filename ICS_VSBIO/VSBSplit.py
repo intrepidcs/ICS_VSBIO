@@ -1,4 +1,5 @@
 from ICS_VSBIO import VSBIOInterface as vsb
+import os
 
 class VSBSplit:
     def __init__(self, filename, numMessages, outDir):
@@ -18,4 +19,4 @@ class VSBSplit:
 
     def split(self):
         # split the file
-        vsb.Split(self.filename, self.numMessages, self.outDir, self.progFunc)
+        vsb.Split(self.filename, self.numMessages, self.outDir, None)

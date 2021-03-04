@@ -1,9 +1,7 @@
 '''
 Setup file for ICS_VSBIO
 '''
-from distutils.command.build import build
-from setuptools.command.install import install
-from distutils.core import setup, Extension
+from setuptools import setup, Extension
 import platform
 
 VERSION = '0.5.0'
@@ -27,18 +25,6 @@ def which(program):
                 return exe_file
 
     return None
-
-class CustomBuild(build):
-    def run(self):
-        self.run_command('build_ext')
-        build.run(self)
-
-
-class CustomInstall(install):
-    def run(self):
-        self.run_command('build_ext')
-        self.do_egg_install()
-
 
 if platform.system() == 'Windows':
     DEFINE_MACROS = [('_WIN32', None), ('VSBIODLL_EXPORTS', None)]
@@ -69,13 +55,13 @@ if SWIG_OPTS is not None:
     for define, value in DEFINE_MACROS:
         SWIG_OPTS.append("-D" + define)
 
-VSBIO_INTERFACE = Extension('_VSBIOInterface',
+VSBIO_INTERFACE = Extension('ICS_VSBIO._VSBIOInterface',
                             sources=INTERFACE_SOURCES,
                             swig_opts=SWIG_OPTS,
                             include_dirs=['ICS_VSBIO/VSBIO'],
                             define_macros=DEFINE_MACROS)
 
-VSBIO_FLAGS = Extension('_VSBIOFlags',
+VSBIO_FLAGS = Extension('ICS_VSBIO._VSBIOFlags',
                         sources=FLAGS_SOURCES,
                         swig_opts=SWIG_OPTS,
                         include_dirs=['ICS_VSBIO/VSBIO'],
@@ -91,6 +77,5 @@ setup(name='ICS_VSBIO',
       platforms=['x86_64'],
       packages=['ICS_VSBIO'],
       package_dir={'ICS_VSBIO': 'ICS_VSBIO'},
-      cmdclass={'build': CustomBuild, 'install': CustomInstall},
       ext_modules=[VSBIO_INTERFACE, VSBIO_FLAGS],
-      py_modules=['ICS_VSBIO/VSBIOInterface', 'ICS_VSBIO/VSBIOFlags', 'ICS_VSBIO/VSBSplit', 'ICS_VSBIO/VSBConcatenate'])
+      py_modules=['VSBIOInterface','VSBIOFlags'])

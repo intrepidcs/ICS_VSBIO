@@ -5,7 +5,9 @@ import threading
 import os
 import sys
 
-os.mkdir("./Out")
+if not os.path.isdir("./Out"):
+    os.mkdir("./Out")
+
 split = splitter.VSBSplit("input.vsb", 5000, "./Out")
 
 def splitThreadFunc():
@@ -31,7 +33,7 @@ else:
 concat = concat.VSBConcatenate("./Out", "./Combined.vsb")
 
 def concatThreadFunc():
-    concat.split()
+    concat.concatenate()
 
 print('start')
 try:
