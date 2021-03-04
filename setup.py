@@ -93,4 +93,4 @@ setup(name='ICS_VSBIO',
       package_dir={'ICS_VSBIO': 'ICS_VSBIO'},
       cmdclass={'build': CustomBuild, 'install': CustomInstall},
       ext_modules=[VSBIO_INTERFACE, VSBIO_FLAGS],
-      py_modules=['VSBIO_INTERFACE', 'VSBIO_FLAGS'])
+      py_modules=['ICS_VSBIO/VSBIOInterface', 'ICS_VSBIO/VSBIOFlags', 'ICS_VSBIO/VSBSplit', 'ICS_VSBIO/VSBConcatenate'])

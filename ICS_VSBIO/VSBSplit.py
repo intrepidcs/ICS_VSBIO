@@ -1,12 +1,12 @@
 from ICS_VSBIO import VSBIOInterface as vsb
-import os
 
 class VSBSplit:
-    def __init__(self, filename, numMessages):
+    def __init__(self, filename, numMessages, outDir):
         if not os.path.isabs(filename):
             filename = os.path.realpath(filename)
         self.filename = filename
         self.numMessages = numMessages
+        self.outDir = outDir
         self.process = True
 
     def progFunc(self, pctComplete):
@@ -18,4 +18,4 @@ class VSBSplit:
 
     def split(self):
         # split the file
-        vsb.Split(self.filename, self.numMessages, os.path.dirname(self.filename), self.progFunc)
+        vsb.Split(self.filename, self.numMessages, self.outDir, self.progFunc)
