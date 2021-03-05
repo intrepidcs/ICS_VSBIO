@@ -38,6 +38,7 @@ VSBIODLL_API void ReadClose(ReadHandle handle);
 
 VSBIODLL_API int GetProgress(ReadHandle handle);
 VSBIODLL_API const char * GetDisplayMessage(ReadHandle handle);
+VSBIODLL_API double GetMsgTime(icsSpyMessageVSB * message);
 VSBIODLL_API const char * GetErrorMessage(ReadHandle handle);
 
 VSBIODLL_API WriteHandle WriteVSBW(const wchar_t * filename);

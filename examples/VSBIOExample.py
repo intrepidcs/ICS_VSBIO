@@ -20,8 +20,8 @@ try:
 			
 except ValueError as e:
 	print(str(e))
-except:
-	print('an unknown error has occurred')
+except Exception as ex:
+	print(ex)
 else:
 	print('Success')
 

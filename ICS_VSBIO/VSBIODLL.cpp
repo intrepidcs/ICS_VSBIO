@@ -38,6 +38,12 @@ extern "C" VSBIODLL_API const char * GetDisplayMessage(ReadHandle handle)
 	std::string const& str = ((VSBIORead *)handle)->GetDisplayMessage();
 	return str.c_str();
 }
+
+extern "C" VSBIODLL_API double GetMsgTime(icsSpyMessageVSB * message)
+{
+	return CMessageTimeDecoderVSB::CalcTimeStamp(*message);
+}
+
 extern "C" VSBIODLL_API const char * GetErrorMessage(ReadHandle handle)
 {
 	std::string const& str = ((VSBIORead *)handle)->GetErrorMessage();

@@ -3229,6 +3229,9 @@ SWIG_FromCharPtr(const char *cptr)
 }
 
 
+  #define SWIG_From_double   PyFloat_FromDouble 
+
+
 SWIGINTERN int
 SWIG_AsVal_long (PyObject *obj, long* val)
 {
@@ -3660,6 +3663,29 @@ SWIGINTERN PyObject *_wrap_GetDisplayMessage(PyObject *SWIGUNUSEDPARM(self), PyO
   }
   result = (char *)GetDisplayMessage(arg1);
   resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_GetMsgTime(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  icsSpyMessageVSB *arg1 = (icsSpyMessageVSB *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  double result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p__icsSpyMessageVSB, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GetMsgTime" "', argument " "1"" of type '" "icsSpyMessageVSB *""'"); 
+  }
+  arg1 = reinterpret_cast< icsSpyMessageVSB * >(argp1);
+  result = (double)GetMsgTime(arg1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
   return NULL;
@@ -5695,6 +5721,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "ReadClose", _wrap_ReadClose, METH_O, NULL},
 	 { "GetProgress", _wrap_GetProgress, METH_O, NULL},
 	 { "GetDisplayMessage", _wrap_GetDisplayMessage, METH_O, NULL},
+	 { "GetMsgTime", _wrap_GetMsgTime, METH_O, NULL},
 	 { "GetErrorMessage", _wrap_GetErrorMessage, METH_O, NULL},
 	 { "WriteVSBW", _wrap_WriteVSBW, METH_O, NULL},
 	 { "WriteVSB", _wrap_WriteVSB, METH_O, NULL},

@@ -13,40 +13,11 @@ pip install ICS_VSBIO
 
 ## Usage
 
-The module contains three Classes ```VSBIOFlags```, ```VSBReader``` and ```VSBWriter```.  
+The module contains three Classes ```VSBIOFlags```, ```VSBReader```, ```VSBWriter```, ```VSBSplit``` and ```VSBConcatenate```.  
 
-### Reading From File
+Please see the examples directory for sample programs.
 
-```py
-from ICS_VSBIO import VSBReader  as reader
-from ICS_VSBIO import VSBWriter  as writer
-from ICS_VSBIO import VSBIOFlags as flags
-import binascii
-
-vsbread = reader.VSBReader("input.vsb")
-vsbwrite = writer.VSBWriter("ouput.vsb")
-
-count = 0
-print('start')
-try:
-    for message in vsbread:
-        count += 1
-        if not count % 2000:
-            print('{0}% of file read'.format(vsbread.get_progress()))
-        if message.info.NetworkID == flags.NETID_HSCAN:
-            if (message.info.ExtraDataPtr):
-                print(binascii.hexlify(message.exData))
-            vsbwrite.write_msg(message)
-
-except ValueError as e:
-    print(str(e))
-except:
-    print('an unknown error has occurred')
-else:
-    print('Success')
-```
-
-#### VSBRead functions
+#### VSBReader functions
 ```__init__``` Takes filename to initialize process 
 
 ```get_progress()``` returns the progress as a integer percentage
@@ -55,11 +26,13 @@ else:
 
 ```get_display_message()``` return Display messages if any
 
-```get_satus()``` returns the current state
+```get_message_time()``` return the message seconds since Jan 1, 2007
+
+```get_status()``` returns the current state
 
 ```get_status_as_string()``` returns the current state in string format
 
-#### VSBWrite functions
+#### VSBWriter functions
 ```__init__``` Takes filename to initialize process 
 
 ```write_msg(message)``` writes vsb message to file.
@@ -70,6 +43,16 @@ else:
 ```exData``` the extra data pointer used by protocols such as ethernet to store dynamic data. in the case of ethernet the full payload is stored here. note ```message.info.ExtraDataPtr``` or ```sizeOfMsg``` can be used to identify if there is content in the ```exData```
 
 ```sizeOfMsg``` the size of the ```exData```
+
+#### VSBSplit functions
+```__init__``` Takes filename to split, number of messages to split on and output directory
+
+```split()``` splits the file
+
+#### VSBConcatenate functions
+```__init__``` Takes directory containing the input files and the output file name
+
+```concatenate()``` concatenates the files
 
 
 #### Info

@@ -13,7 +13,7 @@ split = splitter.VSBSplit("input.vsb", 5000, "./Out")
 def splitThreadFunc():
     split.split()
 
-print('start')
+print('Starting to split!')
 try:
     splitThread = threading.Thread(target=splitThreadFunc)
 
@@ -25,8 +25,8 @@ try:
 			
 except ValueError as e:
 	sys.exit(str(e))
-except:
-	sys.exit('an unknown error has occurred while splitting')
+except Exception as ex:
+	print(ex)
 else:
 	print('Success splitting file!\n')
 
@@ -35,7 +35,7 @@ concat = concat.VSBConcatenate("./Out", "./Combined.vsb")
 def concatThreadFunc():
     concat.concatenate()
 
-print('start')
+print('Starting to concatenate!')
 try:
     concatThread = threading.Thread(target=concatThreadFunc)
 
@@ -47,7 +47,7 @@ try:
 			
 except ValueError as e:
 	print(str(e))
-except:
-	print('an unknown error has occurred while concatenating')
+except Exception as ex:
+    print(ex)
 else:
 	print('Success concatenating files!')

@@ -80,6 +80,9 @@ def GetProgress(handle: "ReadHandle") -> "int":
 def GetDisplayMessage(handle: "ReadHandle") -> "char const *":
     return _VSBIOInterface.GetDisplayMessage(handle)
 
+def GetMsgTime(message: "icsSpyMessageVSB") -> "double":
+    return _VSBIOInterface.GetMsgTime(message)
+
 def GetErrorMessage(handle: "ReadHandle") -> "char const *":
     return _VSBIOInterface.GetErrorMessage(handle)
 
