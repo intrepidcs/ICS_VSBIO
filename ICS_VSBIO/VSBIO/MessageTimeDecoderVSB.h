@@ -14,6 +14,8 @@ class CMessageTimeDecoderVSB
 public:
 	typedef double secs_t;
 	static secs_t CalcTimeStamp(const icsSpyMessageVSB& obMsg);
+	static uint64_t CalcEpoch64(const icsSpyMessageVSB& obMsg);
+	static void SetMessageTime(icsSpyMessageVSB& msg, uint64_t timeVal);
 
 private:
 	static int GetSpyTimeType(const icsSpyMessageVSB& msg);

@@ -1,5 +1,13 @@
+#include <stdio.h>
+
+#include "VSBIO.h"
 #include "VSBIODLL.h"
-#include "OFile.h"
+
+#if defined _WIN32
+#include <tchar.h>
+#endif
+
+#include "VSBDB.h"
 
 extern "C" bool ShowProgressFunc(int nPctDone)
 {
@@ -10,7 +18,9 @@ extern "C" bool ShowProgressFunc(int nPctDone)
 void ShowUsage()
 {
     printf("Usage: VSBIO -s <quoted full path of file to split> <num messages> <output directory>\n");
-    printf("or -c <quoted directory where files to combine reside> <quoted full path of output file>");
+    printf("or -c <quoted directory where files to combine reside> <quoted full path of output file>\n");
+    printf("or -db <quoted full path of vsb file> <quoted full path to db file to create>");
+    printf("or -filter <quoted full path of db file> <quoted full path to vsb file to create> <quoted filter expression>");
 }
 
 #if defined(_WIN32)
@@ -26,7 +36,7 @@ int main(int argc, const char** argv)
 #else
         args.push_back(argv[arg]);
 #endif
-    if (args.size() < 3)
+    if (args.size() < 2)
     {
         ShowUsage();
         return -1;
@@ -59,6 +69,31 @@ int main(int argc, const char** argv)
         else
         {
             printf("\nError concatenating files!");
+            return -1;
+        }
+    }
+    else if ((args[0] == "-db") && (args.size() == 3))
+    {
+        if (FileExists(args[1]))
+        {
+            return CreateDb(args[1].c_str(), args[2].c_str(), ShowProgressFunc) ? 0 : -1;
+        }
+        else
+        {
+            printf("\nError opening file!");
+            return -1;
+        }
+    }
+    else if ((args[0] == "-filter") && (args.size() >= 3))
+    {
+        if (FileExists(args[1]))
+        {
+            return WriteVsb(args[1].c_str(), args[2].c_str(), (args.size() == 3) ? NULL : args[3].c_str(),
+                ShowProgressFunc) ? 0 : -1;
+        }
+        else
+        {
+            printf("\nError opening file!");
             return -1;
         }
     }

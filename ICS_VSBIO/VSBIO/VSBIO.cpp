@@ -504,6 +504,12 @@ bool VSBIOWrite::Concatenate(std::vector<std::string> &sInputFileList, ProgressF
     return true;
 }
 
+/// <summary>
+/// Concatenates the vsb files found in the provided directory, sorted by name
+/// </summary>
+/// <param name="sInputFilePath">Directory where the input files reside</param>
+/// <param name="prog">Progress return</param>
+/// <returns>Whether the files were concatenated successfully</returns>
 bool VSBIOWrite::ConcatenateFromDirectory(const std::string &sInputFilePath, ProgressFunc prog)
 {
     std::vector<std::string> sInputFileList = GetFilesInDirectory(sInputFilePath, "*.vsb");
@@ -511,6 +517,13 @@ bool VSBIOWrite::ConcatenateFromDirectory(const std::string &sInputFilePath, Pro
     return Concatenate(sInputFileList, prog);
 }
 
+/// <summary>
+/// Splits this file using the messages per file parameter and a _00000... suffix for the output files.
+/// </summary>
+/// <param name="nMessagesPerFile">Number of messages to split on</param>
+/// <param name="sOutputLocation">Output path</param>
+/// <param name="prog">Progress callback</param>
+/// <returns>Whether the output files were all written</returns>
 bool VSBIORead::Split(const uint64_t& nMessagesPerFile, const std::string& sOutputLocation, ProgressFunc prog)
 {
 	VSBIOWrite write;

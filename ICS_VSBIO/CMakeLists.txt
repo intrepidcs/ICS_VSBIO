@@ -8,7 +8,7 @@ set(CPACK_PACKAGE_VERSION_PATCH 1)
 
 set(target_dir "bin")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -DSQLITE_ENABLE_COLUMN_METADATA")
 
 if( MSVC )
 	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /EHsc /MP /W4")
@@ -26,11 +26,17 @@ set( SOURCES
 	./VSBIO/OFile.cpp
 	./VSBIO/VSBIO.cpp
 	./VSBIO/MessageTimeDecoderVSB.cpp
+	./VSBIO/VSBDB.cpp
+	./VSBIO/sqlite/sqlite3.c
+	./VSBIO/sqlite/KompexSQLiteDatabase.cpp
+	./VSBIO/sqlite/KompexSQLiteStatement.cpp
+	./VSBIO/sqlite/KompexSQLiteBlob.cpp
 )
 
 include_directories(
 	.
 	./VSBIO
+	./VSBIO/sqlite
 )
 	
 add_definitions(

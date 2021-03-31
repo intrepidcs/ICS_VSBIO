@@ -30,7 +30,7 @@ if platform.system() == 'Windows':
     DEFINE_MACROS = [('_WIN32', None), ('VSBIODLL_EXPORTS', None)]
 elif platform.system() == 'Linux':
     DEFINE_MACROS = [('LINUXSO', None)]
-DEFINE_MACROS += [('PYD', None)]
+DEFINE_MACROS += [('PYD', None), ('SQLITE_ENABLE_COLUMN_METADATA', None)]
 
 if which('swig') or which('swig.exe'):
     SWIG_OPTS = ['-c++', '-py3']
@@ -38,6 +38,11 @@ if which('swig') or which('swig.exe'):
     INTERFACE_SOURCES = ['ICS_VSBIO/VSBIO/OFile.cpp',
                          'ICS_VSBIO/VSBIO/VSBIO.cpp',
                          'ICS_VSBIO/VSBIO/MessageTimeDecoderVSB.cpp',
+                         'ICS_VSBIO/VSBIO/VSBDB.cpp',
+                         'ICS_VSBIO/VSBIO/sqlite/sqlite3.c',
+                         'ICS_VSBIO/VSBIO/sqlite/KompexSQLiteDatabase.cpp',
+                         'ICS_VSBIO/VSBIO/sqlite/KompexSQLiteStatement.cpp',
+                         'ICS_VSBIO/VSBIO/sqlite/KompexSQLiteBlob.cpp',
                          'ICS_VSBIO/VSBIODLL.cpp',
                          'ICS_VSBIO/VSBIOInterface.i',
                          'ICS_VSBIO/VSBIOFlags.i']
@@ -47,6 +52,11 @@ else:
     INTERFACE_SOURCES = ['ICS_VSBIO/VSBIO/OFile.cpp',
                          'ICS_VSBIO/VSBIO/VSBIO.cpp',
                          'ICS_VSBIO/VSBIO/MessageTimeDecoderVSB.cpp',
+                         'ICS_VSBIO/VSBIO/VSBDB.cpp',
+                         'ICS_VSBIO/VSBIO/sqlite/sqlite3.c',
+                         'ICS_VSBIO/VSBIO/sqlite/KompexSQLiteDatabase.cpp',
+                         'ICS_VSBIO/VSBIO/sqlite/KompexSQLiteStatement.cpp',
+                         'ICS_VSBIO/VSBIO/sqlite/KompexSQLiteBlob.cpp',
                          'ICS_VSBIO/VSBIODLL.cpp',
                          'ICS_VSBIO/VSBIOInterface_wrap.cpp',
                          'ICS_VSBIO/VSBIOFlags_wrap.cpp']
@@ -58,13 +68,13 @@ if SWIG_OPTS is not None:
 VSBIO_INTERFACE = Extension('ICS_VSBIO._VSBIOInterface',
                             sources=INTERFACE_SOURCES,
                             swig_opts=SWIG_OPTS,
-                            include_dirs=['ICS_VSBIO/VSBIO'],
+                            include_dirs=['ICS_VSBIO', 'ICS_VSBIO/VSBIO', 'ICS_VSBIO/VSBIO/sqlite'],
                             define_macros=DEFINE_MACROS)
 
 VSBIO_FLAGS = Extension('ICS_VSBIO._VSBIOFlags',
                         sources=FLAGS_SOURCES,
                         swig_opts=SWIG_OPTS,
-                        include_dirs=['ICS_VSBIO/VSBIO'],
+                        include_dirs=['ICS_VSBIO', 'ICS_VSBIO/VSBIO', 'ICS_VSBIO/VSBIO/sqlite'],
                         define_macros=DEFINE_MACROS)
 
 setup(name='ICS_VSBIO',
