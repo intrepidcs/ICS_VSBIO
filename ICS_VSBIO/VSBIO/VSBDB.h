@@ -157,7 +157,7 @@ public:
 class VSBInfo
 {
     std::map<int, NetworkInfo> m_mapNetworks;
-    std::multimap<uint64_t, std::vector<unsigned char>> messageCache;
+    std::multimap<uint64_t, std::vector<unsigned char> > messageCache;
     Kompex::SQLiteDatabase* m_pDb;
 
     void FlushCache(size_t numToFlush = 0);

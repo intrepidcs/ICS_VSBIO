@@ -1,7 +1,7 @@
 #ifndef _VSBStruct
 #define _VSBStruct
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 // Visual studio has extremely poor support for C99 pre-2010
 typedef signed char int8_t;
 typedef short int16_t;

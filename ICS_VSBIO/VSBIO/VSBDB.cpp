@@ -1,4 +1,4 @@
-
+#include <string.h>
 
 #include "VSBIODLL.h"
 #include "VSBIO.h"
@@ -139,7 +139,7 @@ void VSBInfo::FlushCache(size_t numToFlush)
     SQLiteStatement insertMessage(m_pDb);
     insertMessage.BeginTransaction();
     insertMessage.Sql(INSERT_MESSAGES);
-    for (std::multimap<uint64_t, std::vector<unsigned char>>::iterator itMsg = messageCache.begin(); itMsg != messageCache.end(); ++itMsg)
+    for (std::multimap<uint64_t, std::vector<unsigned char> >::iterator itMsg = messageCache.begin(); itMsg != messageCache.end(); ++itMsg)
     {
         SaveMessage(insertMessage, itMsg->first, itMsg->second);
         if (numToFlush && (messageCache.size() >= numToFlush))
