@@ -23,7 +23,7 @@ if row is not None:
 
 filter = "(NetworkId > 0) " # Filter out the neoVI messages (NetworkId = 0)
 if startTime and endTime: # limit between two timestamps (1/3 from start to 1/3 from end)
-    delta = endTime < startTime
+    delta = endTime - startTime
     filter += "AND (MessageTime > " + str(startTime + delta / 3) + ") AND (MessageTime < " + str(endTime - delta / 3) + ") "
 filter += "AND (Id < 300)"  # For CAN data, limit to messages with certain Arb Ids
 
