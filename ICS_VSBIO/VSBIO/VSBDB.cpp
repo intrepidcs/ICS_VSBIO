@@ -23,7 +23,7 @@ using namespace Kompex;
 #define CREATE_MESSAGES "CREATE TABLE RawMessageData (MessageTime INTEGER, NetworkId INTEGER, Id INTEGER, Status INTEGER NOT NULL, Ack INTEGER, " \
         "Header INTEGER, DataSize INTEGER, Data BLOB, FOREIGN KEY(NetworkId) REFERENCES Network(Id) ON DELETE CASCADE, " \
         "PRIMARY KEY(MessageTime,NetworkId,Id) )"
-#define INSERT_MESSAGES "INSERT INTO RawMessageData (MessageTime, NetworkId, Id, Status, Ack, Header, DataSize, Data) VALUES " \
+#define INSERT_MESSAGES "INSERT OR IGNORE INTO RawMessageData (MessageTime, NetworkId, Id, Status, Ack, Header, DataSize, Data) VALUES " \
         "(@MessageTime, @NetworkId, @Id, @Status, @Ack, @Header, @DataSize, @Data)"
 
 #define SELECT_MESSAGES "SELECT MessageTime, NetworkId, Id, Status, Ack, Header, DataSize, Data FROM RawMessageData"
@@ -114,7 +114,7 @@ void VSBInfo::SaveMessage(SQLiteStatement &insertMessage, uint64_t timestamp, co
     insertMessage.BindInt(nCol++, msg->ArbIDOrHeader);
     insertMessage.BindInt64(nCol++, (((uint64_t)msg->StatusBitField2) << 32) | (uint64_t)msg->StatusBitField);
     insertMessage.BindInt64(nCol++, *((uint64_t *)&msg->AckBytes));
-    insertMessage.BindInt64(nCol++, ((uint64_t)msg->Protocol << 8) | (uint64_t)msg->NumberBytesHeader);
+    insertMessage.BindInt64(nCol++, (((uint64_t)msg->MessagePieceID << 16) | (uint64_t)msg->Protocol << 8) | (uint64_t)msg->NumberBytesHeader);
 
     if (data.size() > sizeof(icsSpyMessageVSB)) // If the message has more than 8 bytes, it's saved after the struct
     {
@@ -201,7 +201,8 @@ unsigned int ReadMessage(const SQLiteStatement &qryMessages, std::vector<unsigne
     msg->StatusBitField = (uint32_t)(status & 0xffffffff);
     *((uint64_t*)&msg->AckBytes) = qryMessages.GetColumnInt64(nCol++);
     uint64_t protocol = qryMessages.GetColumnInt64(nCol++);
-    msg->Protocol = (uint8_t)(protocol >> 8);
+    msg->MessagePieceID = (uint8_t)(protocol >> 16);
+    msg->Protocol = (uint8_t)((protocol >> 8) & 0xff);
     msg->NumberBytesHeader = (uint8_t)(protocol & 0xff);
 
     nCol++; // Data size had to be read first
