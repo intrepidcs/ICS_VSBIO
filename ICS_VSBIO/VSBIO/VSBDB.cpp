@@ -139,10 +139,11 @@ void VSBInfo::FlushCache(size_t numToFlush)
     SQLiteStatement insertMessage(m_pDb);
     insertMessage.BeginTransaction();
     insertMessage.Sql(INSERT_MESSAGES);
-    for (std::multimap<uint64_t, std::vector<unsigned char> >::iterator itMsg = messageCache.begin(); itMsg != messageCache.end(); ++itMsg)
+    int nCurItem = 0;
+    for (std::multimap<uint64_t, std::vector<unsigned char> >::iterator itMsg = messageCache.begin(); itMsg != messageCache.end(); ++itMsg, ++nCurItem)
     {
         SaveMessage(insertMessage, itMsg->first, itMsg->second);
-        if (numToFlush && (messageCache.size() >= numToFlush))
+        if (numToFlush && (nCurItem >= numToFlush))
         {
             messageCache.erase(messageCache.begin(), itMsg);
             break;
@@ -239,7 +240,7 @@ bool CreateDb(const char *pVsbPath, const char *pDbPath, ProgressFunc prog)
         uint64_t counter = 0;
         while (read.ReadNextMessage(msg) == VSBIORead::eSuccess)
         {
-            if (prog && !((counter + 1) % 100000))
+            if (prog && !((counter++) % 100000))
             {
                 if (!prog(read.GetProgress()))
                     break;

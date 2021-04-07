@@ -11,7 +11,7 @@
 
 extern "C" bool ShowProgressFunc(int nPctDone)
 {
-    printf("\r%d done", nPctDone);
+    printf("\r%d%% done", nPctDone);
     return true;
 }
 
