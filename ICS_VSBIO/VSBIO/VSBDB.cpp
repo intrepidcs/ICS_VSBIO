@@ -136,14 +136,16 @@ void VSBInfo::SaveMessage(SQLiteStatement &insertMessage, uint64_t timestamp, co
 /// <param name="numToFlush">Number of messages to flush</param>
 void VSBInfo::FlushCache(size_t numToFlush)
 {
+    SQLiteStatement transaction(m_pDb);
+    transaction.SqlStatement("BEGIN TRANSACTION");
+
     SQLiteStatement insertMessage(m_pDb);
-    insertMessage.BeginTransaction();
     insertMessage.Sql(INSERT_MESSAGES);
-    int nCurItem = 0;
-    for (std::multimap<uint64_t, std::vector<unsigned char> >::iterator itMsg = messageCache.begin(); itMsg != messageCache.end(); ++itMsg, ++nCurItem)
+    size_t curIndex = 0;
+    for (std::multimap<uint64_t, std::vector<unsigned char> >::iterator itMsg = messageCache.begin(); itMsg != messageCache.end(); ++itMsg, ++curIndex)
     {
         SaveMessage(insertMessage, itMsg->first, itMsg->second);
-        if (numToFlush && (nCurItem >= numToFlush))
+        if (numToFlush && (curIndex >= numToFlush))
         {
             messageCache.erase(messageCache.begin(), itMsg);
             break;
@@ -151,7 +153,7 @@ void VSBInfo::FlushCache(size_t numToFlush)
     }
     if (numToFlush == 0)  // Remaining messages
         messageCache.clear();
-    insertMessage.CommitTransaction();
+    transaction.SqlStatement("COMMIT TRANSACTION");
 }
 
 /// <summary>
