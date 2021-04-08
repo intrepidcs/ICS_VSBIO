@@ -38,11 +38,20 @@ void NetworkInfo::SaveInfo(SQLiteDatabase *pDb) const
     SQLiteStatement insertNetworks(pDb);
     insertNetworks.Sql(INSERT_NETWORK);
     string netName, protocol;
-    if ((m_id < 0) || (m_id >= NETID_MAX))
+
+    for (size_t nCnt = 0; nCnt < sizeof(networkNames) / sizeof(networkNames[0]); ++nCnt)
+    {
+        if (m_id == networkNames[nCnt].id)
+        {
+            netName = networkNames[nCnt].name;
+            break;
+        }
+    }
+
+    if (netName.size() == 0)
         netName = "Unknown";
     else
     {
-        netName = networkNames[m_id];
         // CAN and CAN FD for example
         for (std::set<int>::const_iterator itProtocol = m_protocol.begin(); itProtocol != m_protocol.end(); ++itProtocol)
         {
