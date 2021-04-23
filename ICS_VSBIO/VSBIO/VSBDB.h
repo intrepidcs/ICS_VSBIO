@@ -169,11 +169,21 @@ class VSBInfo
     void SaveMessage(Kompex::SQLiteStatement& insertMessage, uint64_t timestamp, const std::vector<unsigned char>& data);
 
 public:
+
     VSBInfo(Kompex::SQLiteDatabase* pDb);
     ~VSBInfo();
 
+    /// <summary>
+    /// Reads the message timestamp, updates the network info, adds it to the sorted cache and
+    /// when the cache gets full, it empties half of it
+    /// </summary>
+    /// <param name="data"></param>
     void ProcessMessage(const std::vector<unsigned char>& data);
 
+    /// <summary>
+    /// Writes the network summary table info. Id -1 is the whole file summary
+    /// </summary>
+    /// <param name="pDb">Database to work with</param>
     void SaveInfo() const
     {
         for (std::map<int, NetworkInfo>::const_iterator it = m_mapNetworks.begin(); it != m_mapNetworks.end(); ++it)
@@ -181,7 +191,32 @@ public:
             (*it).second.SaveInfo(m_pDb);
         }
     }
+
+    /// <summary>
+    /// Removes the old data tables if they exist and re-creates them
+    /// </summary>
+    void CleanTables();
+
 };
 
-bool CreateDb(const char* pVsbPath, const char* pDbPath, ProgressFunc prog);
+/// <summary>
+/// Creates a Sqlite database containing all the messages in the vsb file.
+/// </summary>
+/// <param name="pVsbPath">File for which to generate a database</param>
+/// <param name="pDbPath">File to generate</param>
+/// <param name="bAppend">Append to or re-create the data tables</param>
+/// <param name="prog">Progess callback</param>
+/// <returns>Whether the database was created</returns>
+bool CreateDb(const char* pVsbPath, const char* pDbPath, bool bAppend, ProgressFunc prog);
+
+/// <summary>
+/// Creates a vsb file from the given Sqlite message database.
+/// The filter is basically the WHERE clause, which can restrict messages by columns such as MessageTime, NetworkId, Id, etc
+/// Please consult the database schema for details.
+/// </summary>
+/// <param name="pDbPath">Database from which the messages will be read</param>
+/// <param name="pVsbPath">Output file containing filtered messages</param>
+/// <param name="pFilter">The WHERE clause, which can be used to filter a subset of the messages</param>
+/// <param name="prog">Progess callback</param>
+/// <returns>Whether the VSB file was created</returns>
 bool WriteVsb(const char* pDbPath, const char* pVsbPath, const char* pFilter, ProgressFunc prog);

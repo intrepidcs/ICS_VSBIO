@@ -16,7 +16,7 @@ using namespace Kompex;
 #define DROP_NETWORK "DROP TABLE IF EXISTS Network"
 #define CREATE_NETWORK "CREATE TABLE Network (Id INTEGER, Name TEXT NOT NULL, Device TEXT, Protocol TEXT NOT NULL, DisplayName TEXT NOT NULL," \
         "FirstTime INTEGER, LastTime INTEGER, NumMessages INTEGER, PRIMARY KEY(Id))"
-#define INSERT_NETWORK "INSERT INTO Network (Id, Name, Device, Protocol, DisplayName, FirstTime, LastTime, NumMessages) VALUES " \
+#define INSERT_NETWORK "INSERT OR IGNORE INTO Network (Id, Name, Device, Protocol, DisplayName, FirstTime, LastTime, NumMessages) VALUES " \
         "(@Id, @Name, @Device, @Protocol, @DisplayName, @FirstTime, @LastTime, @NumMessages)"
 
 #define DROP_MESSAGES "DROP TABLE IF EXISTS RawMessageData"
@@ -29,10 +29,6 @@ using namespace Kompex;
 #define SELECT_MESSAGES "SELECT MessageTime, NetworkId, Id, Status, Ack, Header, DataSize, Data FROM RawMessageData"
 const int DataSize_Read_Offset = 6;  // 0 index in previous select
 
-/// <summary>
-/// Writes the network summary table info. Id -1 is the whole file summary
-/// </summary>
-/// <param name="pDb">Database to work with</param>
 void NetworkInfo::SaveInfo(SQLiteDatabase *pDb) const
 {
     SQLiteStatement insertNetworks(pDb);
@@ -76,7 +72,7 @@ void NetworkInfo::SaveInfo(SQLiteDatabase *pDb) const
 }
 
 /// <summary>
-/// Re-creates the two tables we need in the database
+/// Sets up the pragmas for speed
 /// </summary>
 /// <param name="pDb">Database object to work with</param>
 VSBInfo::VSBInfo(SQLiteDatabase* pDb)
@@ -88,12 +84,16 @@ VSBInfo::VSBInfo(SQLiteDatabase* pDb)
     stmtDbSetup.SqlStatement("PRAGMA count_changes=OFF");      // this is a deprecated pragma but can help performance if followed
     stmtDbSetup.SqlStatement("PRAGMA cache_size=100000");      // this should max out at just over 80MB of max memory
     stmtDbSetup.SqlStatement("PRAGMA locking_mode=EXCLUSIVE"); // only one reader/writer to the db we're creating
+}
 
-    stmtDbSetup.SqlStatement(DROP_NETWORK);
-    stmtDbSetup.SqlStatement(CREATE_NETWORK);
+void VSBInfo::CleanTables()
+{
+    SQLiteStatement stmtDbClean(m_pDb);
+    stmtDbClean.SqlStatement(DROP_NETWORK);
+    stmtDbClean.SqlStatement(CREATE_NETWORK);
 
-    stmtDbSetup.SqlStatement(DROP_MESSAGES);
-    stmtDbSetup.SqlStatement(CREATE_MESSAGES);
+    stmtDbClean.SqlStatement(DROP_MESSAGES);
+    stmtDbClean.SqlStatement(CREATE_MESSAGES);
 }
 
 /// <summary>
@@ -165,11 +165,6 @@ void VSBInfo::FlushCache(size_t numToFlush)
     transaction.SqlStatement("COMMIT TRANSACTION");
 }
 
-/// <summary>
-/// Reads the message timestamp, updates the network info, adds it to the sorted cache and
-/// when the cache gets full, it empties half of it
-/// </summary>
-/// <param name="data"></param>
 void VSBInfo::ProcessMessage(const std::vector<unsigned char>& data)
 {
     icsSpyMessageVSB* msg = ((icsSpyMessageVSB*)&data[0]);
@@ -233,14 +228,7 @@ unsigned int ReadMessage(const SQLiteStatement &qryMessages, std::vector<unsigne
     return (unsigned int)msgSize;
 }
 
-/// <summary>
-/// Creates a Sqlite database containing all the messages in the vsb file.
-/// </summary>
-/// <param name="pVsbPath">File for which to generate a database</param>
-/// <param name="pDbPath">File to generate</param>
-/// <param name="prog">Progess callback</param>
-/// <returns>Whether the database was created</returns>
-bool CreateDb(const char *pVsbPath, const char *pDbPath, ProgressFunc prog)
+bool CreateDb(const char *pVsbPath, const char *pDbPath, bool bAppend, ProgressFunc prog)
 {
     try
     {
@@ -248,6 +236,9 @@ bool CreateDb(const char *pVsbPath, const char *pDbPath, ProgressFunc prog)
         VSBIORead read(pVsbPath);
         std::vector<unsigned char> msg;
         VSBInfo info(&db);
+        if (!bAppend)
+            info.CleanTables();
+
         uint64_t counter = 0;
         while (read.ReadNextMessage(msg) == VSBIORead::eSuccess)
         {
@@ -268,16 +259,6 @@ bool CreateDb(const char *pVsbPath, const char *pDbPath, ProgressFunc prog)
     }
 }
 
-/// <summary>
-/// Creates a vsb file from the given Sqlite message database.
-/// The filter is basically the WHERE clause, which can restrict messages by columns such as MessageTime, NetworkId, Id, etc
-/// Please consult the database schema for details.
-/// </summary>
-/// <param name="pDbPath">Database from which the messages will be read</param>
-/// <param name="pVsbPath">Output file containing filtered messages</param>
-/// <param name="pFilter">The WHERE clause, which can be used to filter a subset of the messages</param>
-/// <param name="prog">Progess callback</param>
-/// <returns>Whether the VSB file was created</returns>
 bool WriteVsb(const char* pDbPath, const char* pVsbPath, const char *pFilter, ProgressFunc prog)
 {
     try

@@ -18,8 +18,8 @@ The module contains three Classes ```VSBIOFlags```, ```VSBReader```, ```VSBWrite
 Please see the examples directory for sample programs:
 * VSBIOExample.py         Reads the messages from a file and writes some of them to a new file
 * VSBIOSplitConcat.py     Splits the input file and then concatenates all the resulting files back into a new file
-* VSBIOCreateDatabase.py  Creates a Sqlite database containing all the messages in the input vsb file
-* VSBIOFilter.py          Filters a subset of the messages in the database created by the previous example into a new vsb file
+* VSBIOFilter.py          Creates a Sqlite database containing all the messages in the input vsb file and filters a subset of the 
+						  messages into a new vsb file
 
 #### VSBReader functions
 ```__init__``` Takes filename to initialize process 

@@ -20,6 +20,7 @@ void ShowUsage()
     printf("Usage: VSBIO -s <quoted full path of file to split> <num messages> <output directory>\n");
     printf("or -c <quoted directory where files to combine reside> <quoted full path of output file>\n");
     printf("or -db <quoted full path of vsb file> <quoted full path to db file to create>");
+    printf("or -append <quoted full path of vsb file> <quoted full path to db file to create or append to>");
     printf("or -filter <quoted full path of db file> <quoted full path to vsb file to create> <quoted filter expression>");
 }
 
@@ -76,7 +77,19 @@ int main(int argc, const char** argv)
     {
         if (FileExists(args[1]))
         {
-            return CreateDb(args[1].c_str(), args[2].c_str(), ShowProgressFunc) ? 0 : -1;
+            return CreateDb(args[1].c_str(), args[2].c_str(), false, ShowProgressFunc) ? 0 : -1;
+        }
+        else
+        {
+            printf("\nError opening file!");
+            return -1;
+        }
+    }
+    else if ((args[0] == "-append") && (args.size() == 3))
+    {
+        if (FileExists(args[1]))
+        {
+            return CreateDb(args[1].c_str(), args[2].c_str(), true, ShowProgressFunc) ? 0 : -1;
         }
         else
         {

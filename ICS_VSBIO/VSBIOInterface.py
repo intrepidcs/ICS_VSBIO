@@ -116,11 +116,11 @@ def SplitW(sFileName: "wchar_t const *", nMessagesPerFile: "unsigned int", Outpu
 def Split(sFileName: "char const *", nMessagesPerFile: "unsigned int", OutputLocation: "char const *", prog: "ProgressFunc") -> "bool":
     return _VSBIOInterface.Split(sFileName, nMessagesPerFile, OutputLocation, prog)
 
-def CreateDatabaseW(inputFilePath: "wchar_t const *", outputFileName: "wchar_t const *", prog: "ProgressFunc") -> "bool":
-    return _VSBIOInterface.CreateDatabaseW(inputFilePath, outputFileName, prog)
+def CreateDatabaseW(inputFilePath: "wchar_t const *", outputFileName: "wchar_t const *", bAppend: "bool", prog: "ProgressFunc") -> "bool":
+    return _VSBIOInterface.CreateDatabaseW(inputFilePath, outputFileName, bAppend, prog)
 
-def CreateDatabase(inputFilePath: "char const *", outputFileName: "char const *", prog: "ProgressFunc") -> "bool":
-    return _VSBIOInterface.CreateDatabase(inputFilePath, outputFileName, prog)
+def CreateDatabase(inputFilePath: "char const *", outputFileName: "char const *", bAppend: "bool", prog: "ProgressFunc") -> "bool":
+    return _VSBIOInterface.CreateDatabase(inputFilePath, outputFileName, bAppend, prog)
 
 def WriteFilteredVsbW(inputFilePath: "wchar_t const *", outputFileName: "wchar_t const *", filter: "wchar_t const *", prog: "ProgressFunc") -> "bool":
     return _VSBIOInterface.WriteFilteredVsbW(inputFilePath, outputFileName, filter, prog)

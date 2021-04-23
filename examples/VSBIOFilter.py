@@ -1,13 +1,36 @@
 from ICS_VSBIO import VSBIOInterface as vsb
 import sqlite3
 import sys, os
+import threading
 from datetime import datetime, timezone
 
-if not os.path.isfile("./input.mdb"):
-    sys.exit('Please run the VSBIOCreateDatabase script first!')
+inFile = "./input.vsb"
+outFile = "./output.db2"
+filteredFile = "./filtered.vsb"
+# Create a database containing all the messages
+def createThreadFunc():
+    vsb.CreateDatabase(inFile, outFile, False, None)
+
+if os.path.isfile(outFile):
+    print('Using existing database')
+else:
+    print('Starting to create the database!')
+    try:
+        createThread = threading.Thread(target=createThreadFunc)
+
+        createThread.start()    # Start the thread
+
+        createThread.join()   # Wait for it
+                
+    except ValueError as e:
+        sys.exit(str(e))
+    except Exception as ex:
+        print(ex)
+    else:
+        print('Success creating the database!\n')
 
 # Open the message database
-conn = sqlite3.connect("./input.mdb", timeout=10)
+conn = sqlite3.connect(outFile, timeout=10)
 conn.text_factory = lambda x: str(x, 'utf-8', 'ignore')
 
 # Read the file start and end timestamp from the Networks table
@@ -27,7 +50,7 @@ if startTime and endTime: # limit between two timestamps (1/3 from start to 1/3 
     filter += "AND (MessageTime > " + str(startTime + delta / 3) + ") AND (MessageTime < " + str(endTime - delta / 3) + ") "
 filter += "AND (Id < 300)"  # For CAN data, limit to messages with certain Arb Ids
 
-if vsb.WriteFilteredVsb("./input.mdb", "./filtered.vsb", filter, None):
+if vsb.WriteFilteredVsb(outFile, filteredFile, filter, None):
     sys.stdout.write('VSB file was created!\n')
 else:
     sys.stdout.write('Error creating VSB file!\n')
