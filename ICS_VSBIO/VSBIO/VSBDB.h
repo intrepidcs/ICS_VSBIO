@@ -155,7 +155,7 @@ public:
         ++m_numMessages;
     }
 
-    void SaveInfo(Kompex::SQLiteDatabase* pDb) const;
+    void SaveInfo(Kompex::SQLiteDatabase* pDb);
 };
 
 
@@ -184,9 +184,11 @@ public:
     /// Writes the network summary table info. Id -1 is the whole file summary
     /// </summary>
     /// <param name="pDb">Database to work with</param>
-    void SaveInfo() const
+    void SaveInfo()
     {
-        for (std::map<int, NetworkInfo>::const_iterator it = m_mapNetworks.begin(); it != m_mapNetworks.end(); ++it)
+        FlushCache();
+
+        for (std::map<int, NetworkInfo>::iterator it = m_mapNetworks.begin(); it != m_mapNetworks.end(); ++it)
         {
             (*it).second.SaveInfo(m_pDb);
         }
@@ -195,7 +197,7 @@ public:
     /// <summary>
     /// Removes the old data tables if they exist and re-creates them
     /// </summary>
-    void CleanTables();
+    void CleanTables(bool bAppend);
 
 };
 

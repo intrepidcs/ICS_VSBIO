@@ -169,24 +169,40 @@ VSBIODLL_API bool SplitW(const wchar_t *sFileName, unsigned int nMessagesPerFile
 VSBIODLL_API bool Split(const char *sFileName, unsigned int nMessagesPerFile, const char *OutputLocation, ProgressFunc prog);
 
 /// <summary>
-/// Creates a Sqlite database containing all the messages in the vsb file.
+/// Creates a Sqlite database containing all the messages in the vsb file.  Old data is removed.
 /// </summary>
 /// <param name="inputFilePath">File for which to generate a database</param>
 /// <param name="outputFileName">File to generate</param>
-/// <param name="bAppend">Append to or re-create the data tables</param>
 /// <param name="prog">Progess callback</param>
 /// <returns>Whether the database was created</returns>
-VSBIODLL_API bool CreateDatabaseW(const wchar_t* inputFilePath, const wchar_t* outputFileName, bool bAppend, ProgressFunc prog);
+VSBIODLL_API bool CreateDatabaseW(const wchar_t* inputFilePath, const wchar_t* outputFileName, ProgressFunc prog);
 
 /// <summary>
-/// Creates a Sqlite database containing all the messages in the vsb file.
+/// Creates a Sqlite database containing all the messages in the vsb file.  Old data is removed.
 /// </summary>
 /// <param name="inputFilePath">File for which to generate a database</param>
 /// <param name="outputFileName">File to generate</param>
-/// <param name="bAppend">Append to or re-create the data tables</param>
 /// <param name="prog">Progess callback</param>
 /// <returns>Whether the database was created</returns>
-VSBIODLL_API bool CreateDatabase(const char* inputFilePath, const char* outputFileName, bool bAppend, ProgressFunc prog);
+VSBIODLL_API bool CreateDatabase(const char* inputFilePath, const char* outputFileName, ProgressFunc prog);
+
+/// <summary>
+/// Appends to or creates a Sqlite database containing all the messages in the vsb file.
+/// </summary>
+/// <param name="inputFilePath">File for which to generate a database</param>
+/// <param name="outputFileName">File to generate</param>
+/// <param name="prog">Progess callback</param>
+/// <returns>Whether the database was created</returns>
+VSBIODLL_API bool AddToDatabaseW(const wchar_t* inputFilePath, const wchar_t* outputFileName, ProgressFunc prog);
+
+/// <summary>
+/// Appends to or creates a Sqlite database containing all the messages in the vsb file.
+/// </summary>
+/// <param name="inputFilePath">File for which to generate a database</param>
+/// <param name="outputFileName">File to generate</param>
+/// <param name="prog">Progess callback</param>
+/// <returns>Whether the database was created</returns>
+VSBIODLL_API bool AddToDatabase(const char* inputFilePath, const char* outputFileName, ProgressFunc prog);
 
 /// <summary>
 /// Creates a vsb file from the given Sqlite message database.

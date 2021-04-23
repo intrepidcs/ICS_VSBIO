@@ -14,23 +14,37 @@ using namespace Kompex;
 #endif
 
 #define DROP_NETWORK "DROP TABLE IF EXISTS Network"
-#define CREATE_NETWORK "CREATE TABLE Network (Id INTEGER, Name TEXT NOT NULL, Device TEXT, Protocol TEXT NOT NULL, DisplayName TEXT NOT NULL," \
+#define CREATE_NETWORK "CREATE TABLE IF NOT EXISTS Network (Id INTEGER, Name TEXT NOT NULL, Device TEXT, Protocol TEXT NOT NULL, DisplayName TEXT NOT NULL," \
         "FirstTime INTEGER, LastTime INTEGER, NumMessages INTEGER, PRIMARY KEY(Id))"
 #define INSERT_NETWORK "INSERT OR IGNORE INTO Network (Id, Name, Device, Protocol, DisplayName, FirstTime, LastTime, NumMessages) VALUES " \
         "(@Id, @Name, @Device, @Protocol, @DisplayName, @FirstTime, @LastTime, @NumMessages)"
 
 #define DROP_MESSAGES "DROP TABLE IF EXISTS RawMessageData"
-#define CREATE_MESSAGES "CREATE TABLE RawMessageData (MessageTime INTEGER, NetworkId INTEGER, Id INTEGER, Status INTEGER NOT NULL, Ack INTEGER, " \
+#define CREATE_MESSAGES "CREATE TABLE IF NOT EXISTS RawMessageData (MessageTime INTEGER, NetworkId INTEGER, Id INTEGER, Status INTEGER NOT NULL, Ack INTEGER, " \
         "Header INTEGER, DataSize INTEGER, Data BLOB, FOREIGN KEY(NetworkId) REFERENCES Network(Id) ON DELETE CASCADE, " \
         "PRIMARY KEY(MessageTime,NetworkId,Id) )"
 #define INSERT_MESSAGES "INSERT OR IGNORE INTO RawMessageData (MessageTime, NetworkId, Id, Status, Ack, Header, DataSize, Data) VALUES " \
         "(@MessageTime, @NetworkId, @Id, @Status, @Ack, @Header, @DataSize, @Data)"
 
+#define GET_NETWORK_INFO "SELECT Min(MessageTime), Max(MessageTime), Count(*) FROM RawMessageData WHERE NetworkId = @Id"
+
 #define SELECT_MESSAGES "SELECT MessageTime, NetworkId, Id, Status, Ack, Header, DataSize, Data FROM RawMessageData"
 const int DataSize_Read_Offset = 6;  // 0 index in previous select
 
-void NetworkInfo::SaveInfo(SQLiteDatabase *pDb) const
+void NetworkInfo::SaveInfo(SQLiteDatabase *pDb)
 {
+    SQLiteStatement qryNetwork(pDb);
+    qryNetwork.Sql(GET_NETWORK_INFO);
+    qryNetwork.BindInt64(1, m_id);
+
+    if (qryNetwork.FetchRow())  // Update the stats after possibly appending messages
+    {
+        int nQryCol = 0;
+        m_firstTime = qryNetwork.GetColumnInt64(nQryCol++);
+        m_lastTime = qryNetwork.GetColumnInt64(nQryCol++);
+        m_numMessages = qryNetwork.GetColumnInt64(nQryCol++);
+    }
+
     SQLiteStatement insertNetworks(pDb);
     insertNetworks.Sql(INSERT_NETWORK);
     string netName, protocol;
@@ -86,13 +100,15 @@ VSBInfo::VSBInfo(SQLiteDatabase* pDb)
     stmtDbSetup.SqlStatement("PRAGMA locking_mode=EXCLUSIVE"); // only one reader/writer to the db we're creating
 }
 
-void VSBInfo::CleanTables()
+void VSBInfo::CleanTables(bool bAppend)
 {
     SQLiteStatement stmtDbClean(m_pDb);
-    stmtDbClean.SqlStatement(DROP_NETWORK);
+    if (!bAppend)
+        stmtDbClean.SqlStatement(DROP_NETWORK);
     stmtDbClean.SqlStatement(CREATE_NETWORK);
 
-    stmtDbClean.SqlStatement(DROP_MESSAGES);
+    if (!bAppend)
+        stmtDbClean.SqlStatement(DROP_MESSAGES);
     stmtDbClean.SqlStatement(CREATE_MESSAGES);
 }
 
@@ -236,8 +252,7 @@ bool CreateDb(const char *pVsbPath, const char *pDbPath, bool bAppend, ProgressF
         VSBIORead read(pVsbPath);
         std::vector<unsigned char> msg;
         VSBInfo info(&db);
-        if (!bAppend)
-            info.CleanTables();
+        info.CleanTables(bAppend);
 
         uint64_t counter = 0;
         while (read.ReadNextMessage(msg) == VSBIORead::eSuccess)

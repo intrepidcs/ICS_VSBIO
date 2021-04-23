@@ -109,14 +109,24 @@ extern "C" VSBIODLL_API bool Split(const char *sFileName, unsigned int nMessages
     return read.Split(nMessagesPerFile, sOutputLocation, prog);
 }
 
-extern "C" VSBIODLL_API bool CreateDatabaseW(const wchar_t* inputFilePath, const wchar_t* outputFileName, bool bAppend, ProgressFunc prog)
+extern "C" VSBIODLL_API bool CreateDatabaseW(const wchar_t* inputFilePath, const wchar_t* outputFileName, ProgressFunc prog)
 {
-	return CreateDatabase(mbstring(inputFilePath).c_str(), mbstring(outputFileName).c_str(), bAppend, prog);
+	return CreateDatabase(mbstring(inputFilePath).c_str(), mbstring(outputFileName).c_str(), prog);
 }
 
-extern "C" VSBIODLL_API bool CreateDatabase(const char* inputFilePath, const char* outputFileName, bool bAppend, ProgressFunc prog)
+extern "C" VSBIODLL_API bool CreateDatabase(const char* inputFilePath, const char* outputFileName, ProgressFunc prog)
 {
-	return CreateDb(inputFilePath, outputFileName, bAppend, prog);
+	return CreateDb(inputFilePath, outputFileName, false, prog);
+}
+
+extern "C" VSBIODLL_API bool AddToDatabaseW(const wchar_t* inputFilePath, const wchar_t* outputFileName, ProgressFunc prog)
+{
+	return CreateDatabase(mbstring(inputFilePath).c_str(), mbstring(outputFileName).c_str(), prog);
+}
+
+extern "C" VSBIODLL_API bool AddToDatabase(const char* inputFilePath, const char* outputFileName, ProgressFunc prog)
+{
+	return CreateDb(inputFilePath, outputFileName, true, prog);
 }
 
 extern "C" VSBIODLL_API bool WriteFilteredVsbW(const wchar_t* inputFilePath, const wchar_t* outputFileName, const wchar_t* filter,
