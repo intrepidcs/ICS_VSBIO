@@ -2,93 +2,93 @@
 
 #include <stdint.h>
 #include <map>
-#include <set>
 
-#include "KompexSQLiteDatabase.h"
+#include "NetworkInfo.h"
 #include "KompexSQLiteStatement.h"
 
 struct netIdName
 {
     char name[30];
     int  id;
+    int  vnetOffset;
 };
 
-const netIdName networkNames[] = { { "neoVI", 0 },
-{ "HSCAN", 1},
-{ "MSCAN", 2},
-{ "SWCAN", 3},
-{ "LSFTCAN", 4},
-{ "FORDSCP", 5},
-{ "J1708", 6},
-{ "AUX", 7},
-{ "JVPW", 8},
-{ "ISO", 9},
-{ "ISOPIC", 10},
-{ "MAIN51", 11},
-{ "RED", 12},
-{ "SCI", 13},
-{ "ISO2", 14},
-{ "ISO14230", 15},
-{ "LIN", 16},
-{ "OP_ETHERNET1", 17},
-{ "OP_ETHERNET2", 18},
-{ "OP_ETHERNET3", 19},
-{ "ISO3", 41},
-{ "HSCAN2", 42},
-{ "HSCAN3", 44},
-{ "OP_ETHERNET4", 45},
-{ "OP_ETHERNET5", 46},
-{ "ISO4", 47},
-{ "LIN2", 48},
-{ "LIN3", 49},
-{ "LIN4", 50},
-{ "MOST", 51},
-{ "RED_APP_ERROR", 52},
-{ "CGI", 53},
-{ "3G_RESET_STATUS", 54},
-{ "3G_FB_STATUS", 55},
-{ "3G_APP_SIGNAL_STATU", 56},
-{ "3G_READ_DATALINK_CM_TX_MSG", 57},
-{ "3G_READ_DATALINK_CM_RX_MSG", 58},
-{ "3G_LOGGING_OVERFLOW", 59},
-{ "3G_READ_SETTINGS_EX", 60},
-{ "HSCAN4", 61},
-{ "HSCAN5", 62},
-{ "RS232", 63},
-{ "UART", 64},
-{ "UART2", 65},
-{ "UART3", 66},
-{ "UART4", 67},
-{ "SWCAN2", 68},
-{ "ETHERNET_DAQ", 69},
+const netIdName networkNames[] = { { "neoVI", 0, 0 },
+{ "HS CAN", 1, 1},
+{ "MS CAN", 2, 2},
+{ "SW CAN", 3, 3},
+{ "LSFT CAN", 4, 4},
+{ "FORDSCP", 5, 5},
+{ "J1708", 6, 6},
+{ "AUX", 7, 7},
+{ "J1850 VPW", 8, 8},
+{ "ISO", 9, 9},
+{ "ISOPIC", 10, 10},
+{ "MAIN51", 11, 11},
+{ "RED", 12, 12},
+{ "SCI", 13, 13},
+{ "ISO2", 14, 14},
+{ "ISO14230", 15, 15},
+{ "LIN", 16, 16},
+{ "OP (BR) ETH1", 17, 0},
+{ "OP (BR) ETH2", 18, 0},
+{ "OP (BR) ETH3", 19, 0},
+{ "ISO3", 41, 17},
+{ "HS CAN2", 42, 18},
+{ "HS CAN3", 44, 19},
+{ "OP (BR) ETH4", 45, 0},
+{ "OP (BR) ETH5", 46, 0},
+{ "ISO4", 47, 20},
+{ "LIN2", 48, 21},
+{ "LIN3", 49, 22},
+{ "LIN4", 50, 23},
+{ "MOST", 51, 24},
+{ "RED_APP_ERROR", 52, 46},
+{ "CGI", 53, 25},
+{ "3G_RESET_STATUS", 54, 0},
+{ "3G_FB_STATUS", 55, 0},
+{ "3G_APP_SIGNAL_STATUS", 56, 0},
+{ "3G_READ_DATALINK_CM_TX_MSG", 57, 0},
+{ "3G_READ_DATALINK_CM_RX_MSG", 58, 0},
+{ "3G_LOGGING_OVERFLOW", 59, 0},
+{ "3G_READ_SETTINGS_EX", 60, 0},
+{ "HS CAN4", 61, 32},
+{ "HS CAN5", 62, 33},
+{ "RS232", 63, 34},
+{ "UART", 64, 35},
+{ "UART2", 65, 36},
+{ "UART3", 66, 37},
+{ "UART4", 67, 38},
+{ "SW CAN2", 68, 39},
+{ "Ethernet DAQ", 69, 45},
 { "DATA_TO_HOST", 70},
-{ "I2C1", 71},
-{ "SPI1", 72},
-{ "OP_ETHERNET6", 73},
-{ "RED_VBAT", 74},
-{ "OP_ETHERNET7", 75},
-{ "OP_ETHERNET8", 76},
-{ "OP_ETHERNET9", 77},
-{ "OP_ETHERNET10", 78},
-{ "OP_ETHERNET11", 79},
-{ "FLEXRAY1A", 80},
-{ "FLEXRAY1B", 81},
-{ "FLEXRAY2A", 82},
-{ "FLEXRAY2B", 83},
-{ "LIN5", 84},
-{ "FLEXRAY", 85},
-{ "FLEXRAY2", 86},
-{ "OP_ETHERNET12", 87},
-{ "MOST25", 90},
-{ "MOST50", 91},
-{ "MOST150", 92},
-{ "ETHERNET", 93},
-{ "GMFSA", 94},
-{ "TCP", 95},
-{ "HSCAN6", 96},
-{ "HSCAN7", 97},
-{ "LIN6", 98},
-{ "LSFTCAN2", 99 } };
+{ "I2C1", 71, 26},
+{ "SPI1", 72, 27},
+{ "OP (BR) ETH6", 73, 0},
+{ "RED_VBAT", 74, 0},
+{ "OP (BR) ETH7", 75, 0},
+{ "OP (BR) ETH8", 76, 0},
+{ "OP (BR) ETH9", 77, 0},
+{ "OP (BR) ETH10", 78, 0},
+{ "OP (BR) ETH11", 79, 0},
+{ "FlexRay1A", 80, 28},
+{ "FlexRay1B", 81, 40},
+{ "FlexRay2A", 82, 41},
+{ "FlexRay2B", 83, 42},
+{ "LIN5", 84, 43},
+{ "FlexRay", 85, 0},
+{ "FlexRay2", 86, 0},
+{ "OP (BR) ETH12", 87, 0},
+{ "MOST25", 90, 29},
+{ "MOST50", 91, 30},
+{ "MOST150", 92, 31},
+{ "Ethernet", 93, 44},
+{ "GMFSA", 94, 0},
+{ "TCP", 95, 0},
+{ "HS CAN6", 96, 47},
+{ "HS CAN7", 97, 48},
+{ "LIN6", 98, 49},
+{ "LSFT CAN2", 99, 50 } };
 
 const char protocols[][20] = { "CUSTOM",
 "CAN",
@@ -124,41 +124,6 @@ const char protocols[][20] = { "CUSTOM",
 "GMFSA",
 "TCP" };
 
-
-
-class NetworkInfo
-{
-    int m_id;
-    std::set<int> m_protocol;
-    uint64_t m_firstTime, m_lastTime;
-    uint64_t m_numMessages;
-public:
-    NetworkInfo()
-    {
-        m_id = -1;
-        m_firstTime = m_lastTime = 0;
-        m_numMessages = 0;
-    }
-    void ProcessMessage(uint64_t timestamp, int id = -1, int protocol = -1)
-    {
-        m_protocol.insert(protocol);
-        if (m_firstTime == 0)
-        {
-            m_firstTime = timestamp;
-            m_id = id;
-        }
-        else if (m_firstTime > timestamp)
-            m_firstTime = timestamp;
-
-        if (m_lastTime < timestamp)
-            m_lastTime = timestamp;
-        ++m_numMessages;
-    }
-
-    void SaveInfo(Kompex::SQLiteDatabase* pDb);
-};
-
-
 class VSBInfo
 {
     std::map<int, NetworkInfo> m_mapNetworks;
@@ -181,16 +146,15 @@ public:
     void ProcessMessage(const std::vector<unsigned char>& data);
 
     /// <summary>
-    /// Writes the network summary table info. Id -1 is the whole file summary
+    /// Writes the network summary table info.
     /// </summary>
-    /// <param name="pDb">Database to work with</param>
-    void SaveInfo()
+    void UpdateTable()
     {
         FlushCache();
 
         for (std::map<int, NetworkInfo>::iterator it = m_mapNetworks.begin(); it != m_mapNetworks.end(); ++it)
         {
-            (*it).second.SaveInfo(m_pDb);
+            (*it).second.UpdateTable(m_pDb);
         }
     }
 
@@ -220,5 +184,5 @@ bool CreateDb(const char* pVsbPath, const char* pDbPath, bool bAppend, ProgressF
 /// <param name="pVsbPath">Output file containing filtered messages</param>
 /// <param name="pFilter">The WHERE clause, which can be used to filter a subset of the messages</param>
 /// <param name="prog">Progess callback</param>
-/// <returns>Whether the VSB file was created</returns>
-bool WriteVsb(const char* pDbPath, const char* pVsbPath, const char* pFilter, ProgressFunc prog);
+/// <returns>The number of records written or -1 if an error occurred</returns>
+int WriteVsb(const char* pDbPath, const char* pVsbPath, const char* pFilter, ProgressFunc prog);

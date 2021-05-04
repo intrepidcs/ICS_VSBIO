@@ -9,7 +9,7 @@ outFile = "./output.db2"
 filteredFile = "./filtered.vsb"
 # Create a database containing all the messages
 def createThreadFunc():
-    vsb.CreateDatabase(inFile, outFile, False, None)
+    vsb.CreateDatabase(inFile, outFile, None)
 
 if os.path.isfile(outFile):
     print('Using existing database')

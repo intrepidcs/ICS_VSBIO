@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <map>
+#include <list>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -65,5 +67,7 @@ std::string CombinePath(const std::string& sPath, const std::string& sFileName);
 size_t GetLastSlash(const std::string& sFilePath);
 void SplitPath(const std::string& sFullPath, std::string& sDirectory, std::string& sFileName, std::string& sExtension);
 std::vector<std::string> GetFilesInDirectory(const std::string& sPath, const std::string& sExtension);
+std::string GetJson(const std::map<std::string, std::string>& strings);
+std::list<std::string> split(const char* str, char c);
 
 #endif

@@ -213,8 +213,8 @@ VSBIODLL_API bool AddToDatabase(const char* inputFilePath, const char* outputFil
 /// <param name="outputFileName">Output file containing filtered messages</param>
 /// <param name="pFilter">The WHERE clause, which can be used to filter a subset of the messages</param>
 /// <param name="prog">Progess callback</param>
-/// <returns>Whether the VSB file was created</returns>
-VSBIODLL_API bool WriteFilteredVsbW(const wchar_t* inputFilePath, const wchar_t* outputFileName, const wchar_t* filter, ProgressFunc prog);
+/// <returns>The number of records written or -1 if an error occurred</returns>
+VSBIODLL_API int WriteFilteredVsbW(const wchar_t* inputFilePath, const wchar_t* outputFileName, const wchar_t* filter, ProgressFunc prog);
 
 /// <summary>
 /// Creates a vsb file from the given Sqlite message database.
@@ -225,8 +225,9 @@ VSBIODLL_API bool WriteFilteredVsbW(const wchar_t* inputFilePath, const wchar_t*
 /// <param name="outputFileName">Output file containing filtered messages</param>
 /// <param name="pFilter">The WHERE clause, which can be used to filter a subset of the messages</param>
 /// <param name="prog">Progess callback</param>
-/// <returns>Whether the VSB file was created</returns>
-VSBIODLL_API bool WriteFilteredVsb(const char* inputFilePath, const char* outputFileName, const char* filter, ProgressFunc prog);
+/// <returns>The number of records written or -1 if an error occurred</returns>
+VSBIODLL_API int WriteFilteredVsb(const char* inputFilePath, const char* outputFileName, const char* filter, ProgressFunc prog);
+
 
 #ifdef __cplusplus
 }

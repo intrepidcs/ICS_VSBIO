@@ -422,3 +422,39 @@ std::vector<std::string> GetFilesInDirectory(const std::string& sPath, const std
 #endif
     return fileNames;
 }
+
+std::string GetJson(const std::map<std::string, std::string>& strings)
+{
+	if (strings.size() == 0)
+		return "";
+	std::string json = "{\"attr\":[";
+	bool bFirst = true;
+	for (std::map<std::string, std::string>::const_iterator it = strings.begin(); it != strings.end(); ++it)
+	{
+		if (bFirst)
+			bFirst = !bFirst;
+		else
+			json += ",";
+		json += "{\"" + it->first + "\":\"" + it->second + "\"}";
+	}
+	json += "]}";
+	return json;
+}
+
+std::list<std::string> split(const char* str, char c)
+{
+	std::list<std::string> result;
+
+	do
+	{
+		const char* begin = str;
+
+		while ((*str != c) && *str)
+			str++;
+
+		result.push_back(std::string(begin, str));
+	} while (0 != *str++);
+
+	return result;
+}
+

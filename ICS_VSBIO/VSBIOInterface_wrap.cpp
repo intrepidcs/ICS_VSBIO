@@ -3298,20 +3298,6 @@ SWIGINTERNINLINE PyObject*
 }
 
 
-SWIGINTERN int
-SWIG_AsVal_bool (PyObject *obj, bool *val)
-{
-  int r;
-  if (!PyBool_Check(obj))
-    return SWIG_ERROR;
-  r = PyObject_IsTrue(obj);
-  if (r == -1)
-    return SWIG_ERROR;
-  if (val) *val = r ? true : false;
-  return SWIG_OK;
-}
-
-
 SWIGINTERNINLINE PyObject*
   SWIG_From_unsigned_SS_int  (unsigned int value)
 {
@@ -4072,20 +4058,17 @@ SWIGINTERN PyObject *_wrap_CreateDatabaseW(PyObject *SWIGUNUSEDPARM(self), PyObj
   PyObject *resultobj = 0;
   wchar_t *arg1 = (wchar_t *) 0 ;
   wchar_t *arg2 = (wchar_t *) 0 ;
-  bool arg3 ;
-  ProgressFunc arg4 = (ProgressFunc) 0 ;
+  ProgressFunc arg3 = (ProgressFunc) 0 ;
   int res1 ;
   wchar_t *buf1 = 0 ;
   int alloc1 = 0 ;
   int res2 ;
   wchar_t *buf2 = 0 ;
   int alloc2 = 0 ;
-  bool val3 ;
-  int ecode3 = 0 ;
-  PyObject *swig_obj[4] ;
+  PyObject *swig_obj[3] ;
   bool result;
   
-  if (!SWIG_Python_UnpackTuple(args, "CreateDatabaseW", 4, 4, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "CreateDatabaseW", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_AsWCharPtrAndSize(swig_obj[0], &buf1, NULL, &alloc1);
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CreateDatabaseW" "', argument " "1"" of type '" "wchar_t const *""'");
@@ -4096,18 +4079,13 @@ SWIGINTERN PyObject *_wrap_CreateDatabaseW(PyObject *SWIGUNUSEDPARM(self), PyObj
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CreateDatabaseW" "', argument " "2"" of type '" "wchar_t const *""'");
   }
   arg2 = reinterpret_cast< wchar_t * >(buf2);
-  ecode3 = SWIG_AsVal_bool(swig_obj[2], &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "CreateDatabaseW" "', argument " "3"" of type '" "bool""'");
-  } 
-  arg3 = static_cast< bool >(val3);
   {
-    int res = SWIG_ConvertFunctionPtr(swig_obj[3], (void**)(&arg4), SWIGTYPE_p_f_int__bool);
+    int res = SWIG_ConvertFunctionPtr(swig_obj[2], (void**)(&arg3), SWIGTYPE_p_f_int__bool);
     if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CreateDatabaseW" "', argument " "4"" of type '" "ProgressFunc""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CreateDatabaseW" "', argument " "3"" of type '" "ProgressFunc""'"); 
     }
   }
-  result = (bool)CreateDatabaseW((wchar_t const *)arg1,(wchar_t const *)arg2,arg3,arg4);
+  result = (bool)CreateDatabaseW((wchar_t const *)arg1,(wchar_t const *)arg2,arg3);
   resultobj = SWIG_From_bool(static_cast< bool >(result));
   if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
   if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
@@ -4123,20 +4101,17 @@ SWIGINTERN PyObject *_wrap_CreateDatabase(PyObject *SWIGUNUSEDPARM(self), PyObje
   PyObject *resultobj = 0;
   char *arg1 = (char *) 0 ;
   char *arg2 = (char *) 0 ;
-  bool arg3 ;
-  ProgressFunc arg4 = (ProgressFunc) 0 ;
+  ProgressFunc arg3 = (ProgressFunc) 0 ;
   int res1 ;
   char *buf1 = 0 ;
   int alloc1 = 0 ;
   int res2 ;
   char *buf2 = 0 ;
   int alloc2 = 0 ;
-  bool val3 ;
-  int ecode3 = 0 ;
-  PyObject *swig_obj[4] ;
+  PyObject *swig_obj[3] ;
   bool result;
   
-  if (!SWIG_Python_UnpackTuple(args, "CreateDatabase", 4, 4, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "CreateDatabase", 3, 3, swig_obj)) SWIG_fail;
   res1 = SWIG_AsCharPtrAndSize(swig_obj[0], &buf1, NULL, &alloc1);
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CreateDatabase" "', argument " "1"" of type '" "char const *""'");
@@ -4147,18 +4122,99 @@ SWIGINTERN PyObject *_wrap_CreateDatabase(PyObject *SWIGUNUSEDPARM(self), PyObje
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CreateDatabase" "', argument " "2"" of type '" "char const *""'");
   }
   arg2 = reinterpret_cast< char * >(buf2);
-  ecode3 = SWIG_AsVal_bool(swig_obj[2], &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "CreateDatabase" "', argument " "3"" of type '" "bool""'");
-  } 
-  arg3 = static_cast< bool >(val3);
   {
-    int res = SWIG_ConvertFunctionPtr(swig_obj[3], (void**)(&arg4), SWIGTYPE_p_f_int__bool);
+    int res = SWIG_ConvertFunctionPtr(swig_obj[2], (void**)(&arg3), SWIGTYPE_p_f_int__bool);
     if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CreateDatabase" "', argument " "4"" of type '" "ProgressFunc""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res), "in method '" "CreateDatabase" "', argument " "3"" of type '" "ProgressFunc""'"); 
     }
   }
-  result = (bool)CreateDatabase((char const *)arg1,(char const *)arg2,arg3,arg4);
+  result = (bool)CreateDatabase((char const *)arg1,(char const *)arg2,arg3);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_AddToDatabaseW(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wchar_t *arg1 = (wchar_t *) 0 ;
+  wchar_t *arg2 = (wchar_t *) 0 ;
+  ProgressFunc arg3 = (ProgressFunc) 0 ;
+  int res1 ;
+  wchar_t *buf1 = 0 ;
+  int alloc1 = 0 ;
+  int res2 ;
+  wchar_t *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject *swig_obj[3] ;
+  bool result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "AddToDatabaseW", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_AsWCharPtrAndSize(swig_obj[0], &buf1, NULL, &alloc1);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "AddToDatabaseW" "', argument " "1"" of type '" "wchar_t const *""'");
+  }
+  arg1 = reinterpret_cast< wchar_t * >(buf1);
+  res2 = SWIG_AsWCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "AddToDatabaseW" "', argument " "2"" of type '" "wchar_t const *""'");
+  }
+  arg2 = reinterpret_cast< wchar_t * >(buf2);
+  {
+    int res = SWIG_ConvertFunctionPtr(swig_obj[2], (void**)(&arg3), SWIGTYPE_p_f_int__bool);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in method '" "AddToDatabaseW" "', argument " "3"" of type '" "ProgressFunc""'"); 
+    }
+  }
+  result = (bool)AddToDatabaseW((wchar_t const *)arg1,(wchar_t const *)arg2,arg3);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_AddToDatabase(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  char *arg1 = (char *) 0 ;
+  char *arg2 = (char *) 0 ;
+  ProgressFunc arg3 = (ProgressFunc) 0 ;
+  int res1 ;
+  char *buf1 = 0 ;
+  int alloc1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject *swig_obj[3] ;
+  bool result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "AddToDatabase", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_AsCharPtrAndSize(swig_obj[0], &buf1, NULL, &alloc1);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "AddToDatabase" "', argument " "1"" of type '" "char const *""'");
+  }
+  arg1 = reinterpret_cast< char * >(buf1);
+  res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "AddToDatabase" "', argument " "2"" of type '" "char const *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  {
+    int res = SWIG_ConvertFunctionPtr(swig_obj[2], (void**)(&arg3), SWIGTYPE_p_f_int__bool);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in method '" "AddToDatabase" "', argument " "3"" of type '" "ProgressFunc""'"); 
+    }
+  }
+  result = (bool)AddToDatabase((char const *)arg1,(char const *)arg2,arg3);
   resultobj = SWIG_From_bool(static_cast< bool >(result));
   if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
   if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
@@ -4186,7 +4242,7 @@ SWIGINTERN PyObject *_wrap_WriteFilteredVsbW(PyObject *SWIGUNUSEDPARM(self), PyO
   wchar_t *buf3 = 0 ;
   int alloc3 = 0 ;
   PyObject *swig_obj[4] ;
-  bool result;
+  int result;
   
   if (!SWIG_Python_UnpackTuple(args, "WriteFilteredVsbW", 4, 4, swig_obj)) SWIG_fail;
   res1 = SWIG_AsWCharPtrAndSize(swig_obj[0], &buf1, NULL, &alloc1);
@@ -4210,8 +4266,8 @@ SWIGINTERN PyObject *_wrap_WriteFilteredVsbW(PyObject *SWIGUNUSEDPARM(self), PyO
       SWIG_exception_fail(SWIG_ArgError(res), "in method '" "WriteFilteredVsbW" "', argument " "4"" of type '" "ProgressFunc""'"); 
     }
   }
-  result = (bool)WriteFilteredVsbW((wchar_t const *)arg1,(wchar_t const *)arg2,(wchar_t const *)arg3,arg4);
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  result = (int)WriteFilteredVsbW((wchar_t const *)arg1,(wchar_t const *)arg2,(wchar_t const *)arg3,arg4);
+  resultobj = SWIG_From_int(static_cast< int >(result));
   if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
   if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
   if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
@@ -4240,7 +4296,7 @@ SWIGINTERN PyObject *_wrap_WriteFilteredVsb(PyObject *SWIGUNUSEDPARM(self), PyOb
   char *buf3 = 0 ;
   int alloc3 = 0 ;
   PyObject *swig_obj[4] ;
-  bool result;
+  int result;
   
   if (!SWIG_Python_UnpackTuple(args, "WriteFilteredVsb", 4, 4, swig_obj)) SWIG_fail;
   res1 = SWIG_AsCharPtrAndSize(swig_obj[0], &buf1, NULL, &alloc1);
@@ -4264,8 +4320,8 @@ SWIGINTERN PyObject *_wrap_WriteFilteredVsb(PyObject *SWIGUNUSEDPARM(self), PyOb
       SWIG_exception_fail(SWIG_ArgError(res), "in method '" "WriteFilteredVsb" "', argument " "4"" of type '" "ProgressFunc""'"); 
     }
   }
-  result = (bool)WriteFilteredVsb((char const *)arg1,(char const *)arg2,(char const *)arg3,arg4);
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  result = (int)WriteFilteredVsb((char const *)arg1,(char const *)arg2,(char const *)arg3,arg4);
+  resultobj = SWIG_From_int(static_cast< int >(result));
   if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
   if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
   if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
@@ -6115,6 +6171,8 @@ static PyMethodDef SwigMethods[] = {
 	 { "Split", _wrap_Split, METH_VARARGS, NULL},
 	 { "CreateDatabaseW", _wrap_CreateDatabaseW, METH_VARARGS, NULL},
 	 { "CreateDatabase", _wrap_CreateDatabase, METH_VARARGS, NULL},
+	 { "AddToDatabaseW", _wrap_AddToDatabaseW, METH_VARARGS, NULL},
+	 { "AddToDatabase", _wrap_AddToDatabase, METH_VARARGS, NULL},
 	 { "WriteFilteredVsbW", _wrap_WriteFilteredVsbW, METH_VARARGS, NULL},
 	 { "WriteFilteredVsb", _wrap_WriteFilteredVsb, METH_VARARGS, NULL},
 	 { "icsSpyMessageVSB_StatusBitField_set", _wrap_icsSpyMessageVSB_StatusBitField_set, METH_VARARGS, NULL},

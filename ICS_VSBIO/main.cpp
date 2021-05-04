@@ -7,7 +7,7 @@
 #include <tchar.h>
 #endif
 
-#include "VSBDB.h"
+#include "VSBDatabase.h"
 
 extern "C" bool ShowProgressFunc(int nPctDone)
 {

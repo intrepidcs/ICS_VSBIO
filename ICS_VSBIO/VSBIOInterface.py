@@ -116,16 +116,22 @@ def SplitW(sFileName: "wchar_t const *", nMessagesPerFile: "unsigned int", Outpu
 def Split(sFileName: "char const *", nMessagesPerFile: "unsigned int", OutputLocation: "char const *", prog: "ProgressFunc") -> "bool":
     return _VSBIOInterface.Split(sFileName, nMessagesPerFile, OutputLocation, prog)
 
-def CreateDatabaseW(inputFilePath: "wchar_t const *", outputFileName: "wchar_t const *", bAppend: "bool", prog: "ProgressFunc") -> "bool":
-    return _VSBIOInterface.CreateDatabaseW(inputFilePath, outputFileName, bAppend, prog)
+def CreateDatabaseW(inputFilePath: "wchar_t const *", outputFileName: "wchar_t const *", prog: "ProgressFunc") -> "bool":
+    return _VSBIOInterface.CreateDatabaseW(inputFilePath, outputFileName, prog)
 
-def CreateDatabase(inputFilePath: "char const *", outputFileName: "char const *", bAppend: "bool", prog: "ProgressFunc") -> "bool":
-    return _VSBIOInterface.CreateDatabase(inputFilePath, outputFileName, bAppend, prog)
+def CreateDatabase(inputFilePath: "char const *", outputFileName: "char const *", prog: "ProgressFunc") -> "bool":
+    return _VSBIOInterface.CreateDatabase(inputFilePath, outputFileName, prog)
 
-def WriteFilteredVsbW(inputFilePath: "wchar_t const *", outputFileName: "wchar_t const *", filter: "wchar_t const *", prog: "ProgressFunc") -> "bool":
+def AddToDatabaseW(inputFilePath: "wchar_t const *", outputFileName: "wchar_t const *", prog: "ProgressFunc") -> "bool":
+    return _VSBIOInterface.AddToDatabaseW(inputFilePath, outputFileName, prog)
+
+def AddToDatabase(inputFilePath: "char const *", outputFileName: "char const *", prog: "ProgressFunc") -> "bool":
+    return _VSBIOInterface.AddToDatabase(inputFilePath, outputFileName, prog)
+
+def WriteFilteredVsbW(inputFilePath: "wchar_t const *", outputFileName: "wchar_t const *", filter: "wchar_t const *", prog: "ProgressFunc") -> "int":
     return _VSBIOInterface.WriteFilteredVsbW(inputFilePath, outputFileName, filter, prog)
 
-def WriteFilteredVsb(inputFilePath: "char const *", outputFileName: "char const *", filter: "char const *", prog: "ProgressFunc") -> "bool":
+def WriteFilteredVsb(inputFilePath: "char const *", outputFileName: "char const *", filter: "char const *", prog: "ProgressFunc") -> "int":
     return _VSBIOInterface.WriteFilteredVsb(inputFilePath, outputFileName, filter, prog)
 class icsSpyMessageVSB(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")

@@ -4,20 +4,10 @@
 #include "VSBIO.h"
 #include "OFile.h"
 #include "MessageTimeDecoderVSB.h"
-#include "VSBDB.h"
+#include "VSBDatabase.h"
 #include "KompexSQLiteException.h"
 
 using namespace Kompex;
-
-#if defined _WIN32
-#include <tchar.h>
-#endif
-
-#define DROP_NETWORK "DROP TABLE IF EXISTS Network"
-#define CREATE_NETWORK "CREATE TABLE IF NOT EXISTS Network (Id INTEGER, Name TEXT NOT NULL, Device TEXT, Protocol TEXT NOT NULL, DisplayName TEXT NOT NULL," \
-        "FirstTime INTEGER, LastTime INTEGER, NumMessages INTEGER, PRIMARY KEY(Id))"
-#define INSERT_NETWORK "INSERT OR IGNORE INTO Network (Id, Name, Device, Protocol, DisplayName, FirstTime, LastTime, NumMessages) VALUES " \
-        "(@Id, @Name, @Device, @Protocol, @DisplayName, @FirstTime, @LastTime, @NumMessages)"
 
 #define DROP_MESSAGES "DROP TABLE IF EXISTS RawMessageData"
 #define CREATE_MESSAGES "CREATE TABLE IF NOT EXISTS RawMessageData (MessageTime INTEGER, NetworkId INTEGER, Id INTEGER, Status INTEGER NOT NULL, Ack INTEGER, " \
@@ -26,63 +16,25 @@ using namespace Kompex;
 #define INSERT_MESSAGES "INSERT OR IGNORE INTO RawMessageData (MessageTime, NetworkId, Id, Status, Ack, Header, DataSize, Data) VALUES " \
         "(@MessageTime, @NetworkId, @Id, @Status, @Ack, @Header, @DataSize, @Data)"
 
-#define GET_NETWORK_INFO "SELECT Min(MessageTime), Max(MessageTime), Count(*) FROM RawMessageData WHERE NetworkId = @Id"
-
 #define SELECT_MESSAGES "SELECT MessageTime, NetworkId, Id, Status, Ack, Header, DataSize, Data FROM RawMessageData"
 const int DataSize_Read_Offset = 6;  // 0 index in previous select
 
-void NetworkInfo::SaveInfo(SQLiteDatabase *pDb)
+void PrepareForWriting(SQLiteDatabase* pDb)
 {
-    SQLiteStatement qryNetwork(pDb);
-    qryNetwork.Sql(GET_NETWORK_INFO);
-    qryNetwork.BindInt64(1, m_id);
+    SQLiteStatement stmtDbSetup(pDb);
+    stmtDbSetup.SqlStatement("PRAGMA journal_mode=OFF");       // we don't roll back transactions so no journal required
+    stmtDbSetup.SqlStatement("PRAGMA synchronous=OFF");        // let the OS handle writes, no need to protect against power failures
+    stmtDbSetup.SqlStatement("PRAGMA count_changes=OFF");      // this is a deprecated pragma but can help performance if followed
+    stmtDbSetup.SqlStatement("PRAGMA cache_size=100000");      // this should max out at just over 80MB of max memory
+    stmtDbSetup.SqlStatement("PRAGMA locking_mode=EXCLUSIVE"); // only one reader/writer to the db we're creating
+}
 
-    if (qryNetwork.FetchRow())  // Update the stats after possibly appending messages
-    {
-        int nQryCol = 0;
-        m_firstTime = qryNetwork.GetColumnInt64(nQryCol++);
-        m_lastTime = qryNetwork.GetColumnInt64(nQryCol++);
-        m_numMessages = qryNetwork.GetColumnInt64(nQryCol++);
-    }
-
-    SQLiteStatement insertNetworks(pDb);
-    insertNetworks.Sql(INSERT_NETWORK);
-    string netName, protocol;
-
-    for (size_t nCnt = 0; nCnt < sizeof(networkNames) / sizeof(networkNames[0]); ++nCnt)
-    {
-        if (m_id == networkNames[nCnt].id)
-        {
-            netName = networkNames[nCnt].name;
-            break;
-        }
-    }
-
-    if (netName.size() == 0)
-        netName = "Unknown";
-    else
-    {
-        // CAN and CAN FD for example
-        for (std::set<int>::const_iterator itProtocol = m_protocol.begin(); itProtocol != m_protocol.end(); ++itProtocol)
-        {
-            if ((*itProtocol >= 0) && (*itProtocol <= SPY_PROTOCOL_TCP))
-            {
-                if (protocol.size())
-                    protocol += ",";
-                protocol += protocols[*itProtocol];
-            }
-        }
-    }
-    int nCol = 1;
-    insertNetworks.BindInt(nCol++, m_id);
-    insertNetworks.BindString(nCol++, netName);
-    insertNetworks.BindString(nCol++, "");
-    insertNetworks.BindString(nCol++, protocol);
-    insertNetworks.BindString(nCol++, netName);
-    insertNetworks.BindInt64(nCol++, m_firstTime);
-    insertNetworks.BindInt64(nCol++, m_lastTime);
-    insertNetworks.BindInt64(nCol++, m_numMessages);
-    insertNetworks.ExecuteAndFree();
+void CleanAfterWriting(SQLiteDatabase* pDb)
+{
+    SQLiteStatement stmtDbCleanup(pDb);
+    stmtDbCleanup.SqlStatement("PRAGMA journal_mode=DELETE");
+    stmtDbCleanup.SqlStatement("PRAGMA synchronous=FULL");
+    stmtDbCleanup.SqlStatement("PRAGMA shrink_memory");
 }
 
 /// <summary>
@@ -92,21 +44,14 @@ void NetworkInfo::SaveInfo(SQLiteDatabase *pDb)
 VSBInfo::VSBInfo(SQLiteDatabase* pDb)
 {
     m_pDb = pDb;
-    SQLiteStatement stmtDbSetup(m_pDb);
-    stmtDbSetup.SqlStatement("PRAGMA journal_mode=OFF");       // we don't roll back transactions so no journal required
-    stmtDbSetup.SqlStatement("PRAGMA synchronous=OFF");        // let the OS handle writes, no need to protect against power failures
-    stmtDbSetup.SqlStatement("PRAGMA count_changes=OFF");      // this is a deprecated pragma but can help performance if followed
-    stmtDbSetup.SqlStatement("PRAGMA cache_size=100000");      // this should max out at just over 80MB of max memory
-    stmtDbSetup.SqlStatement("PRAGMA locking_mode=EXCLUSIVE"); // only one reader/writer to the db we're creating
+    PrepareForWriting(m_pDb);
 }
 
 void VSBInfo::CleanTables(bool bAppend)
 {
-    SQLiteStatement stmtDbClean(m_pDb);
-    if (!bAppend)
-        stmtDbClean.SqlStatement(DROP_NETWORK);
-    stmtDbClean.SqlStatement(CREATE_NETWORK);
+    NetworkInfo::CleanMessageStatistics(m_pDb);
 
+    SQLiteStatement stmtDbClean(m_pDb);
     if (!bAppend)
         stmtDbClean.SqlStatement(DROP_MESSAGES);
     stmtDbClean.SqlStatement(CREATE_MESSAGES);
@@ -118,10 +63,7 @@ void VSBInfo::CleanTables(bool bAppend)
 VSBInfo::~VSBInfo()
 { 
     FlushCache(); 
-    SQLiteStatement stmtDbCleanup(m_pDb);
-    stmtDbCleanup.SqlStatement("PRAGMA journal_mode=DELETE");
-    stmtDbCleanup.SqlStatement("PRAGMA synchronous=FULL");
-    stmtDbCleanup.SqlStatement("PRAGMA shrink_memory");
+    CleanAfterWriting(m_pDb);
 }
 
 /// <summary>
@@ -264,7 +206,7 @@ bool CreateDb(const char *pVsbPath, const char *pDbPath, bool bAppend, ProgressF
             }
             info.ProcessMessage(msg);
         }
-        info.SaveInfo();
+        info.UpdateTable();
         return true;
     }
     catch (SQLiteException& exception)
@@ -274,7 +216,7 @@ bool CreateDb(const char *pVsbPath, const char *pDbPath, bool bAppend, ProgressF
     }
 }
 
-bool WriteVsb(const char* pDbPath, const char* pVsbPath, const char *pFilter, ProgressFunc prog)
+int WriteVsb(const char* pDbPath, const char* pVsbPath, const char *pFilter, ProgressFunc prog)
 {
     try
     {
@@ -290,7 +232,6 @@ bool WriteVsb(const char* pDbPath, const char* pVsbPath, const char *pFilter, Pr
         qryMessages.Sql(sSql);
 
         VSBIOWrite write;
-        write.Init(pVsbPath);
 
         std::vector<unsigned char> msg;
         uint64_t counter = 0;
@@ -298,7 +239,10 @@ bool WriteVsb(const char* pDbPath, const char* pVsbPath, const char *pFilter, Pr
         unsigned int messageSize;
         while (qryMessages.FetchRow())
         {
-            if (prog && !((counter + 1) % 100000))
+            if (counter++ == 0)
+                write.Init(pVsbPath);
+
+            if (prog && !(counter % 100000))
             {
                 if (!prog(++pct))
                     break;
@@ -307,11 +251,11 @@ bool WriteVsb(const char* pDbPath, const char* pVsbPath, const char *pFilter, Pr
             write.WriteMessage(&msg[0], messageSize);
         }
 
-        return true;
+        return (int)counter;
     }
     catch (SQLiteException& exception)
     {
         exception.Show();
-        return false;
+        return -1;
     }
 }

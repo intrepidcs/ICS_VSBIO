@@ -3,7 +3,7 @@
 
 #include "VSBIODLL.h"
 #include "VSBIO/VSBIO.h"
-#include "VSBIO/VSBDB.h"
+#include "VSBIO/VSBDatabase.h"
 #include <string>
 #include <locale>
 
@@ -129,13 +129,13 @@ extern "C" VSBIODLL_API bool AddToDatabase(const char* inputFilePath, const char
 	return CreateDb(inputFilePath, outputFileName, true, prog);
 }
 
-extern "C" VSBIODLL_API bool WriteFilteredVsbW(const wchar_t* inputFilePath, const wchar_t* outputFileName, const wchar_t* filter,
+extern "C" VSBIODLL_API int WriteFilteredVsbW(const wchar_t* inputFilePath, const wchar_t* outputFileName, const wchar_t* filter,
 	ProgressFunc prog)
 {
 	return WriteFilteredVsb(mbstring(inputFilePath).c_str(), mbstring(outputFileName).c_str(), mbstring(filter).c_str(), prog);
 }
 
-extern "C" VSBIODLL_API bool WriteFilteredVsb(const char* inputFilePath, const char* outputFileName, const char *filter,
+extern "C" VSBIODLL_API int WriteFilteredVsb(const char* inputFilePath, const char* outputFileName, const char *filter,
 	ProgressFunc prog)
 {
 	return WriteVsb(inputFilePath, outputFileName, filter, prog);

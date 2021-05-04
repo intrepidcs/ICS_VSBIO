@@ -29,7 +29,8 @@ set( SOURCES
 	./VSBIO/OFile.cpp
 	./VSBIO/VSBIO.cpp
 	./VSBIO/MessageTimeDecoderVSB.cpp
-	./VSBIO/VSBDB.cpp
+	./VSBIO/VSBDatabase.cpp
+	./VSBIO/NetworkInfo.cpp
 	./VSBIO/sqlite/sqlite3.c
 	./VSBIO/sqlite/KompexSQLiteDatabase.cpp
 	./VSBIO/sqlite/KompexSQLiteStatement.cpp
