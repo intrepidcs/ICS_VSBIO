@@ -1,25 +1,24 @@
 # ICS_VSBIO
 This module is designed to help users read Intrepid Control Systems VSB file. The file consists of messages that have been logged on the network. 
 
-## Installation 
-The module can be installed using ```pip``` or can simply be installed from the git repo directly. 
-
 ### Pip Installation
+To install with ```pip``` first download all of the source code from the repo by clicking on the dropdown at the green Code button and click on Download ZIP. 
 
-To install with ```pip``` simply enter the following in the terminal. 
-```
-pip install ICS_VSBIO
-```
+Then you must install a compiler on your PC. If running Windows install Microsoft Visual C++ 14.0 or newer. You can get this by installing "Build Tools for Visual Sudio" at https://visualstudio.microsoft.com/downloads/.
+
+Then navigate to the root of the downloaded source code and type "pip install -e ." at the command prompt without quotes. 
+
+The compiler should make a folder in the source code directory called ICS_VSBIO.egg-info. 
+
 
 ## Usage
 
-The module contains three Classes ```VSBIOFlags```, ```VSBReader```, ```VSBWriter```, ```VSBSplit``` and ```VSBConcatenate```.  
+The module contains three Classes ```MsgFileClass```, ```VSBIOFlags```, ```VSBReader```, ```VSBWriter```, ```VSBSplit``` and ```VSBConcatenate```.  
 
 Please see the examples directory for sample programs:
-* VSBIOExample.py         Reads the messages from a file and writes some of them to a new file
-* VSBIOSplitConcat.py     Splits the input file and then concatenates all the resulting files back into a new file
-* VSBIOFilter.py          Creates a Sqlite database containing all the messages in the input vsb file and filters a subset of the 
-						  messages into a new vsb file
+* VSBIOExample.py - Reads the messages from a file and writes some of them to a new file.
+* GenerateVSBFileInfoSummary.py - Generates an xlsx file with a summary of all of the MsgIDs on all networks among a list of vsb files including number of records for each. See comments at top of file for more info. 
+* SplitVSB_ByArbIdAndNetwork.py - Extracts a subset of message data from a list of vsb files and combines the result into a single vsb file. You can split by time, network, and MsgID.  See comments at top of file for more info. 
 
 #### VSBReader functions
 ```__init__``` Takes filename to initialize process 
@@ -47,16 +46,6 @@ Please see the examples directory for sample programs:
 ```exData``` the extra data pointer used by protocols such as ethernet to store dynamic data. in the case of ethernet the full payload is stored here. note ```message.info.ExtraDataPtr``` or ```sizeOfMsg``` can be used to identify if there is content in the ```exData```
 
 ```sizeOfMsg``` the size of the ```exData```
-
-#### VSBSplit functions
-```__init__``` Takes filename to split, number of messages to split on and output directory
-
-```split()``` splits the file
-
-#### VSBConcatenate functions
-```__init__``` Takes directory containing the input files and the output file name
-
-```concatenate()``` concatenates the files
 
 
 #### Info

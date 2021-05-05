@@ -177,7 +177,7 @@ for msg_File in msg_Files.FilesListSorted:
 
 		log.info("Generate filtered vsb file")
 		
-		msg_File.NumberOfRecordsInFilteredVSB = vsb.WriteFilteredVsb(msg_File.DB_FileName, msg_File.FilteredVSBFilename, NetworkAndMsgIDQueryString + TimeFilterString, None)
+		msg_File.NumberOfRecordsInFilteredVSB = vsb.WriteFilteredVsb(msg_File.DB_FileName, msg_File.FilteredVSBFilename, "(" + NetworkAndMsgIDQueryString + ")" + TimeFilterString, None)
 		if msg_File.NumberOfRecordsInFilteredVSB > 0:
 			sys.stdout.write("VSB file was created! with " + str(msg_File.NumberOfRecordsInFilteredVSB) + " in it. \n")
 			log.info("Finished generating filtered vsb file")
@@ -218,4 +218,6 @@ if config["CombineResultingFilesToASingleVSB"] == "TRUE":
 	else:
 		sys.stdout.write('Combined vsb file has no records for output.\n')
 		log.info('Combined vsb file has no records for output.')
+	if ( os.path.isfile(OutputDatabaseFilename) and (config["DeleteTempDB2FileAfterExecution"] == "TRUE")  ):
+		os.remove(OutputDatabaseFilename)
 log.info("Goodbye")

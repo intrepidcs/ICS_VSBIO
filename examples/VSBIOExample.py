@@ -3,7 +3,7 @@ from ICS_VSBIO import VSBWriter  as writer
 from ICS_VSBIO import VSBIOFlags as flags
 import binascii
 
-vsbRead = reader.VSBReader("input.vsb")
+vsbRead = reader.VSBReader("input1.vsb")
 vsbWrite = writer.VSBWriter("ouput.vsb")
 
 count = 0

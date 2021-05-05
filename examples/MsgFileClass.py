@@ -44,6 +44,7 @@ class msgFiles:
 				except ValueError as e:
 					print(str(e))
 			else:
+				self.FilesList[-1].DB_FileName = inputFilePath["path"]
 				conn = sqlite3.connect(inputFilePath["path"], timeout=10)
 
 			self.log.info("Get info from DB file")

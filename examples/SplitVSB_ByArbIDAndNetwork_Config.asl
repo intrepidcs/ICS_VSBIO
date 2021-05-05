@@ -1,24 +1,18 @@
 {
 	"StartTimeInSecondsFromStartOfFile" : NaN,
 	"EndTimeInSecondsFromStartOfFile" : NaN,
-	"StartTimeAbsolute" : "2021-03-15T08:55:55.200000+00:00",
-	"EndTimeAbsolute" : "2021-04-29T13:23:05.500924+00:00",
+	"StartTimeAbsolute" : "2017-07-18T10:09:02.400000+00:00",
+	"EndTimeAbsolute" : "2017-07-19T10:09:03.200000+00:00",
 	"DeleteTempDB2FileAfterExecution" : "TRUE",
-	"CombineResultingFilesToASingleVSB" : "TRUE",	
+	"CombineResultingFilesToASingleVSB" : "TRUE",
 	"MsgIDsPerNetwork": [{
         "network_IDString": "HSCAN",
-        "MsgIdList": "0x7*, 0x6??"
+        "MsgIdList": "0x1*, 0x77?"
     },{
         "network_IDString": "MSCAN",
-        "MsgIdList": "0x7C6, 0x7C4, 0x751, 0x785, 0x775, 0x741, 0x740, 0x6??, 0x733, 0x7CE, 0x7CC, 0x759, 0x78D, 0x77D, 0x749, 0x748, 0x73B, 0x7DF"
+        "MsgIdList": "0x4a0, 0x4a1, 0x4a2, 0x4a3, 0x4a4, 0x4a5, 0x4a6, 0x4a7, 0x4a8, 0x4a9, 0x4aa, 0x4c0, 0x4c1, 0x4c2, 0x4c3, 0x4c4, 0x4c5, 0x4c6, 0x4c7, 0x4c8, 0x4c9, 0x4ca, 0x4d0, 0x4d1, 0x4d2, 0x4d3, 0x4d4, 0x4d5, 0x4d6, 0x4d7, 0x4d8, 0x4d9, 0x4da, 0x552"
     },{
-        "network_IDString": "HSCAN2",
-        "MsgIdList": "0x7*"
-    },{
-        "network_IDString": "HSCAN3",
-        "MsgIdList": "0x720, 0x728, 0x7DF"
-    },{
-        "network_IDString": "HSCAN4",
-        "MsgIdList": "0x7*, 0x620, 0x6???, 0x528"
+        "network_IDString": "SWCAN",
+        "MsgIdList": "0x106*, 0x107?40??, 0x13*"
     }]
 }
