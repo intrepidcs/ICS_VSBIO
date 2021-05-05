@@ -176,8 +176,12 @@ for msg_File in msg_Files.FilesListSorted:
 				TimeFilterString = "((MessageTime > " + FilteredStartTime + ") AND (MessageTime < " + FilteredEndTime + "))"
 
 		log.info("Generate filtered vsb file")
-		
-		msg_File.NumberOfRecordsInFilteredVSB = vsb.WriteFilteredVsb(msg_File.DB_FileName, msg_File.FilteredVSBFilename, "(" + NetworkAndMsgIDQueryString + ")" + TimeFilterString, None)
+		if len(NetworkAndMsgIDQueryString) > 0:
+			TempQueryString = "(" + NetworkAndMsgIDQueryString + ")"
+		else:
+			TempQueryString = ""
+
+		msg_File.NumberOfRecordsInFilteredVSB = vsb.WriteFilteredVsb(msg_File.DB_FileName, msg_File.FilteredVSBFilename, TempQueryString + TimeFilterString, None)
 		if msg_File.NumberOfRecordsInFilteredVSB > 0:
 			sys.stdout.write("VSB file was created! with " + str(msg_File.NumberOfRecordsInFilteredVSB) + " in it. \n")
 			log.info("Finished generating filtered vsb file")
