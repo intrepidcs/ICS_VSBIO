@@ -1,52 +1,26 @@
 # ICS_VSBIO
 This module is designed to help users read Intrepid Control Systems VSB file. The file consists of messages that have been logged on the network. 
 
-## Instillation 
-The module can be installed using ```pip``` or can simply be installed from the git repo directly. 
+### Pip Installation
+To install with ```pip``` first download all of the source code from the repo by clicking on the dropdown at the green Code button and click on Download ZIP. 
 
-### Pip Instillation
+Then you must install a compiler on your PC. If running Windows install Microsoft Visual C++ 14.0 or newer. You can get this by installing "Build Tools for Visual Sudio" at https://visualstudio.microsoft.com/downloads/.
 
-To install with ```pip``` simply enter the following in the terminal. 
-```
-pip install ICS_VSBIO
-```
+Then navigate to the root of the downloaded source code and type "pip install -e ." at the command prompt without quotes. 
+
+The compiler should make a folder in the source code directory called ICS_VSBIO.egg-info. 
+
 
 ## Usage
 
-The module contains three Classes ```VSBIOFlags```, ```VSBReader``` and ```VSBWriter```.  
+The module contains three Classes ```MsgFileClass```, ```VSBIOFlags```, ```VSBReader```, ```VSBWriter```, ```VSBSplit``` and ```VSBConcatenate```.  
 
-### Reading From File
+Please see the examples directory for sample programs:
+* VSBIOExample.py - Reads the messages from a file and writes some of them to a new file.
+* GenerateVSBFileInfoSummary.py - Generates an xlsx file with a summary of all of the MsgIDs on all networks among a list of vsb files including number of records for each. See comments at top of file for more info. 
+* SplitVSB_ByArbIdAndNetwork.py - Extracts a subset of message data from a list of vsb files and combines the result into a single vsb file. You can split by time, network, and MsgID.  See comments at top of file for more info. 
 
-```py
-from ICS_VSBIO import VSBReader  as reader
-from ICS_VSBIO import VSBWriter  as writer
-from ICS_VSBIO import VSBIOFlags as flags
-import binascii
-
-vsbread = reader.VSBReader("input.vsb")
-vsbwrite = writer.VSBWriter("ouput.vsb")
-
-count = 0
-print('start')
-try:
-    for message in vsbread:
-        count += 1
-        if not count % 2000:
-            print('{0}% of file read'.format(vsbread.get_progress()))
-        if message.info.NetworkID == flags.NETID_HSCAN:
-            if (message.info.ExtraDataPtr):
-                print(binascii.hexlify(message.exData))
-            vsbwrite.write_msg(message)
-
-except ValueError as e:
-    print(str(e))
-except:
-    print('an unknown error has occurred')
-else:
-    print('Success')
-```
-
-#### VSBRead functions
+#### VSBReader functions
 ```__init__``` Takes filename to initialize process 
 
 ```get_progress()``` returns the progress as a integer percentage
@@ -55,11 +29,13 @@ else:
 
 ```get_display_message()``` return Display messages if any
 
-```get_satus()``` returns the current state
+```get_message_time()``` return the message seconds since Jan 1, 2007
+
+```get_status()``` returns the current state
 
 ```get_status_as_string()``` returns the current state in string format
 
-#### VSBWrite functions
+#### VSBWriter functions
 ```__init__``` Takes filename to initialize process 
 
 ```write_msg(message)``` writes vsb message to file.

@@ -1,4 +1,4 @@
 /*VSBIODLL.i*/
 %include "stdint.i"
 %module VSBIOFlags
-%include "VSBIO/include/VSBIO/VSBFlags.h"
+%include "VSBIO/VSBFlags.h"

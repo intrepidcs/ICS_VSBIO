@@ -87,6 +87,12 @@ class VSBReader:
 		'''
 		return vsb.GetDisplayMessage(self.handle)
 
+	def get_message_time(self, msg):
+		'''
+		return the message seconds since Jan 1, 2007
+		'''
+		return vsb.GetMsgTime(msg.info)
+
 	def get_status(self):
 		'''
 		returns the current state
