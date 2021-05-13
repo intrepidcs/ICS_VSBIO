@@ -3,6 +3,8 @@ import logging
 from ICS_VSBIO import VSBIOInterface as vsb
 from datetime import datetime, timezone
 import sqlite3
+import sys
+from ICS_IPA import IPAInterfaceLibrary
 
 class msgFiles:
 	def __init__(self, inputFilePaths, ReportGenTimeStamp):
@@ -19,13 +21,18 @@ class msgFiles:
 		self.handler.setFormatter(self.formatter)
 		self.log.addHandler(self.handler)
 
+		if IPAInterfaceLibrary.is_running_on_wivi_server():
+			OutputFilePath = os.path.dirname(sys.argv[0]) + "\\"
+		else:
+			OutputFilePath = os.path.dirname(sys.argv[0]) + "\\"
+
 		for inputFilePath in inputFilePaths:
 			filenameWithoutPath = os.path.basename(inputFilePath["path"])
-			filename, fileExtension = os.path.splitext(inputFilePath["path"])
+			filename, fileExtension = os.path.splitext(filenameWithoutPath)
 			self.FilesList.append(msgFile())
-			self.FilesList[-1].DB_FileName = os.path.splitext(filenameWithoutPath)[0] + "_" + ReportGenTimeStamp + "_Filtrd.db2"
+			self.FilesList[-1].DB_FileName = OutputFilePath + filename + "_" + ReportGenTimeStamp + "_Filtrd.db2"
 			self.FilesList[-1].FileName = filenameWithoutPath
-			self.FilesList[-1].FilePath = filename
+			self.FilesList[-1].FilePath = OutputFilePath
 			self.FilesList[-1].FileExtension = fileExtension
 			self.FilesList[-1].FileCreatedByClass = False
 			self.FilesList[-1].FileStartTime = ""

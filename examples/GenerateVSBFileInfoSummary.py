@@ -42,8 +42,8 @@ from ICS_IPA import DataFileIOLibrary as icsFI
 from ICS_IPA import IPAInterfaceLibrary
 from shutil import copyfile
 
-from ICS_VSBIO import VSBIOInterface as vsb
 from datetime import datetime, timezone
+from ICS_IPA import IPAInterfaceLibrary
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -74,9 +74,15 @@ log.info("Analyzing input files")
 input_msg_Files = msgFiles(inputFilePaths, ReportGenTimeStamp)
 
 if IPAInterfaceLibrary.is_running_on_wivi_server():
-	TemplateFilenameAndPath = sys.argv[0].replace("__main__.py", config["TemplateFilename"])
+	OutputFilePath = os.path.dirname(sys.argv[0]) + "\\"
+	TemplateFilenameAndPath = OutputFilePath + config["TemplateFilename"]
+	OutputFilename = "vsbFileInfoSummary_" + str(ReportGenTimeStamp) + ".xlsx"
+	OutputFilenameAndPath = OutputFilePath + OutputFilename
 else:
-	TemplateFilenameAndPath = sys.argv[0].replace("__main__.py", config["TemplateFilename"])
+	OutputFilePath = os.path.dirname(sys.argv[0]) + "\\"
+	TemplateFilenameAndPath = OutputFilePath + config["TemplateFilename"]
+	OutputFilename = "vsbFileInfoSummary_" + str(ReportGenTimeStamp) + ".xlsx"
+	OutputFilenameAndPath = OutputFilePath + OutputFilename
 
 #now write the vsbFiles info to the template Excel Spreadsheet
 log.info("Creating Excel output file")
@@ -86,7 +92,7 @@ DataEntryRow = 3
 if(len(input_msg_Files.FilesListSorted) > 0):	
 	if not('vsbStatSummary' in wb.sheetnames):
 		log.info(OutputFilename + " doesn't have a sheet named vsbStatSummary")
-		wb.save(OutputFilename)
+		wb.save(OutputFilenameAndPath)
 		wb.close()
 		quit()
 	ws = wb.get_sheet_by_name('vsbStatSummary')
@@ -119,9 +125,7 @@ if(len(input_msg_Files.FilesListSorted) > 0):
 
 	log.info("Saving report file")
 	
-	OutputFilename = "vsbFileInfoSummary_" + str(ReportGenTimeStamp) + ".xlsx"
-
-	wb.save(OutputFilename)
+	wb.save(OutputFilenameAndPath)
 	wb.close()
 
 	log.info("Goodbye")
