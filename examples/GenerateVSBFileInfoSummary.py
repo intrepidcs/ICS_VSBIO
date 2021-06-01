@@ -74,15 +74,15 @@ log.info("Analyzing input files")
 input_msg_Files = msgFiles(inputFilePaths, ReportGenTimeStamp)
 
 if IPAInterfaceLibrary.is_running_on_wivi_server():
-	OutputFilePath = os.path.dirname(sys.argv[0]) + "\\"
-	TemplateFilenameAndPath = OutputFilePath + config["TemplateFilename"]
+	OutputFilePath = os.path.dirname(sys.argv[0])
+	TemplateFilenameAndPath = os.path.join(OutputFilePath, config["TemplateFilename"])
 	OutputFilename = "vsbFileInfoSummary_" + str(ReportGenTimeStamp) + ".xlsx"
-	OutputFilenameAndPath = OutputFilePath + OutputFilename
+	OutputFilenameAndPath = os.path.join(OutputFilePath ,OutputFilename)
 else:
-	OutputFilePath = os.path.dirname(sys.argv[0]) + "\\"
+	OutputFilePath = os.path.dirname(sys.argv[0])
 	TemplateFilenameAndPath = OutputFilePath + config["TemplateFilename"]
 	OutputFilename = "vsbFileInfoSummary_" + str(ReportGenTimeStamp) + ".xlsx"
-	OutputFilenameAndPath = OutputFilePath + OutputFilename
+	OutputFilenameAndPath = os.path.join(OutputFilePath ,OutputFilename)
 
 #now write the vsbFiles info to the template Excel Spreadsheet
 log.info("Creating Excel output file")

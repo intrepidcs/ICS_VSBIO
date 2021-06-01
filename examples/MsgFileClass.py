@@ -22,15 +22,15 @@ class msgFiles:
 		self.log.addHandler(self.handler)
 
 		if IPAInterfaceLibrary.is_running_on_wivi_server():
-			OutputFilePath = os.path.dirname(sys.argv[0]) + "\\"
+			OutputFilePath = os.path.dirname(sys.argv[0]) 
 		else:
-			OutputFilePath = os.path.dirname(sys.argv[0]) + "\\"
+			OutputFilePath = os.path.dirname(sys.argv[0])
 
 		for inputFilePath in inputFilePaths:
 			filenameWithoutPath = os.path.basename(inputFilePath["path"])
 			filename, fileExtension = os.path.splitext(filenameWithoutPath)
 			self.FilesList.append(msgFile())
-			self.FilesList[-1].DB_FileName = OutputFilePath + filename + "_" + ReportGenTimeStamp + "_Filtrd.db2"
+			self.FilesList[-1].DB_FileName = os.path.join(OutputFilePath, filename + "_" + ReportGenTimeStamp + "_Filtrd.db2") 
 			self.FilesList[-1].FileName = filenameWithoutPath
 			self.FilesList[-1].FilePath = OutputFilePath
 			self.FilesList[-1].FileExtension = fileExtension

@@ -145,9 +145,9 @@ for i in range(len(MsgIDsPerNetwork)):
 
 #now name output files
 if IPAInterfaceLibrary.is_running_on_wivi_server():
-	OutputFilePath = os.path.dirname(sys.argv[0]) + "\\"
+	OutputFilePath = os.path.dirname(sys.argv[0])
 else:
-	OutputFilePath = os.path.dirname(sys.argv[0]) + "\\"
+	OutputFilePath = os.path.dirname(sys.argv[0])
 
 # now go through each file and split using NetworkAndMsgIDQueryString
 for msg_File in msg_Files.FilesListSorted:
@@ -206,8 +206,8 @@ for msg_File in msg_Files.FilesListSorted:
 		print(str(e))
 
 
-OutputDatabaseFilename = OutputFilePath + "\CombinedNetworkFile_" + ReportGenTimeStamp + "_Filtrd.db2"
-OutputVSBFilename = OutputFilePath + "\CombinedNetworkFile_" + ReportGenTimeStamp + "_Filtrd.vsb"
+OutputDatabaseFilename = os.path.join(OutputFilePath, "CombinedNetworkFile_" + ReportGenTimeStamp + "_Filtrd.db2")
+OutputVSBFilename = os.path.join(OutputFilePath, "CombinedNetworkFile_" + ReportGenTimeStamp + "_Filtrd.vsb")
 FirstFileAdded = False
 if config["CombineResultingFilesToASingleVSB"] == "TRUE":
 	for msg_File in msg_Files.FilesListSorted:
@@ -231,7 +231,7 @@ if config["CombineResultingFilesToASingleVSB"] == "TRUE":
 
 #now compress output files
 if config["CombineResultingFilesToASingleVSB"] == "FALSE":
-	VSBOutputZipFilename = OutputFilePath + "\AllOutputVsbFiles_" + ReportGenTimeStamp + ".zip"
+	VSBOutputZipFilename = os.path.join(OutputFilePath, "AllOutputVsbFiles_" + ReportGenTimeStamp + ".zip")
 	zipf = zipfile.ZipFile(VSBOutputZipFilename, 'w', zipfile.ZIP_DEFLATED)
 	for msg_File in msg_Files.FilesListSorted:
 		if (msg_File.NumberOfRecordsInFilteredVSB > 0) and (os.path.isfile(msg_File.FilteredVSBFilename)):
@@ -240,7 +240,7 @@ if config["CombineResultingFilesToASingleVSB"] == "FALSE":
 	zipf.close()
 	 
 if config["DeleteTempDB2FileAfterExecution"] == "FALSE":
-	DB2OutputZipFilename = OutputFilePath + "\AllOutputDB2Files_" + ReportGenTimeStamp + ".zip"
+	DB2OutputZipFilename = os.path.join(OutputFilePath, "AllOutputDB2Files_" + ReportGenTimeStamp + ".zip")
 	zipf = zipfile.ZipFile(DB2OutputZipFilename, 'w', zipfile.ZIP_DEFLATED)
 	for msg_File in msg_Files.FilesListSorted:
 		if ( (msg_File.NumberOfRecordsInFilteredVSB > 0) and os.path.isfile(msg_File.DB_FileName) and (msg_File.FileCreatedByClass)):
