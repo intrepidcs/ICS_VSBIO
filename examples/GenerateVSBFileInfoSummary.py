@@ -19,7 +19,7 @@
 #
 ##########################################################################################################################################################################################################################################
 #    Script Outputs:
-#        The script outputs a two files (vsb + db2) that both start with the text CombinedNetworkFile_ followed by a timestamp indicating when the script was run. 
+#        The script outputs a *.xlsx file based on the TemplateFilename but with summary information about the vsb or db2 files analyzed. 
 #        
 ##########################################################################################################################################################################################################################################
 
