@@ -80,7 +80,7 @@ if IPAInterfaceLibrary.is_running_on_wivi_server():
 	OutputFilenameAndPath = os.path.join(OutputFilePath ,OutputFilename)
 else:
 	OutputFilePath = os.path.dirname(sys.argv[0])
-	TemplateFilenameAndPath = OutputFilePath + config["TemplateFilename"]
+	TemplateFilenameAndPath = os.path.join(OutputFilePath, config["TemplateFilename"])
 	OutputFilename = "vsbFileInfoSummary_" + str(ReportGenTimeStamp) + ".xlsx"
 	OutputFilenameAndPath = os.path.join(OutputFilePath ,OutputFilename)
 
