@@ -95,7 +95,7 @@ if(len(input_msg_Files.FilesListSorted) > 0):
 		wb.save(OutputFilenameAndPath)
 		wb.close()
 		quit()
-	ws = wb.get_sheet_by_name('vsbStatSummary')
+	ws = wb['vsbStatSummary']
 
 	#Read in the header rows 
 	ColumnHeadersFromTemplateSpreadsheet = []
