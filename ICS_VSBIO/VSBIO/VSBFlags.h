@@ -394,5 +394,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define HARDWARE_TIMESTAMP_ID_NEORED_25NS (unsigned char)9
 #define HARDWARE_TIMESTAMP_ID_NEORED_10NS (unsigned char)10
 
+/// <summary>
+/// __time64_t offset to 2007/1/1
+/// </summary>
+#define ICS_EPOCH_OFFSET 1167609600000000000ULL
 
 #endif

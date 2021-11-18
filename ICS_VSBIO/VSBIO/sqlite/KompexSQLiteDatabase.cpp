@@ -128,12 +128,12 @@ void SQLiteDatabase::Close()
 	}
 }
 
-void SQLiteDatabase::TraceOutput(void *ptr, const char *sql)
+void SQLiteDatabase::TraceOutput(void *, const char *sql)
 {
 	std::cout << "trace: " << sql << std::endl;
 }
 
-void SQLiteDatabase::ProfileOutput(void* ptr, const char* sql, sqlite3_uint64 time)
+void SQLiteDatabase::ProfileOutput(void* , const char* sql, sqlite3_uint64 time)
 {
 	std::cout << "profile: " << sql << std::endl;
 	std::cout << "profile time: " << time << std::endl;
@@ -328,12 +328,12 @@ void SQLiteDatabase::CleanUpFailedMemoryDatabase(sqlite3 *memoryDatabase, sqlite
 	KOMPEX_EXCEPT(errMsg, internalSqliteErrCode);
 }
 
-int SQLiteDatabase::ProcessDDLRow(void *db, int columnsCount, char **values, char **columns)
+int SQLiteDatabase::ProcessDDLRow(void *db, int columnsCount, char **values, char **)
 {
 	if(columnsCount != 1)
 	{
 		KOMPEX_EXCEPT("error occured during DDL: columnsCount != 1", -1);
-		return -1;
+		//return -1;
 	}
 
 	// execute a sql statement in values[0] in the database db.
@@ -343,12 +343,12 @@ int SQLiteDatabase::ProcessDDLRow(void *db, int columnsCount, char **values, cha
 	return 0;
 }
 
-int SQLiteDatabase::ProcessDMLRow(void *db, int columnsCount, char **values, char **columns)
+int SQLiteDatabase::ProcessDMLRow(void *db, int columnsCount, char **values, char **)
 {
 	if(columnsCount != 1)
 	{
 		KOMPEX_EXCEPT("error occured during DML: columnsCount != 1", -1);
-		return -1;
+		//return -1;
 	}
 	
 	char *stmt = sqlite3_mprintf("INSERT INTO main.%q SELECT * FROM origin.%q", values[0], values[0]);

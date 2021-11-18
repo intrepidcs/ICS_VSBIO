@@ -53,9 +53,22 @@ void VSBInfo::CleanTables(bool bAppend)
 
     SQLiteStatement stmtDbClean(m_pDb);
     if (!bAppend)
+    {
         stmtDbClean.SqlStatement(DROP_MESSAGES);
+    }
     stmtDbClean.SqlStatement(CREATE_MESSAGES);
 }
+
+void VSBInfo::UpdateTable()
+{
+    FlushCache();
+
+    for (std::map<int, NetworkInfo>::iterator it = m_mapNetworks.begin(); it != m_mapNetworks.end(); ++it)
+    {
+        (*it).second.UpdateTable(m_pDb);
+    }
+}
+
 
 /// <summary>
 /// Destructor, inserts the rest of the cache and cleans up the database
@@ -77,7 +90,8 @@ void VSBInfo::SaveMessage(SQLiteStatement &insertMessage, uint64_t timestamp, co
     icsSpyMessageVSB* msg = ((icsSpyMessageVSB*)&data[0]);
     int nCol = 1;
     insertMessage.BindInt64(nCol++, timestamp);
-    insertMessage.BindInt(nCol++, (((uint32_t)msg->NetworkID2) << 8) | (uint32_t)msg->NetworkID);
+    uint32_t networkId = (((uint32_t)msg->NetworkID2) << 8) | (uint32_t)msg->NetworkID;
+    insertMessage.BindInt(nCol++, networkId);
     insertMessage.BindInt(nCol++, msg->ArbIDOrHeader);
     insertMessage.BindInt64(nCol++, (((uint64_t)msg->StatusBitField2) << 32) | (uint64_t)msg->StatusBitField);
     insertMessage.BindInt64(nCol++, *((uint64_t *)&msg->AckBytes));
@@ -109,7 +123,7 @@ void VSBInfo::FlushCache(size_t numToFlush)
     SQLiteStatement insertMessage(m_pDb);
     insertMessage.Sql(INSERT_MESSAGES);
     size_t curIndex = 0;
-    for (std::multimap<uint64_t, std::vector<unsigned char> >::iterator itMsg = messageCache.begin(); itMsg != messageCache.end(); ++itMsg, ++curIndex)
+    for (auto itMsg = messageCache.begin(); itMsg != messageCache.end(); ++itMsg, ++curIndex)
     {
         SaveMessage(insertMessage, itMsg->first, itMsg->second);
         if (numToFlush && (curIndex >= numToFlush))
@@ -149,7 +163,7 @@ unsigned int ReadMessage(const SQLiteStatement &qryMessages, std::vector<unsigne
 
     size_t msgSize = sizeof(icsSpyMessageVSB);
     if (dataSize > 8)
-        msgSize += dataSize;
+        msgSize += (size_t)dataSize;
     if (data.size() < msgSize)
         data.resize(msgSize);
 
@@ -175,13 +189,13 @@ unsigned int ReadMessage(const SQLiteStatement &qryMessages, std::vector<unsigne
     {
         msg->NumberBytesData = (uint8_t)dataSize;
         if (dataSize)
-            memcpy(msg->Data.data, qryMessages.GetColumnBlob(nCol++), dataSize);
+            memcpy(msg->Data.data, qryMessages.GetColumnBlob(nCol++), (size_t)dataSize);
     }
     else
     {
         msg->ExtraDataPtrEnabled = 1;
         msg->ExtraDataPtr = (uint32_t)dataSize;
-        memcpy(&data[sizeof(icsSpyMessageVSB)], qryMessages.GetColumnBlob(nCol++), dataSize);
+        memcpy(&data[sizeof(icsSpyMessageVSB)], qryMessages.GetColumnBlob(nCol++), (size_t)dataSize);
     }
     return (unsigned int)msgSize;
 }

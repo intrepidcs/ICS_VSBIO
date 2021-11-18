@@ -43,7 +43,8 @@ public:
 		eSuccess = 0,
 		eEndOfFile = 1,
 		eError = 2,
-		eBufferToSmall = 3
+		eBufferTooSmall = 3,
+		eInvalidPayloadSize = 4
 	};
 
 private:

@@ -329,6 +329,15 @@ bool IsDirectory(const std::string& sPath)
 #endif
 }
 
+bool RemoveFile(const std::string& sPath)
+{
+#ifndef linux
+	return DeleteFileW(widestring(sPath).c_str()) ? true : false;
+#else
+	return Owunlink(sPath.c_str()) == 0;
+#endif
+}
+
 std::string CombinePath(const std::string& sPath, const std::string& sFileName)
 {
 	std::string sFullPath(sPath);

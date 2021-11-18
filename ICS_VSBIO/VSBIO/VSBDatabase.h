@@ -3,92 +3,10 @@
 #include <stdint.h>
 #include <map>
 
+#include "NetworkLookups.h"
 #include "NetworkInfo.h"
+#include "VSBStruct.h"
 #include "KompexSQLiteStatement.h"
-
-struct netIdName
-{
-    char name[30];
-    int  id;
-    int  vnetOffset;
-};
-
-const netIdName networkNames[] = { { "neoVI", 0, 0 },
-{ "HS CAN", 1, 1},
-{ "MS CAN", 2, 2},
-{ "SW CAN", 3, 3},
-{ "LSFT CAN", 4, 4},
-{ "FORDSCP", 5, 5},
-{ "J1708", 6, 6},
-{ "AUX", 7, 7},
-{ "J1850 VPW", 8, 8},
-{ "ISO", 9, 9},
-{ "ISOPIC", 10, 10},
-{ "MAIN51", 11, 11},
-{ "RED", 12, 12},
-{ "SCI", 13, 13},
-{ "ISO2", 14, 14},
-{ "ISO14230", 15, 15},
-{ "LIN", 16, 16},
-{ "OP (BR) ETH1", 17, 0},
-{ "OP (BR) ETH2", 18, 0},
-{ "OP (BR) ETH3", 19, 0},
-{ "ISO3", 41, 17},
-{ "HS CAN2", 42, 18},
-{ "HS CAN3", 44, 19},
-{ "OP (BR) ETH4", 45, 0},
-{ "OP (BR) ETH5", 46, 0},
-{ "ISO4", 47, 20},
-{ "LIN2", 48, 21},
-{ "LIN3", 49, 22},
-{ "LIN4", 50, 23},
-{ "MOST", 51, 24},
-{ "RED_APP_ERROR", 52, 46},
-{ "CGI", 53, 25},
-{ "3G_RESET_STATUS", 54, 0},
-{ "3G_FB_STATUS", 55, 0},
-{ "3G_APP_SIGNAL_STATUS", 56, 0},
-{ "3G_READ_DATALINK_CM_TX_MSG", 57, 0},
-{ "3G_READ_DATALINK_CM_RX_MSG", 58, 0},
-{ "3G_LOGGING_OVERFLOW", 59, 0},
-{ "3G_READ_SETTINGS_EX", 60, 0},
-{ "HS CAN4", 61, 32},
-{ "HS CAN5", 62, 33},
-{ "RS232", 63, 34},
-{ "UART", 64, 35},
-{ "UART2", 65, 36},
-{ "UART3", 66, 37},
-{ "UART4", 67, 38},
-{ "SW CAN2", 68, 39},
-{ "Ethernet DAQ", 69, 45},
-{ "DATA_TO_HOST", 70},
-{ "I2C1", 71, 26},
-{ "SPI1", 72, 27},
-{ "OP (BR) ETH6", 73, 0},
-{ "RED_VBAT", 74, 0},
-{ "OP (BR) ETH7", 75, 0},
-{ "OP (BR) ETH8", 76, 0},
-{ "OP (BR) ETH9", 77, 0},
-{ "OP (BR) ETH10", 78, 0},
-{ "OP (BR) ETH11", 79, 0},
-{ "FlexRay1A", 80, 28},
-{ "FlexRay1B", 81, 40},
-{ "FlexRay2A", 82, 41},
-{ "FlexRay2B", 83, 42},
-{ "LIN5", 84, 43},
-{ "FlexRay", 85, 0},
-{ "FlexRay2", 86, 0},
-{ "OP (BR) ETH12", 87, 0},
-{ "MOST25", 90, 29},
-{ "MOST50", 91, 30},
-{ "MOST150", 92, 31},
-{ "Ethernet", 93, 44},
-{ "GMFSA", 94, 0},
-{ "TCP", 95, 0},
-{ "HS CAN6", 96, 47},
-{ "HS CAN7", 97, 48},
-{ "LIN6", 98, 49},
-{ "LSFT CAN2", 99, 50 } };
 
 const char protocols[][20] = { "CUSTOM",
 "CAN",
@@ -148,15 +66,7 @@ public:
     /// <summary>
     /// Writes the network summary table info.
     /// </summary>
-    void UpdateTable()
-    {
-        FlushCache();
-
-        for (std::map<int, NetworkInfo>::iterator it = m_mapNetworks.begin(); it != m_mapNetworks.end(); ++it)
-        {
-            (*it).second.UpdateTable(m_pDb);
-        }
-    }
+    void UpdateTable();
 
     /// <summary>
     /// Removes the old data tables if they exist and re-creates them
@@ -164,6 +74,9 @@ public:
     void CleanTables(bool bAppend);
 
 };
+
+void PrepareForWriting(Kompex::SQLiteDatabase* pDb);
+void CleanAfterWriting(Kompex::SQLiteDatabase* pDb);
 
 /// <summary>
 /// Creates a Sqlite database containing all the messages in the vsb file.

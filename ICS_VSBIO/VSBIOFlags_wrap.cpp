@@ -2815,6 +2815,31 @@ SWIGINTERNINLINE PyObject*
 
   #define SWIG_From_double   PyFloat_FromDouble 
 
+
+#include <limits.h>
+#if !defined(SWIG_NO_LLONG_MAX)
+# if !defined(LLONG_MAX) && defined(__GNUC__) && defined (__LONG_LONG_MAX__)
+#   define LLONG_MAX __LONG_LONG_MAX__
+#   define LLONG_MIN (-LLONG_MAX - 1LL)
+#   define ULLONG_MAX (LLONG_MAX * 2ULL + 1ULL)
+# endif
+#endif
+
+
+#if defined(LLONG_MAX) && !defined(SWIG_LONG_LONG_AVAILABLE)
+#  define SWIG_LONG_LONG_AVAILABLE
+#endif
+
+
+#ifdef SWIG_LONG_LONG_AVAILABLE
+SWIGINTERNINLINE PyObject* 
+SWIG_From_unsigned_SS_long_SS_long  (unsigned long long value)
+{
+  return (value > LONG_MAX) ?
+    PyLong_FromUnsignedLongLong(value) : PyInt_FromLong(static_cast< long >(value));
+}
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -3905,6 +3930,7 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "NEOVI_RED_TIMESTAMP_1_10US",SWIG_From_double(static_cast< double >(0.00001)));
   SWIG_Python_SetConstant(d, "NEOVIPRO_VCAN_TIMESTAMP_2_US",SWIG_From_double(static_cast< double >(65536.0)));
   SWIG_Python_SetConstant(d, "NEOVIPRO_VCAN_TIMESTAMP_1_US",SWIG_From_double(static_cast< double >(1.0)));
+  SWIG_Python_SetConstant(d, "ICS_EPOCH_OFFSET",SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(1167609600000000000ULL)));
 #if PY_VERSION_HEX >= 0x03000000
   return m;
 #else

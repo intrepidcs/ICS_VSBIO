@@ -63,9 +63,10 @@ VSBIORead::enumFileCondition VSBIORead::ReadNextMessage(std::vector<unsigned cha
 	if (msg.size() <  sizeof(VSBSpyMessage))
 		msg.resize(sizeof(VSBSpyMessage));
 	size_t retval;
-	while ((returnvalue = ReadNextMessage(&msg[0], msg.size(), &retval)) == eBufferToSmall)	
+	while ((returnvalue = ReadNextMessage(&msg[0], msg.size(), &retval)) == eBufferTooSmall)	
 		msg.resize(retval);	
-	msg.resize(retval); //should always make the vector smaller
+	if (returnvalue == eSuccess)
+		msg.resize(retval); //should always make the vector smaller
 	return returnvalue;
 }
 
@@ -76,7 +77,7 @@ VSBIORead::enumFileCondition VSBIORead::ReadNextMessage(unsigned char * msg, siz
 	mBufferSizeRequired = sizeof(VSBSpyMessage);
     *returnLength = (size_t)mBufferSizeRequired;
 	if (mBufferSizeRequired < sizeof(VSBSpyMessage))
-		return eBufferToSmall;
+		return eBufferTooSmall;
 
 	unsigned long read;
 	mDisplayOut = "";
@@ -238,7 +239,7 @@ VSBIORead::enumFileCondition VSBIORead::Read102()
 	if (pMessageChunk->ExtraDataPtrEnabled && pMessageChunk->ExtraDataPtr)
 	{
 		enumFileCondition condition = GetEDP(pMessageChunk->ExtraDataPtr);
-		if ( condition == eBufferToSmall)
+		if ( condition == eBufferTooSmall)
 		{
 			mCurrentMsgLocation -= sizeof(VSBSpyMessage);
 			mCurrentFile.SetFilePtr(mCurrentMsgLocation, SEEK_SET);
@@ -274,11 +275,13 @@ VSBIORead::enumFileCondition VSBIORead::Read104()
 	if (pMessageChunk->ExtraDataPtrEnabled && pMessageChunk->ExtraDataPtr)
 	{
 		mBufferSizeRequired = pMessageChunk->ExtraDataPtr + sizeof(VSBSpyMessage);
+		if (mCurrentMsgLocation + mBufferSizeRequired > mCurrentFileSize)  // The file is corrupted
+			return eInvalidPayloadSize;
 		if (pMessageChunk->ExtraDataPtr + sizeof(VSBSpyMessage) > messageBufferSize )
 		{			
 			mCurrentMsgLocation -= sizeof(VSBSpyMessage);
 			mCurrentFile.SetFilePtr(mCurrentMsgLocation, SEEK_SET);
-			return eBufferToSmall;
+			return eBufferTooSmall;
 		}
 		mCurrentMsgLocation += pMessageChunk->ExtraDataPtr;
 		mCurrentFile.Read(message + sizeof(VSBSpyMessage), pMessageChunk->ExtraDataPtr, read);
@@ -315,10 +318,12 @@ VSBIORead::enumFileCondition VSBIORead::GetEDP(unsigned int requestedEDP)
 	
 	mCurrentFile.Read(&EDPsize, sizeof(EDPsize), read);
 	mBufferSizeRequired = sizeof(VSBSpyMessage) + EDPsize;
+	if (mCurrentMsgLocation + mBufferSizeRequired > mCurrentFileSize)  // The file is corrupted
+		return eInvalidPayloadSize;
 	if (sizeof(VSBSpyMessage) + EDPsize > messageBufferSize)
 	{
 		mCurrentFile.SetFilePtr(mCurrentEDPLocation, SEEK_SET);
-		return eBufferToSmall;
+		return eBufferTooSmall;
 	}
 
 	pMessageChunk->ExtraDataPtr = EDPsize;
@@ -391,9 +396,10 @@ VSBIORead::enumFileCondition VSBIOReadMultiple::ReadNextMessage(std::vector<unsi
 	if (msg.size() <  sizeof(VSBSpyMessage))
 		msg.resize(sizeof(VSBSpyMessage));
 	size_t retval;
-	while ((returnvalue = ReadNextMessage(&msg[0], msg.size(), &retval)) == VSBIORead::eBufferToSmall)
+	while ((returnvalue = ReadNextMessage(&msg[0], msg.size(), &retval)) == VSBIORead::eBufferTooSmall)
 		msg.resize(retval);
-	msg.resize(retval); //should always make the vector smaller
+	if (returnvalue == VSBIORead::eSuccess)
+		msg.resize(retval); //should always make the vector smaller
 	return returnvalue;
 }
 
@@ -409,7 +415,7 @@ VSBIORead::enumFileCondition VSBIOReadMultiple::ReadNextMessage(unsigned char * 
 		if (pair.second->GetMessageSize() > sizeOfBuffer)
 		{
 			(*returnLength) = pair.second->GetMessageSize();
-			return VSBIORead::eBufferToSmall;
+			return VSBIORead::eBufferTooSmall;
 		}
 		latestTimestamp.pop();
 

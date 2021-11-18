@@ -4,7 +4,7 @@ Setup file for ICS_VSBIO
 from setuptools import setup, Extension
 import platform
 
-VERSION = '0.5.0'
+VERSION = '0.5.1'
 
 def which(program):
     '''

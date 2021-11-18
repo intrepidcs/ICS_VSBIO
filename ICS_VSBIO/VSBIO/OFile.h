@@ -62,6 +62,7 @@ std::string mbstring(const std::wstring &text);
 
 bool FileExists(const std::string& sPath);
 bool IsDirectory(const std::string& sPath);
+bool RemoveFile(const std::string& sPath);
 
 std::string CombinePath(const std::string& sPath, const std::string& sFileName);
 size_t GetLastSlash(const std::string& sFilePath);

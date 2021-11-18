@@ -5,6 +5,7 @@
 #include "OFile.h"
 #include "MessageTimeDecoderVSB.h"
 #include "VSBDatabase.h"
+#include "NetworkLookups.h"
 #include "KompexSQLiteException.h"
 
 using namespace Kompex;
@@ -32,10 +33,15 @@ m_numMessages(0)
     size_t strip = m_name.find(" (neoVI 3G)");
     if (strip != string::npos)
         m_name = m_name.substr(0, strip);
+    m_id = GetIdFromName(m_name);
+    m_protocol.insert(protocol);
+}
 
+int NetworkInfo::GetIdFromName(const std::string& name)
+{
     int vnetOffset = 0;
-    string findName = m_name;
-    strip = findName.find(" (VNET A)");
+    string findName = name;
+    size_t strip = findName.find(" (VNET A)");
     if (strip != string::npos)
     {
         findName = findName.substr(0, strip);
@@ -55,14 +61,36 @@ m_numMessages(0)
         if (networkNames[nCnt].name == findName)
         {
             if (vnetOffset)
-                m_id = networkNames[nCnt].vnetOffset + vnetOffset;
+                return networkNames[nCnt].vnetOffset + vnetOffset;
             else
-                m_id = networkNames[nCnt].id;
-            break;
+                return networkNames[nCnt].id;
         }
     }
-    m_protocol.insert(protocol);
+    return -1;
 }
+
+bool NetworkInfo::UpdateFromKey(const std::string& networkKey)
+{
+    bool bDbUpdateNeeded = false;
+    if (((m_name.size() == 0) || (m_id == -1)) && (networkKey.substr(0, 3) == "net"))
+    {
+        int key = strtol(&networkKey[3], NULL, 0);
+
+        if (key < sizeof(keyBasedNetworkNames) / sizeof(keyBasedNetworkNames[0]))
+        {
+            if (m_name.size() == 0)
+            {
+                m_name = m_displayName = keyBasedNetworkNames[key].name;
+                bDbUpdateNeeded = true;
+            }
+            m_protocol.clear();
+            m_protocol.insert(keyBasedNetworkNames[key].protocol);
+            m_id = GetIdFromName(m_name);
+        }
+    }
+    return bDbUpdateNeeded;
+}
+
 
 /// <summary>
 /// Default constructor
@@ -127,10 +155,10 @@ void NetworkInfo::UpdateName(int id)
 /// <summary>
 /// Aggregates the message stats for this network.  This is needed because sqlite does not currently support UPDATE subqueries.
 /// </summary>
-/// <param name="pDb">Database to update</param>
-void NetworkInfo::ReadMessageStats(SQLiteDatabase* pDb)
+/// <param name="pMessageDb">Database to update</param>
+void NetworkInfo::ReadMessageStats(SQLiteDatabase* pMessageDb)
 {
-    SQLiteStatement qryNetwork(pDb);
+    SQLiteStatement qryNetwork(pMessageDb);
     qryNetwork.Sql(GET_NETWORK_INFO);
     qryNetwork.BindInt64(1, m_id);
 
@@ -146,11 +174,11 @@ void NetworkInfo::ReadMessageStats(SQLiteDatabase* pDb)
 /// <summary>
 /// Returns true if a row exists for this network.  This is to preserve the names and fields updated elsewhere.
 /// </summary>
-/// <param name="pDb">Database to update</param>
+/// <param name="pMessageDb">Database to update</param>
 /// <returns>true if a record for this network exists</returns>
-bool NetworkInfo::RecordExists(SQLiteDatabase* pDb)
+bool NetworkInfo::RecordExists(SQLiteDatabase* pMessageDb)
 {
-    SQLiteStatement qryFind(pDb);
+    SQLiteStatement qryFind(pMessageDb);
     qryFind.Sql(READ_NETWORK);
     qryFind.BindInt64(1, m_id);
 
@@ -160,22 +188,22 @@ bool NetworkInfo::RecordExists(SQLiteDatabase* pDb)
 /// <summary>
 /// Inserts the record, once we made sure it doesn't exist
 /// </summary>
-/// <param name="pDb">Database to update</param>
-void NetworkInfo::Insert(SQLiteDatabase* pDb)
+/// <param name="pMessageDb">Database to update</param>
+void NetworkInfo::Insert(SQLiteDatabase* pMessageDb)
 {
     string protocol;
     // CAN and CAN FD for example
-    for (std::set<int>::const_iterator itProtocol = m_protocol.begin(); itProtocol != m_protocol.end(); ++itProtocol)
+    for (const auto numProtocol : m_protocol)
     {
-        if ((*itProtocol >= 0) && (*itProtocol <= SPY_PROTOCOL_TCP))
+        if ((numProtocol >= 0) && (numProtocol <= SPY_PROTOCOL_TCP))
         {
             if (protocol.size())
                 protocol += ",";
-            protocol += protocols[*itProtocol];
+            protocol += protocols[numProtocol];
         }
     }
 
-    SQLiteStatement insertNetworks(pDb);
+    SQLiteStatement insertNetworks(pMessageDb);
     insertNetworks.Sql(INSERT_NETWORK);
     int nCol = 1;
     insertNetworks.BindInt(nCol++, m_id);
@@ -189,12 +217,12 @@ void NetworkInfo::Insert(SQLiteDatabase* pDb)
     insertNetworks.ExecuteAndFree();
 }
 
-void NetworkInfo::UpdateTable(SQLiteDatabase *pDb)
+void NetworkInfo::UpdateTable(SQLiteDatabase *pMessageDb)
 {
-    if (RecordExists(pDb))
+    if (RecordExists(pMessageDb))
     {
-        ReadMessageStats(pDb);
-        SQLiteStatement updateMessageStats(pDb);
+        ReadMessageStats(pMessageDb);
+        SQLiteStatement updateMessageStats(pMessageDb);
         updateMessageStats.Sql(UPDATE_MESSAGE_STATS);
         int nCol = 1;
         updateMessageStats.BindInt64(nCol++, m_firstTime);
@@ -206,16 +234,16 @@ void NetworkInfo::UpdateTable(SQLiteDatabase *pDb)
     }
     else
     {
-        Insert(pDb);
+        Insert(pMessageDb);
     }
 }
 
-void NetworkInfo::UpdateDescription(SQLiteDatabase* pDb)
+void NetworkInfo::UpdateDescription(SQLiteDatabase* pMessageDb)
 {
-    if (RecordExists(pDb))
+    if (RecordExists(pMessageDb))
     {
-        ReadMessageStats(pDb);
-        SQLiteStatement updateMessageStats(pDb);
+        ReadMessageStats(pMessageDb);
+        SQLiteStatement updateMessageStats(pMessageDb);
         updateMessageStats.Sql(UPDATE_DESCRIPTION);
         int nCol = 1;
         updateMessageStats.BindString(nCol++, m_name);
@@ -226,13 +254,13 @@ void NetworkInfo::UpdateDescription(SQLiteDatabase* pDb)
     }
     else
     {
-        Insert(pDb);
+        Insert(pMessageDb);
     }
 }
 
-void NetworkInfo::CleanMessageStatistics(Kompex::SQLiteDatabase* pDb)
+void NetworkInfo::CleanMessageStatistics(Kompex::SQLiteDatabase* pMessageDb)
 {
-    SQLiteStatement stmtDbClean(pDb);
+    SQLiteStatement stmtDbClean(pMessageDb);
     stmtDbClean.SqlStatement(CREATE_NETWORK);
     stmtDbClean.SqlStatement(CLEAR_MESSAGE_STATS);
 }
