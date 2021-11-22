@@ -123,7 +123,7 @@ void VSBInfo::FlushCache(size_t numToFlush)
     SQLiteStatement insertMessage(m_pDb);
     insertMessage.Sql(INSERT_MESSAGES);
     size_t curIndex = 0;
-    for (auto itMsg = messageCache.begin(); itMsg != messageCache.end(); ++itMsg, ++curIndex)
+    for (std::multimap<uint64_t, std::vector<unsigned char> >::iterator itMsg = messageCache.begin(); itMsg != messageCache.end(); ++itMsg, ++curIndex)
     {
         SaveMessage(insertMessage, itMsg->first, itMsg->second);
         if (numToFlush && (curIndex >= numToFlush))

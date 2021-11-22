@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdlib.h>
 
 #include "VSBIODLL.h"
 #include "VSBIO.h"
@@ -193,13 +194,13 @@ void NetworkInfo::Insert(SQLiteDatabase* pMessageDb)
 {
     string protocol;
     // CAN and CAN FD for example
-    for (const auto numProtocol : m_protocol)
+    for (std::set<int>::iterator itProtocol = m_protocol.begin(); itProtocol != m_protocol.end(); ++itProtocol)
     {
-        if ((numProtocol >= 0) && (numProtocol <= SPY_PROTOCOL_TCP))
+        if ((*itProtocol >= 0) && (*itProtocol <= SPY_PROTOCOL_TCP))
         {
             if (protocol.size())
                 protocol += ",";
-            protocol += protocols[numProtocol];
+            protocol += protocols[*itProtocol];
         }
     }
 
