@@ -3,7 +3,7 @@
 	"EndTimeInSecondsFromStartOfFile" : NaN,
 	"StartTimeAbsolute" : "2017-07-18T10:09:02.400000+00:00",
 	"EndTimeAbsolute" : "2017-07-19T10:09:03.200000+00:00",
-	"DeleteTempDB2FileAfterExecution" : "TRUE",
+	"DeleteTempDB2FileAfterExecution" : "FALSE",
 	"CombineResultingFilesToASingleVSB" : "TRUE",
 	"MsgIDsPerNetwork": [{
         "network_IDString": "HSCAN",

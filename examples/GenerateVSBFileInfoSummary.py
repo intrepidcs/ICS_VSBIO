@@ -24,16 +24,11 @@
 ##########################################################################################################################################################################################################################################
 
 import numpy as np
-import pprint
-import enum
 import sys
 import os
 import logging
 import json
-import re
-import sqlite3
 import sys, os
-import openpyxl
 
 from openpyxl.reader.excel import load_workbook
 from UtilityFunctions import ConvertNetworkStringToID
@@ -109,14 +104,16 @@ if(len(input_msg_Files.FilesListSorted) > 0):
 
 	for a in range(len(input_msg_Files.FilesListSorted)):
 		log.info("Writing network info for File number " + str(a))
-		for b in range(len(input_msg_Files.FilesListSorted[a].FileneNetworks)):
-			for c in range(len(input_msg_Files.FilesListSorted[a].FileneNetworks[b].network_msg_ids_hex)):
+		for b in range(len(input_msg_Files.FilesListSorted[a].FileNetworks)):
+			for c in range(len(input_msg_Files.FilesListSorted[a].FileNetworks[b].network_msg_ids_hex)):
 				ws.cell(row=DataEntryRow, column=1, value=input_msg_Files.FilesListSorted[a].FileStartTime)
 				ws.cell(row=DataEntryRow, column=2, value=input_msg_Files.FilesListSorted[a].FileEndTime)
-				ws.cell(row=DataEntryRow, column=3, value=input_msg_Files.FilesListSorted[a].FileName)
-				ws.cell(row=DataEntryRow, column=4, value=input_msg_Files.FilesListSorted[a].FileneNetworks[b].network_name)
-				ws.cell(row=DataEntryRow, column=5, value=input_msg_Files.FilesListSorted[a].FileneNetworks[b].network_msg_ids_hex[c])
-				ws.cell(row=DataEntryRow, column=6, value=input_msg_Files.FilesListSorted[a].FileneNetworks[b].network_msg_num_msgs[c])
+				ws.cell(row=DataEntryRow, column=3, value=input_msg_Files.FilesListSorted[a].InputFileName)
+				ws.cell(row=DataEntryRow, column=4, value=input_msg_Files.FilesListSorted[a].FileNetworks[b].network_name)
+				ws.cell(row=DataEntryRow, column=5, value=input_msg_Files.FilesListSorted[a].FileNetworks[b].network_msg_ids_hex[c])
+				ws.cell(row=DataEntryRow, column=6, value=input_msg_Files.FilesListSorted[a].FileNetworks[b].network_msg_num_msgs[c])
+				ws.cell(row=DataEntryRow, column=7, value=input_msg_Files.FilesListSorted[a].FileNetworks[b].network_msg_id_min_periods[c])
+				ws.cell(row=DataEntryRow, column=8, value=input_msg_Files.FilesListSorted[a].FileNetworks[b].network_msg_id_max_periods[c])
 				DataEntryRow = DataEntryRow + 1
 
 		if ( os.path.isfile(input_msg_Files.FilesListSorted[a].DB_FileName) and (input_msg_Files.FilesListSorted[a].FileCreatedByClass) \
@@ -124,9 +121,11 @@ if(len(input_msg_Files.FilesListSorted) > 0):
 			os.remove(input_msg_Files.FilesListSorted[a].DB_FileName)
 
 	log.info("Saving report file")
-	
-	wb.save(OutputFilenameAndPath)
+	if IPAInterfaceLibrary.is_running_on_wivi_server():
+		wb.save(OutputFilename)
+	else:
+		wb.save(OutputFilenameAndPath)
+		
 	wb.close()
-
 	log.info("Goodbye")
 
