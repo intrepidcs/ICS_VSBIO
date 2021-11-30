@@ -173,7 +173,8 @@ icsSpyMessageVSB_SIZE = _VSBIOInterface.icsSpyMessageVSB_SIZE
 eSuccess = _VSBIOInterface.eSuccess
 eEndOfFile = _VSBIOInterface.eEndOfFile
 eError = _VSBIOInterface.eError
-eBufferToSmall = _VSBIOInterface.eBufferToSmall
+eBufferTooSmall = _VSBIOInterface.eBufferTooSmall
+eInvalidPayloadSize = _VSBIOInterface.eInvalidPayloadSize
 
 def GetEDP(message: "icsSpyMessageVSB") -> "char *":
     return _VSBIOInterface.GetEDP(message)

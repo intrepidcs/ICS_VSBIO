@@ -5,7 +5,8 @@ class ReadStatus:
 	eSuccess = vsb.eSuccess
 	eEndOfFile = vsb.eEndOfFile
 	eError = vsb.eError
-	eBufferToSmall = vsb.eBufferToSmall
+	eBufferTooSmall = vsb.eBufferTooSmall
+	eInvalidPayloadSize = vsb.eInvalidPayloadSize
 	eFileOpened = 10
 	eInit = 11
 
@@ -63,7 +64,7 @@ class VSBReader:
 			raise StopIteration()
 		elif self.state == vsb.eError:
 			raise ValueError(self.get_error_message())
-		elif self.state == vsb.eBufferToSmall:
+		elif self.state == vsb.eBufferTooSmall:
 			vsb.VSBIOFree(self.message)
 			self.message = vsb.VSBIOMalloc(size)
 			self.size = size

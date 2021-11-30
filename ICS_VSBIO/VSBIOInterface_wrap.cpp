@@ -3367,7 +3367,8 @@ SWIG_From_short  (short value)
 		eSuccess = 0,
 		eEndOfFile = 1,
 		eError = 2,
-		eBufferToSmall = 3
+		eBufferTooSmall = 3,
+		eInvalidPayloadSize = 4
 	} VSBRtnValues;
 
 	char * GetEDP(icsSpyMessageVSB * message, size_t *len)
@@ -7072,7 +7073,8 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "eSuccess",SWIG_From_int(static_cast< int >(eSuccess)));
   SWIG_Python_SetConstant(d, "eEndOfFile",SWIG_From_int(static_cast< int >(eEndOfFile)));
   SWIG_Python_SetConstant(d, "eError",SWIG_From_int(static_cast< int >(eError)));
-  SWIG_Python_SetConstant(d, "eBufferToSmall",SWIG_From_int(static_cast< int >(eBufferToSmall)));
+  SWIG_Python_SetConstant(d, "eBufferTooSmall",SWIG_From_int(static_cast< int >(eBufferTooSmall)));
+  SWIG_Python_SetConstant(d, "eInvalidPayloadSize",SWIG_From_int(static_cast< int >(eInvalidPayloadSize)));
 #if PY_VERSION_HEX >= 0x03000000
   return m;
 #else

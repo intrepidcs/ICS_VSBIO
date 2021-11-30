@@ -28,7 +28,8 @@
 		eSuccess = 0,
 		eEndOfFile = 1,
 		eError = 2,
-		eBufferToSmall = 3
+		eBufferTooSmall = 3,
+		eInvalidPayloadSize = 4
 	} VSBRtnValues;
 
 	char * GetEDP(icsSpyMessageVSB * message, size_t *len)
