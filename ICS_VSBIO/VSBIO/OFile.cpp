@@ -69,6 +69,7 @@ bool OFile::OpenFile(const char* sUtf8FileName, bool bCreateNew, bool bWritable,
 #include "OFile.h"
 
 #include <dirent.h>
+#include <unistd.h>
 #include <cstdlib>
 
 #define FILE_CURRENT 1
@@ -334,7 +335,7 @@ bool RemoveFile(const std::string& sPath)
 #ifndef linux
 	return DeleteFileW(widestring(sPath).c_str()) ? true : false;
 #else
-	return Owunlink(sPath.c_str()) == 0;
+	return unlink(sPath.c_str()) == 0;
 #endif
 }
 
