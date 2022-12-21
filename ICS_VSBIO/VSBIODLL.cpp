@@ -109,6 +109,17 @@ extern "C" VSBIODLL_API bool Split(const char *sFileName, unsigned int nMessages
     return read.Split(nMessagesPerFile, sOutputLocation, prog);
 }
 
+extern "C" VSBIODLL_API bool SplitBySizeW(const wchar_t* sFileName, double sizeInMB, const wchar_t* sOutputLocation, ProgressFunc prog)
+{
+	return SplitBySize(mbstring(sFileName).c_str(), sizeInMB, mbstring(sOutputLocation).c_str(), prog);
+}
+
+extern "C" VSBIODLL_API bool SplitBySize(const char* sFileName, double sizeInMB, const char* sOutputLocation, ProgressFunc prog)
+{
+	VSBIORead read(sFileName);
+	return read.SplitBySize(sizeInMB, sOutputLocation, prog);
+}
+
 extern "C" VSBIODLL_API bool CreateDatabaseW(const wchar_t* inputFilePath, const wchar_t* outputFileName, ProgressFunc prog)
 {
 	return CreateDatabase(mbstring(inputFilePath).c_str(), mbstring(outputFileName).c_str(), prog);

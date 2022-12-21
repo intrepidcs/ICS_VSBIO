@@ -4,7 +4,7 @@ Setup file for ICS_VSBIO
 from setuptools import setup, Extension
 import platform
 
-VERSION = '0.5.1'
+VERSION = '0.5.2'
 
 def which(program):
     '''
@@ -40,6 +40,7 @@ if which('swig') or which('swig.exe'):
                          'ICS_VSBIO/VSBIO/MessageTimeDecoderVSB.cpp',
                          'ICS_VSBIO/VSBIO/VSBDatabase.cpp',
                          'ICS_VSBIO/VSBIO/NetworkInfo.cpp',
+                         'ICS_VSBIO/VSBIO/PcapFile.cpp',
                          'ICS_VSBIO/VSBIO/sqlite/sqlite3.c',
                          'ICS_VSBIO/VSBIO/sqlite/KompexSQLiteDatabase.cpp',
                          'ICS_VSBIO/VSBIO/sqlite/KompexSQLiteStatement.cpp',
@@ -55,6 +56,7 @@ else:
                          'ICS_VSBIO/VSBIO/MessageTimeDecoderVSB.cpp',
                          'ICS_VSBIO/VSBIO/VSBDatabase.cpp',
                          'ICS_VSBIO/VSBIO/NetworkInfo.cpp',
+                         'ICS_VSBIO/VSBIO/PcapFile.cpp',
                          'ICS_VSBIO/VSBIO/sqlite/sqlite3.c',
                          'ICS_VSBIO/VSBIO/sqlite/KompexSQLiteDatabase.cpp',
                          'ICS_VSBIO/VSBIO/sqlite/KompexSQLiteStatement.cpp',

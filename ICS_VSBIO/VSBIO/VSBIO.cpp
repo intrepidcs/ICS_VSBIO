@@ -336,7 +336,7 @@ VSBIORead::enumFileCondition VSBIORead::GetEDP(unsigned int requestedEDP)
 
 //---------------------------------------------------------------------------------------------------------------------------
 
-VSBIOReadMultiple::VSBIOReadMultiple(const std::vector<std::string> &files)
+VSBIOReadMultiple::VSBIOReadMultiple(const std::vector<std::string> &files) : message(NULL)
 {
 	for (std::vector<std::string>::const_iterator it = files.begin(); it != files.end(); ++it)
 	{
@@ -561,5 +561,49 @@ bool VSBIORead::Split(const uint64_t& nMessagesPerFile, const std::string& sOutp
 		write.WriteMessage(msg);
 	}
     return true;
+}
+
+
+/// <summary>
+/// Splits this file using the messages per file parameter and a _00000... suffix for the output files.
+/// </summary>
+/// <param name="sizeInMB">Maximum size of split files in MB</param>
+/// <param name="sOutputLocation">Output path</param>
+/// <param name="prog">Progress callback</param>
+/// <returns>Whether the output files were all written</returns>
+bool VSBIORead::SplitBySize(double sizeInMB, const std::string& sOutputLocation, ProgressFunc prog)
+{
+	VSBIOWrite write;
+
+	std::string sDirectory, sName, sExtension;
+	SplitPath(mFileName, sDirectory, sName, sExtension);
+
+	unsigned long long counter = 0, splitFileSize = VSB_HEADERSIZE, 
+		maxSplitSize = (unsigned long long)(sizeInMB * 1048576.0);
+	unsigned int currentFileNumber = 0;
+	std::string outputFileName;
+	std::vector<unsigned char> msg;
+	char szBuffer[81];
+	while (ReadNextMessage(msg) == VSBIORead::eSuccess)
+	{
+		if (prog && !((++counter) % 100000))
+		{
+			if (!prog(GetProgress()))
+				break;
+		}
+
+		splitFileSize += msg.size();
+		if ((currentFileNumber == 0) || (splitFileSize > maxSplitSize))
+		{
+			outputFileName = CombinePath(sOutputLocation, sName);
+			snprintf(szBuffer, 81, "_%05d", (int)(currentFileNumber++));
+			outputFileName += szBuffer;
+			outputFileName += sExtension;
+			write.Init(outputFileName);
+			splitFileSize = VSB_HEADERSIZE;  // header size
+		}
+		write.WriteMessage(msg);
+	}
+	return true;
 }
 

@@ -52,15 +52,14 @@ import math
 import zipfile
 
 from UtilityFunctions import ConvertNetworkStringToID
-from ICS_IPA import DataFileIOLibrary as icsFI
-from ICS_IPA import IPAInterfaceLibrary
+from ICS_VSBIO import ICSFileInterfaceLibrary
 from shutil import copyfile
 
+from datetime import date, datetime, time, timezone
+
 from ICS_VSBIO import VSBIOInterface as vsb
-from datetime import datetime, timezone
 from time import mktime
 from MsgFileClass import msgFiles
-from ICS_IPA import IPAInterfaceLibrary
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -74,8 +73,8 @@ log.addHandler(handler)
 
 log.info("Hello")
 
-slFilePath = IPAInterfaceLibrary.get_config_file()
-inputFilePaths = IPAInterfaceLibrary.get_input_file_list()
+slFilePath = ICSFileInterfaceLibrary.get_config_file()
+inputFilePaths = ICSFileInterfaceLibrary.get_input_file_list()
 
 log.info(slFilePath)
 
@@ -144,7 +143,7 @@ for i in range(len(MsgIDsPerNetwork)):
 			NetworkAndMsgIDQueryString += ")"
 
 #now name output files
-if IPAInterfaceLibrary.is_running_on_wivi_server():
+if ICSFileInterfaceLibrary.is_running_on_wivi_server():
 	OutputFilePath = os.path.dirname(sys.argv[0])
 else:
 	OutputFilePath = os.path.dirname(sys.argv[0])
@@ -152,7 +151,7 @@ else:
 # now go through each file and split using NetworkAndMsgIDQueryString
 for msg_File in msg_Files.FilesListSorted:
 	try:
-		msg_File.FilteredVSBFilename = os.path.splitext(msg_File.FilePath + msg_File.FileName)[0] + "_" + ReportGenTimeStamp + "_Filtrd.vsb"
+		msg_File.FilteredVSBFilename = os.path.splitext(msg_File.InputFilePath + msg_File.InputFileName)[0] + "_" + ReportGenTimeStamp + "_Filtrd.vsb"
 		# Open the message database
 		
 		log.info("Get info from DB file")
@@ -207,7 +206,13 @@ for msg_File in msg_Files.FilesListSorted:
 
 
 OutputDatabaseFilename = os.path.join(OutputFilePath, "CombinedNetworkFile_" + ReportGenTimeStamp + "_Filtrd.db2")
-OutputVSBFilename = os.path.join(OutputFilePath, "CombinedNetworkFile_" + ReportGenTimeStamp + "_Filtrd.vsb")
+if ICSFileInterfaceLibrary.is_running_on_wivi_server():
+	log.info("Running in wivi mode...")
+	OutputVSBFilename = "CombinedNetworkFile_" + str(ReportGenTimeStamp) + "_Filtrd.vsb"
+else:
+	OutputVSBFilename = os.path.join(OutputFilePath, "CombinedNetworkFile_" + ReportGenTimeStamp + "_Filtrd.vsb")
+
+
 FirstFileAdded = False
 if config["CombineResultingFilesToASingleVSB"] == "TRUE":
 	for msg_File in msg_Files.FilesListSorted:
@@ -222,30 +227,42 @@ if config["CombineResultingFilesToASingleVSB"] == "TRUE":
 
 	SortByTimeQueryString = "NetworkId >= 0 ORDER BY MessageTime"
 	NumberOfRecordsInCombinedOutputFile = vsb.WriteFilteredVsb(OutputDatabaseFilename, OutputVSBFilename, SortByTimeQueryString, None)
+	log.info("NumberOfRecordsInCombinedOutputFile = " + str(NumberOfRecordsInCombinedOutputFile))
 	if NumberOfRecordsInCombinedOutputFile > 0:
 		log.info("Finished generating combined filtered vsb file with " + str(NumberOfRecordsInCombinedOutputFile) + " records in file.")
 	else:
 		log.info('Combined vsb file has no records for output.')
 	if ( os.path.isfile(OutputDatabaseFilename) and (config["DeleteTempDB2FileAfterExecution"] == "TRUE")  ):
 		os.remove(OutputDatabaseFilename)
+		log.info("Removed file: " + OutputDatabaseFilename )
 
 #now compress output files
 if config["CombineResultingFilesToASingleVSB"] == "FALSE":
-	VSBOutputZipFilename = os.path.join(OutputFilePath, "AllOutputVsbFiles_" + ReportGenTimeStamp + ".zip")
+	if ICSFileInterfaceLibrary.is_running_on_wivi_server():
+		VSBOutputZipFilename = "AllOutputVsbFiles_" + ReportGenTimeStamp + ".zip"
+	else:
+		VSBOutputZipFilename = os.path.join(OutputFilePath, "AllOutputVsbFiles_" + ReportGenTimeStamp + ".zip")	
 	zipf = zipfile.ZipFile(VSBOutputZipFilename, 'w', zipfile.ZIP_DEFLATED)
 	for msg_File in msg_Files.FilesListSorted:
 		if (msg_File.NumberOfRecordsInFilteredVSB > 0) and (os.path.isfile(msg_File.FilteredVSBFilename)):
 			zipf.write(msg_File.FilteredVSBFilename, arcname = os.path.basename(msg_File.FilteredVSBFilename))
 			os.remove(msg_File.FilteredVSBFilename) 
+			log.info("Removed file: " + msg_File.FilteredVSBFilename )
+
 	zipf.close()
 	 
 if config["DeleteTempDB2FileAfterExecution"] == "FALSE":
-	DB2OutputZipFilename = os.path.join(OutputFilePath, "AllOutputDB2Files_" + ReportGenTimeStamp + ".zip")
+	if ICSFileInterfaceLibrary.is_running_on_wivi_server():
+		DB2OutputZipFilename = "AllOutputDB2Files_" + ReportGenTimeStamp + ".zip"
+	else:
+		DB2OutputZipFilename = os.path.join(OutputFilePath, "AllOutputDB2Files_" + ReportGenTimeStamp + ".zip")
+
 	zipf = zipfile.ZipFile(DB2OutputZipFilename, 'w', zipfile.ZIP_DEFLATED)
 	for msg_File in msg_Files.FilesListSorted:
 		if ( (msg_File.NumberOfRecordsInFilteredVSB > 0) and os.path.isfile(msg_File.DB_FileName) and (msg_File.FileCreatedByClass)):
 			zipf.write(msg_File.DB_FileName, arcname = os.path.basename(msg_File.DB_FileName))
 			os.remove(msg_File.DB_FileName) 
+			log.info("Removed Temp DB File")
 	zipf.close()
 
 log.info("Goodbye")

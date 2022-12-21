@@ -33,12 +33,10 @@ import sys, os
 from openpyxl.reader.excel import load_workbook
 from UtilityFunctions import ConvertNetworkStringToID
 from MsgFileClass import msgFiles
-from ICS_IPA import DataFileIOLibrary as icsFI
-from ICS_IPA import IPAInterfaceLibrary
+from ICS_VSBIO import ICSFileInterfaceLibrary as fileLoader
 from shutil import copyfile
 
 from datetime import datetime, timezone
-from ICS_IPA import IPAInterfaceLibrary
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -52,8 +50,8 @@ log.addHandler(handler)
 
 log.info("Hello")
 
-slFilePath = IPAInterfaceLibrary.get_config_file()
-inputFilePaths = IPAInterfaceLibrary.get_input_file_list()
+slFilePath = fileLoader.get_config_file()
+inputFilePaths = fileLoader.get_input_file_list()
 
 #  C:\Jmitchell\FordExplorerData\extracted data 13-03-2021 02-57-29-510938 PM\Script 15-03-2021 08-55-07-650000 AM
 
@@ -68,7 +66,7 @@ ReportGenTimeStamp = datetime.now().strftime("%m-%d-%y_%H-%M-%S")
 log.info("Analyzing input files")
 input_msg_Files = msgFiles(inputFilePaths, ReportGenTimeStamp)
 
-if IPAInterfaceLibrary.is_running_on_wivi_server():
+if fileLoader.is_running_on_wivi_server():
 	OutputFilePath = os.path.dirname(sys.argv[0])
 	TemplateFilenameAndPath = os.path.join(OutputFilePath, config["TemplateFilename"])
 	OutputFilename = "vsbFileInfoSummary_" + str(ReportGenTimeStamp) + ".xlsx"
@@ -121,7 +119,7 @@ if(len(input_msg_Files.FilesListSorted) > 0):
 			os.remove(input_msg_Files.FilesListSorted[a].DB_FileName)
 
 	log.info("Saving report file")
-	if IPAInterfaceLibrary.is_running_on_wivi_server():
+	if fileLoader.is_running_on_wivi_server():
 		wb.save(OutputFilename)
 	else:
 		wb.save(OutputFilenameAndPath)

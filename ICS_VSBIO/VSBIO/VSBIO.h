@@ -105,6 +105,7 @@ public:
 	void UpdateUIOutput(VSBIO & vsbio);
 
     bool Split(const uint64_t& nMessagesPerFile, const std::string& OutputLocation, ProgressFunc prog);
+	bool SplitBySize(double sizeInMB, const std::string& sOutputLocation, ProgressFunc prog);
 
 protected:
 	std::string mErrorOut;

@@ -4055,6 +4055,108 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_SplitBySizeW(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  wchar_t *arg1 = (wchar_t *) 0 ;
+  double arg2 ;
+  wchar_t *arg3 = (wchar_t *) 0 ;
+  ProgressFunc arg4 = (ProgressFunc) 0 ;
+  int res1 ;
+  wchar_t *buf1 = 0 ;
+  int alloc1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  int res3 ;
+  wchar_t *buf3 = 0 ;
+  int alloc3 = 0 ;
+  PyObject *swig_obj[4] ;
+  bool result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "SplitBySizeW", 4, 4, swig_obj)) SWIG_fail;
+  res1 = SWIG_AsWCharPtrAndSize(swig_obj[0], &buf1, NULL, &alloc1);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SplitBySizeW" "', argument " "1"" of type '" "wchar_t const *""'");
+  }
+  arg1 = reinterpret_cast< wchar_t * >(buf1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SplitBySizeW" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  res3 = SWIG_AsWCharPtrAndSize(swig_obj[2], &buf3, NULL, &alloc3);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "SplitBySizeW" "', argument " "3"" of type '" "wchar_t const *""'");
+  }
+  arg3 = reinterpret_cast< wchar_t * >(buf3);
+  {
+    int res = SWIG_ConvertFunctionPtr(swig_obj[3], (void**)(&arg4), SWIGTYPE_p_f_int__bool);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in method '" "SplitBySizeW" "', argument " "4"" of type '" "ProgressFunc""'"); 
+    }
+  }
+  result = (bool)SplitBySizeW((wchar_t const *)arg1,arg2,(wchar_t const *)arg3,arg4);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  return resultobj;
+fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SplitBySize(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  char *arg1 = (char *) 0 ;
+  double arg2 ;
+  char *arg3 = (char *) 0 ;
+  ProgressFunc arg4 = (ProgressFunc) 0 ;
+  int res1 ;
+  char *buf1 = 0 ;
+  int alloc1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  int res3 ;
+  char *buf3 = 0 ;
+  int alloc3 = 0 ;
+  PyObject *swig_obj[4] ;
+  bool result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "SplitBySize", 4, 4, swig_obj)) SWIG_fail;
+  res1 = SWIG_AsCharPtrAndSize(swig_obj[0], &buf1, NULL, &alloc1);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SplitBySize" "', argument " "1"" of type '" "char const *""'");
+  }
+  arg1 = reinterpret_cast< char * >(buf1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SplitBySize" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  res3 = SWIG_AsCharPtrAndSize(swig_obj[2], &buf3, NULL, &alloc3);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "SplitBySize" "', argument " "3"" of type '" "char const *""'");
+  }
+  arg3 = reinterpret_cast< char * >(buf3);
+  {
+    int res = SWIG_ConvertFunctionPtr(swig_obj[3], (void**)(&arg4), SWIGTYPE_p_f_int__bool);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in method '" "SplitBySize" "', argument " "4"" of type '" "ProgressFunc""'"); 
+    }
+  }
+  result = (bool)SplitBySize((char const *)arg1,arg2,(char const *)arg3,arg4);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  return resultobj;
+fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_CreateDatabaseW(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   wchar_t *arg1 = (wchar_t *) 0 ;
@@ -6170,6 +6272,8 @@ static PyMethodDef SwigMethods[] = {
 	 { "Concatenate", _wrap_Concatenate, METH_VARARGS, NULL},
 	 { "SplitW", _wrap_SplitW, METH_VARARGS, NULL},
 	 { "Split", _wrap_Split, METH_VARARGS, NULL},
+	 { "SplitBySizeW", _wrap_SplitBySizeW, METH_VARARGS, NULL},
+	 { "SplitBySize", _wrap_SplitBySize, METH_VARARGS, NULL},
 	 { "CreateDatabaseW", _wrap_CreateDatabaseW, METH_VARARGS, NULL},
 	 { "CreateDatabase", _wrap_CreateDatabase, METH_VARARGS, NULL},
 	 { "AddToDatabaseW", _wrap_AddToDatabaseW, METH_VARARGS, NULL},

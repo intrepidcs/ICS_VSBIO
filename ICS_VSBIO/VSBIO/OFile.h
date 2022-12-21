@@ -14,7 +14,7 @@ class OFile
 {
 public:
 
-    OFile() : m_bReadOnly(false)
+    OFile() : m_bReadOnly(false), m_bOverlapped(false)
     {
 #ifdef _WIN32
 	    hFile = NULL;

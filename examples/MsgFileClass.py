@@ -7,7 +7,7 @@ import sys
 import zipfile
 import shutil
 from pathlib import Path
-from ICS_IPA import IPAInterfaceLibrary
+from ICS_VSBIO import ICSFileInterfaceLibrary
 
 class msgFiles:
 	def __init__(self, inputFilePaths, ReportGenTimeStamp):
@@ -24,7 +24,7 @@ class msgFiles:
 		self.handler.setFormatter(self.formatter)
 		self.log.addHandler(self.handler)
 
-		if IPAInterfaceLibrary.is_running_on_wivi_server():
+		if ICSFileInterfaceLibrary.is_running_on_wivi_server():
 			OutputFilePath = os.path.dirname(sys.argv[0]) 
 		else:
 			OutputFilePath = os.path.dirname(sys.argv[0])

@@ -116,6 +116,12 @@ def SplitW(sFileName: "wchar_t const *", nMessagesPerFile: "unsigned int", Outpu
 def Split(sFileName: "char const *", nMessagesPerFile: "unsigned int", OutputLocation: "char const *", prog: "ProgressFunc") -> "bool":
     return _VSBIOInterface.Split(sFileName, nMessagesPerFile, OutputLocation, prog)
 
+def SplitBySizeW(sFileName: "wchar_t const *", sizeInMB: "double", sOutputLocation: "wchar_t const *", prog: "ProgressFunc") -> "bool":
+    return _VSBIOInterface.SplitBySizeW(sFileName, sizeInMB, sOutputLocation, prog)
+
+def SplitBySize(sFileName: "char const *", sizeInMB: "double", sOutputLocation: "char const *", prog: "ProgressFunc") -> "bool":
+    return _VSBIOInterface.SplitBySize(sFileName, sizeInMB, sOutputLocation, prog)
+
 def CreateDatabaseW(inputFilePath: "wchar_t const *", outputFileName: "wchar_t const *", prog: "ProgressFunc") -> "bool":
     return _VSBIOInterface.CreateDatabaseW(inputFilePath, outputFileName, prog)
 

@@ -24,13 +24,13 @@ endif()
 
 
 set( SOURCES
-	./main.cpp
 	./VSBIODLL.cpp
 	./VSBIO/OFile.cpp
 	./VSBIO/VSBIO.cpp
 	./VSBIO/MessageTimeDecoderVSB.cpp
 	./VSBIO/VSBDatabase.cpp
 	./VSBIO/NetworkInfo.cpp
+	./VSBIO/PcapFile.cpp
 	./VSBIO/sqlite/sqlite3.c
 	./VSBIO/sqlite/KompexSQLiteDatabase.cpp
 	./VSBIO/sqlite/KompexSQLiteStatement.cpp
@@ -42,9 +42,14 @@ include_directories(
 	./VSBIO
 	./VSBIO/sqlite
 )
+
+#Create test command line program
+add_executable(VSBIOTest ./main.cpp. ./VSBIO/OFile.cpp)
+target_include_directories(VSBIOTest PUBLIC include)
+target_link_libraries(VSBIOTest VSBIO)
 	
 add_definitions(
-	#-DVSBIODLL_EXPORTS
+	-DVSBIODLL_EXPORTS
 )
 
 if (WIN32)
@@ -55,10 +60,8 @@ include_directories(
 	.
 )
 
-
-add_executable(VSBIO ${SOURCES})
-
-
+add_library(VSBIO SHARED ${SOURCES})
+target_include_directories(VSBIO PUBLIC include)
 if(WIN32)
 	target_link_libraries(VSBIO)
 else()

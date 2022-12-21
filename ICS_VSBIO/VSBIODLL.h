@@ -169,7 +169,28 @@ VSBIODLL_API bool SplitW(const wchar_t *sFileName, unsigned int nMessagesPerFile
 VSBIODLL_API bool Split(const char *sFileName, unsigned int nMessagesPerFile, const char *OutputLocation, ProgressFunc prog);
 
 /// <summary>
+/// Splits this file using the file size parameter and a _00000... suffix for the output files.
+/// </summary>
+/// <param name="sFileName">Field to split</param>
+/// <param name="sizeInMB">Maximum size of split files in MB</param>
+/// <param name="sOutputLocation">Output path</param>
+/// <param name="prog">Progress callback</param>
+/// <returns>Whether the output files were all written</returns>
+VSBIODLL_API bool SplitBySizeW(const wchar_t* sFileName, double sizeInMB, const wchar_t* sOutputLocation, ProgressFunc prog);
+
+/// <summary>
+/// Splits this file using the file size parameter and a _00000... suffix for the output files.
+/// </summary>
+/// <param name="sFileName">Field to split</param>
+/// <param name="sizeInMB">Maximum size of split files in MB</param>
+/// <param name="sOutputLocation">Output path</param>
+/// <param name="prog">Progress callback</param>
+/// <returns>Whether the output files were all written</returns>
+VSBIODLL_API bool SplitBySize(const char* sFileName, double sizeInMB, const char* sOutputLocation, ProgressFunc prog);
+
+/// <summary>
 /// Creates a Sqlite database containing all the messages in the vsb file.  Old data is removed.
+/// If the output file extension is .pcap or .pcapng, those formats are written instead.
 /// </summary>
 /// <param name="inputFilePath">File for which to generate a database</param>
 /// <param name="outputFileName">File to generate</param>
@@ -179,6 +200,7 @@ VSBIODLL_API bool CreateDatabaseW(const wchar_t* inputFilePath, const wchar_t* o
 
 /// <summary>
 /// Creates a Sqlite database containing all the messages in the vsb file.  Old data is removed.
+/// If the output file extension is .pcap or .pcapng, those formats are written instead.
 /// </summary>
 /// <param name="inputFilePath">File for which to generate a database</param>
 /// <param name="outputFileName">File to generate</param>

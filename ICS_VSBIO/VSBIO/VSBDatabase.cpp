@@ -6,6 +6,7 @@
 #include "MessageTimeDecoderVSB.h"
 #include "VSBDatabase.h"
 #include "KompexSQLiteException.h"
+#include "PcapFile.h"
 
 using namespace Kompex;
 
@@ -200,8 +201,44 @@ unsigned int ReadMessage(const SQLiteStatement &qryMessages, std::vector<unsigne
     return (unsigned int)msgSize;
 }
 
+bool CreatePcap(const char* pVsbPath, const char* pOutPath, bool bAppend, bool bPcap, ProgressFunc prog)
+{
+    try
+    {
+        VSBIORead read(pVsbPath);
+        std::vector<unsigned char> msg;
+        PcapFile outFile(bPcap ? PcapType::pcapType : PcapType::pcapngType);
+        if (!outFile.Open(pOutPath, bAppend))
+            return false;
+
+        uint64_t counter = 0;
+        while (read.ReadNextMessage(msg) == VSBIORead::eSuccess)
+        {
+            if (prog && !((counter++) % 100000))
+            {
+                if (!prog(read.GetProgress()))
+                    break;
+            }
+            outFile.WriteMessage(msg);
+        }
+        return true;
+    }
+    catch (SQLiteException& exception)
+    {
+        exception.Show();
+        return false;
+    }
+}
+
 bool CreateDb(const char *pVsbPath, const char *pDbPath, bool bAppend, ProgressFunc prog)
 {
+    std::string sDirectory, sName, sExtension;
+    SplitPath(pDbPath, sDirectory, sName, sExtension);
+    if (_stricmp(sExtension.c_str(), ".pcap") == 0)
+        return CreatePcap(pVsbPath, pDbPath, bAppend, true, prog);
+    else if (_stricmp(sExtension.c_str(), ".pcapng") == 0)
+        return CreatePcap(pVsbPath, pDbPath, bAppend, false, prog);
+
     try
     {
         SQLiteDatabase db(pDbPath, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, 0);
