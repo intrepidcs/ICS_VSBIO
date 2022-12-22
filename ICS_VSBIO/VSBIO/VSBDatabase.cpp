@@ -234,9 +234,9 @@ bool CreateDb(const char *pVsbPath, const char *pDbPath, bool bAppend, ProgressF
 {
     std::string sDirectory, sName, sExtension;
     SplitPath(pDbPath, sDirectory, sName, sExtension);
-    if (_stricmp(sExtension.c_str(), ".pcap") == 0)
+    if (stricmp(sExtension.c_str(), ".pcap") == 0)
         return CreatePcap(pVsbPath, pDbPath, bAppend, true, prog);
-    else if (_stricmp(sExtension.c_str(), ".pcapng") == 0)
+    else if (stricmp(sExtension.c_str(), ".pcapng") == 0)
         return CreatePcap(pVsbPath, pDbPath, bAppend, false, prog);
 
     try
