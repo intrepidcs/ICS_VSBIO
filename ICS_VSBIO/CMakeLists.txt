@@ -44,7 +44,7 @@ include_directories(
 )
 
 #Create test command line program
-add_executable(VSBIOTest ./main.cpp. ./VSBIO/OFile.cpp)
+add_executable(VSBIOTest ./main.cpp ./VSBIO/OFile.cpp)
 target_include_directories(VSBIOTest PUBLIC include)
 target_link_libraries(VSBIOTest VSBIO)
 	

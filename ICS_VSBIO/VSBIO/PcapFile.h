@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <vector>
+#include <cstdio>
 
 enum class PcapType
 {

@@ -8,6 +8,10 @@
 #include "KompexSQLiteException.h"
 #include "PcapFile.h"
 
+#if !defined(_WIN32)
+#define _stricmp strcasecmp
+#endif
+
 using namespace Kompex;
 
 #define DROP_MESSAGES "DROP TABLE IF EXISTS RawMessageData"
@@ -234,9 +238,9 @@ bool CreateDb(const char *pVsbPath, const char *pDbPath, bool bAppend, ProgressF
 {
     std::string sDirectory, sName, sExtension;
     SplitPath(pDbPath, sDirectory, sName, sExtension);
-    if (stricmp(sExtension.c_str(), ".pcap") == 0)
+    if (_stricmp(sExtension.c_str(), ".pcap") == 0)
         return CreatePcap(pVsbPath, pDbPath, bAppend, true, prog);
-    else if (stricmp(sExtension.c_str(), ".pcapng") == 0)
+    else if (_stricmp(sExtension.c_str(), ".pcapng") == 0)
         return CreatePcap(pVsbPath, pDbPath, bAppend, false, prog);
 
     try
