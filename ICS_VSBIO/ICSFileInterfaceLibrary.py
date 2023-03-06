@@ -47,6 +47,8 @@ def get_config_file():
             input = json.load(open(sys.argv[1]))
             if 'config_files' in input and len(input['config_files']) > 1:
                 return input['config_files'][0]
+            elif 'configuration' in input:
+                return json.dumps(input['configuration'])
             return None
         else:
             return None
