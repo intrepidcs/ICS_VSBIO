@@ -94,8 +94,7 @@ std::string mbstring(const std::wstring &text)
   return result;
 }
 
-#if defined(__linux__) || defined(QNX_OS)
-#if defined(ANDROID) || defined(__APPLE__)
+#if defined(__linux__) || defined(QNX_OS) || defined(ANDROID) || defined(__APPLE__)
 
 #define _fseeki64 fseek
 #define _ftelli64 ftell
@@ -105,7 +104,6 @@ std::string mbstring(const std::wstring &text)
 #define _fseeki64 fseeko64
 #define _ftelli64 ftello64//ltello64
 
-#endif
 #endif
 
 bool OFile::OpenFile(const char* sFileName, bool bCreateNew, bool bWriteable, bool bOverlapped)
@@ -332,7 +330,7 @@ bool IsDirectory(const std::string& sPath)
 
 bool RemoveFile(const std::string& sPath)
 {
-#ifndef linux
+#ifdef _WIN32
 	return DeleteFileW(widestring(sPath).c_str()) ? true : false;
 #else
 	return unlink(sPath.c_str()) == 0;
