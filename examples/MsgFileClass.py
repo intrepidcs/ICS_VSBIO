@@ -10,32 +10,19 @@ from pathlib import Path
 from ICS_VSBIO import ICSFileInterfaceLibrary
 
 class msgFiles:
-	def __init__(self, inputFilePaths, ReportGenTimeStamp):
+	def __init__(self, inputFilePaths, ReportGenTimeStamp, OutputFilePath, log):
 		self.FilesList = []
 		self.FilesListSorted = []
-
-		logging.basicConfig(level=logging.INFO)
-		self.log = logging.getLogger(__name__)
-		self.handler = logging.FileHandler('IPA.log')
-		self.handler.setLevel(logging.INFO)
-
-		# create a logging format
-		self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(message)s')
-		self.handler.setFormatter(self.formatter)
-		self.log.addHandler(self.handler)
-
-		if ICSFileInterfaceLibrary.is_running_on_wivi_server():
-			OutputFilePath = os.path.dirname(sys.argv[0]) 
-		else:
-			OutputFilePath = os.path.dirname(sys.argv[0])
+		self.OutputFilePath = OutputFilePath
+		self.log = log
 
 		for inputFilePath in inputFilePaths:
 			self.FilesList.append(msgFile())
 			self.FilesList[-1].InputFileName = os.path.basename(inputFilePath["path"])
 			self.FilesList[-1].InputFilePath = os.path.dirname(inputFilePath["path"])
 			filename, fileExtension = os.path.splitext(str(self.FilesList[-1].InputFileName))
-			self.FilesList[-1].DB_FileName = os.path.join(OutputFilePath, filename + "_" + ReportGenTimeStamp + "_Filtrd.db2") 
-			self.FilesList[-1].OutputFilePath = OutputFilePath
+			self.FilesList[-1].DB_FileName = os.path.join(self.OutputFilePath, filename + "_" + ReportGenTimeStamp + "_Filtrd.db2") 
+			self.FilesList[-1].OutputFilePath = self.OutputFilePath
 			self.FilesList[-1].FileExtension = fileExtension
 			self.FilesList[-1].FileCreatedByClass = False
 			self.FilesList[-1].FileStartTime = ""
@@ -87,7 +74,7 @@ class msgFiles:
 								self.log.info("Removed top level zip file")
 								
 							except OSError as e:
-								self.log.info("error removing temp zip folder")
+								a=a
 
 			if (self.FilesList[-1].FileExtension == ".vsb"):
 				try:
@@ -119,9 +106,13 @@ class msgFiles:
 				startTime = row[0]
 				self.FilesList[-1].FileStartTimeRaw = startTime
 				self.FilesList[-1].FileStartTime = (datetime.fromtimestamp(startTime / 1e9, timezone.utc).isoformat() + '\n')
+				self.FilesList[-1].FileStartTime = self.FilesList[-1].FileStartTime[0:len(self.FilesList[-1].FileStartTime)-7]
 				endTime = row[1]
 				self.FilesList[-1].FileEndTimeRaw = endTime
 				self.FilesList[-1].FileEndTime = (datetime.fromtimestamp(endTime / 1e9, timezone.utc).isoformat() + '\n')
+				self.FilesList[-1].FileEndTime = self.FilesList[-1].FileEndTime[0:len(self.FilesList[-1].FileEndTime)-7]				
+				tempTime = (self.FilesList[-1].FileEndTimeRaw - self.FilesList[-1].FileStartTimeRaw)/1e9
+				self.FilesList[-1].FileDurationInMin = tempTime / 60
 
 			#now get the list of existing network Ids and Names
 			cursor.execute("Select DISTINCT Id, Name from Network ORDER by Id")
@@ -138,6 +129,7 @@ class msgFiles:
 
 			for i in range(len(self.FilesList[-1].FileNetworks)):
 				self.FilesList[-1].FileNetworks[i].numberOfArbIDs = 0
+				self.FilesList[-1].FileNetworks[i].network_tot_number_messages_in_file = 0
 				cursor.execute("SELECT Id, COUNT(*) NumMessages FROM RawMessageData WHERE NetworkId = " + str(self.FilesList[-1].FileNetworks[i].network_id) + " GROUP BY Id")
 				row = cursor.fetchall()
 				for j in range(len(row)):
@@ -145,32 +137,67 @@ class msgFiles:
 					self.FilesList[-1].FileNetworks[i].network_msg_ids_hex.append(hex(row[j][0]))
 					self.FilesList[-1].FileNetworks[i].network_msg_num_msgs.append(row[j][1])
 					self.FilesList[-1].FileNetworks[i].numberOfArbIDs = self.FilesList[-1].FileNetworks[i].numberOfArbIDs + 1
+					self.FilesList[-1].FileNetworks[i].network_tot_number_messages_in_file = self.FilesList[-1].FileNetworks[i].network_tot_number_messages_in_file + self.FilesList[-1].FileNetworks[i].network_msg_num_msgs[-1]
 
 			# now loop through each network and each ArbID and determine the min and max sample period
 			for i in range(len(self.FilesList[-1].FileNetworks)):
 				for j in range(self.FilesList[-1].FileNetworks[i].numberOfArbIDs):
 					if self.FilesList[-1].FileNetworks[i].network_msg_num_msgs[j] > 1:
-						QueryString = "CREATE VIEW IF NOT EXISTS TempView AS SELECT * FROM RawMessageData WHERE NetworkId = " + str(self.FilesList[-1].FileNetworks[i].network_id) + " AND ID = " + str(self.FilesList[-1].FileNetworks[i].network_msg_ids_dec[j])
+						ViewString ="TempView" + str(i) + "_" + str(j)
+						QueryString = "CREATE VIEW IF NOT EXISTS " + ViewString + " AS SELECT * FROM RawMessageData WHERE NetworkId = " + str(self.FilesList[-1].FileNetworks[i].network_id) + " AND ID = " + str(self.FilesList[-1].FileNetworks[i].network_msg_ids_dec[j])
 						cursor.execute(QueryString)
-						QueryString = "SELECT MIN(DeltaVal), MAX(DeltaVal) FROM (SELECT (a.MessageTime - b.MessageTime) as DeltaVal FROM TempView AS a JOIN TempView AS b ON (b.MessageTime = (SELECT MAX(z.MessageTime) FROM TempView AS z WHERE z.MessageTime < a.MessageTime)))"
+						QueryString = "SELECT MIN(DeltaVal), MAX(DeltaVal) FROM (SELECT (a.MessageTime - b.MessageTime) as DeltaVal FROM " + ViewString + " AS a JOIN " + ViewString + " AS b ON (b.MessageTime = (SELECT MAX(z.MessageTime) FROM " + ViewString + " AS z WHERE z.MessageTime < a.MessageTime)))"
 						cursor.execute(QueryString)
 						row = cursor.fetchall()
 						self.FilesList[-1].FileNetworks[i].network_msg_id_min_periods.append(row[0][0]*1e-9)
 						self.FilesList[-1].FileNetworks[i].network_msg_id_max_periods.append(row[0][1]*1e-9)
-						cursor.execute("DROP VIEW IF EXISTS TempView")					
+						cursor.execute("DROP VIEW IF EXISTS " + ViewString)					
 					else:
 						self.FilesList[-1].FileNetworks[i].network_msg_id_min_periods.append(0)
 						self.FilesList[-1].FileNetworks[i].network_msg_id_max_periods.append(0)
 
-		self.FilesListSorted = sorted(self.FilesList, key=lambda x: x.FileStartTimeRaw)				
+				#now calculate the overall min and max time gaps for all messages on network
+				if self.FilesList[-1].FileNetworks[i].network_tot_number_messages_in_file > 1:
+					QueryString = "CREATE VIEW IF NOT EXISTS TempView5 AS SELECT * FROM RawMessageData WHERE NetworkId = " + str(self.FilesList[-1].FileNetworks[i].network_id)
+					cursor.execute(QueryString)
+					QueryString = "SELECT MIN(DeltaVal), MAX(DeltaVal) FROM (SELECT (a.MessageTime - b.MessageTime) as DeltaVal FROM TempView5 AS a JOIN TempView5 AS b ON (b.MessageTime = (SELECT MAX(z.MessageTime) FROM TempView5 AS z WHERE z.MessageTime < a.MessageTime)))"
+					cursor.execute(QueryString)
+					row = cursor.fetchall()
+					self.FilesList[-1].FileNetworks[i].network_min_time_gap = (row[0][0]*1e-9)
+					self.FilesList[-1].FileNetworks[i].network_max_time_gap = (row[0][1]*1e-9)
 
+					QueryString = "SELECT MIN(MessageTime), MAX(MessageTime) FROM TempView5"
+					cursor.execute(QueryString)
+					row = cursor.fetchall()
+					tempTime = row[0][0]
+					self.FilesList[-1].FileNetworks[i].network_data_start_time = (datetime.fromtimestamp(tempTime / 1e9, timezone.utc).isoformat() + '\n')
+					self.FilesList[-1].FileNetworks[i].network_data_start_time = self.FilesList[-1].FileNetworks[i].network_data_start_time[0:len(self.FilesList[-1].FileNetworks[i].network_data_start_time)-7]
+					tempTime = row[0][1]
+					self.FilesList[-1].FileNetworks[i].network_data_end_time = (datetime.fromtimestamp(tempTime / 1e9, timezone.utc).isoformat() + '\n')
+					self.FilesList[-1].FileNetworks[i].network_data_end_time = self.FilesList[-1].FileNetworks[i].network_data_end_time[0:len(self.FilesList[-1].FileNetworks[i].network_data_end_time)-7]
+					cursor.execute("DROP VIEW IF EXISTS TempView5")
+								
+				else:
+					self.FilesList[-1].FileNetworks[i].network_min_time_gap = 0
+					self.FilesList[-1].FileNetworks[i].network_max_time_gap = 0
+					self.FilesList[-1].FileNetworks[i].network_data_start_time = 0
+					self.FilesList[-1].FileNetworks[i].network_data_end_time = 0
+
+		self.FilesListSorted = sorted(self.FilesList, key=lambda x: x.FileStartTimeRaw)
+
+		#now calculate and populate the time gap between each file now that they are sorted
+		self.FilesListSorted[0].time_gap_from_prev_file = 0
+		for i in range(1, len(self.FilesListSorted)):
+			self.FilesListSorted[i].time_gap_from_prev_file = (self.FilesListSorted[i].FileStartTimeRaw - self.FilesListSorted[i-1].FileEndTimeRaw) /1e9
 
 class msgFile:
 	def __init__(self):
 		self.DB_FileName = ""
 		self.FilteredVSBFilename = ""
 		self.NumberOfRecordsInFilteredVSB = 0		
+		self.FileStartTimeRaw = 0.0
 		self.FileStartTime = 0.0
+		self.FileEndTimeRaw = 0.0
 		self.FileEndTime = 0.0
 		self.InputFileName = ""
 		self.InputFilePath = ""
@@ -179,6 +206,8 @@ class msgFile:
 		self.FileExtension = ""
 		self.FileNetworks = []
 		self.FileCreatedByClass = False
+		self.time_gap_from_prev_file = 0
+		self.FileDurationInMin = 0
 
 class file_network:
 	def __init__(self):
@@ -189,3 +218,8 @@ class file_network:
 		self.network_msg_num_msgs = []
 		self.network_msg_id_min_periods = []
 		self.network_msg_id_max_periods = []
+		self.network_tot_number_messages_in_file = 0
+		self.network_data_start_time = ""
+		self.network_data_end_time = ""
+		self.network_min_time_gap = 0.0
+		self.network_max_time_gap = 0.0

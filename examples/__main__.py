@@ -1,1 +1,1 @@
-import GenerateVSBFileInfoSummary
+import GenerateTripSummaryFromVSBFiles

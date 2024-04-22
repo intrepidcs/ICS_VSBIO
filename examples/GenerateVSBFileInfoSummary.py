@@ -33,49 +33,55 @@ import sys, os
 from openpyxl.reader.excel import load_workbook
 from UtilityFunctions import ConvertNetworkStringToID
 from MsgFileClass import msgFiles
-from ICS_VSBIO import ICSFileInterfaceLibrary as fileLoader
+from ICS_VSBIO import ICSFileInterfaceLibrary
 from shutil import copyfile
 
 from datetime import datetime, timezone
 
+slFilePath = ICSFileInterfaceLibrary.get_config_file()
+inputFilePaths = ICSFileInterfaceLibrary.get_input_file_list()
+
+ReportGenTimeStamp = datetime.now().strftime("%m-%d-%y_%H-%M-%S")
+
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
-handler = logging.FileHandler('IPA.log')
-handler.setLevel(logging.INFO)
+loggingPath = "IPA.log"
+print(slFilePath)
+is_wivi35 = ICSFileInterfaceLibrary.is_running_on_wivi_server() and os.path.splitext(sys.argv[1])[1].lower() == '.json'
 
-# create a logging format
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(message)s')
-handler.setFormatter(formatter)
-log.addHandler(handler)
-
-log.info("Hello")
-
-slFilePath = fileLoader.get_config_file()
-inputFilePaths = fileLoader.get_input_file_list()
-
-#  C:\Jmitchell\FordExplorerData\extracted data 13-03-2021 02-57-29-510938 PM\Script 15-03-2021 08-55-07-650000 AM
-
-log.info(slFilePath)
-
-with open(slFilePath) as configFile:
-    config = json.load(configFile)
-
-# now go through each file, look for hits and log hits to dsr file
-# create a list for vsbFiles
-ReportGenTimeStamp = datetime.now().strftime("%m-%d-%y_%H-%M-%S")
-log.info("Analyzing input files")
-input_msg_Files = msgFiles(inputFilePaths, ReportGenTimeStamp)
-
-if fileLoader.is_running_on_wivi_server():
-	OutputFilePath = os.path.dirname(sys.argv[0])
+if is_wivi35:	
+	config = json.loads(slFilePath)
+	ipaInstanceConfig = json.load(open(sys.argv[1]))
+	config['output_dir'] = ipaInstanceConfig['output_dir']
+	loggingPath = os.path.join(ipaInstanceConfig["output_dir"], "IPA.log")
+	OutputFilePath = config['output_dir']
 	TemplateFilenameAndPath = os.path.join(OutputFilePath, config["TemplateFilename"])
 	OutputFilename = "vsbFileInfoSummary_" + str(ReportGenTimeStamp) + ".xlsx"
 	OutputFilenameAndPath = os.path.join(OutputFilePath ,OutputFilename)
 else:
-	OutputFilePath = os.path.dirname(sys.argv[0])
+	configFile = open(slFilePath)
+	config = json.load(configFile)
+	config['output_dir'] = os.getcwd()
+	OutputFilePath = config['output_dir']
 	TemplateFilenameAndPath = os.path.join(OutputFilePath, config["TemplateFilename"])
 	OutputFilename = "vsbFileInfoSummary_" + str(ReportGenTimeStamp) + ".xlsx"
 	OutputFilenameAndPath = os.path.join(OutputFilePath ,OutputFilename)
+
+handler = logging.FileHandler(loggingPath)
+handler.setLevel(logging.INFO)
+# create a logging format
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(message)s')
+handler.setFormatter(formatter)
+log.addHandler(handler)
+log.info("Hello")
+
+log.info(slFilePath)
+
+# now go through each file, look for hits and log hits to dsr file
+# create a list for vsbFiles
+
+log.info("Analyzing input files")
+input_msg_Files = msgFiles(inputFilePaths, ReportGenTimeStamp, OutputFilePath, log)
 
 #now write the vsbFiles info to the template Excel Spreadsheet
 log.info("Creating Excel output file")
@@ -119,7 +125,7 @@ if(len(input_msg_Files.FilesListSorted) > 0):
 			os.remove(input_msg_Files.FilesListSorted[a].DB_FileName)
 
 	log.info("Saving report file")
-	if fileLoader.is_running_on_wivi_server():
+	if ICSFileInterfaceLibrary.is_running_on_wivi_server():
 		wb.save(OutputFilename)
 	else:
 		wb.save(OutputFilenameAndPath)

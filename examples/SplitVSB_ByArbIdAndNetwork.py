@@ -61,26 +61,38 @@ from ICS_VSBIO import VSBIOInterface as vsb
 from time import mktime
 from MsgFileClass import msgFiles
 
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger(__name__)
-handler = logging.FileHandler('IPA.log')
-handler.setLevel(logging.INFO)
-
-# create a logging format
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(message)s')
-handler.setFormatter(formatter)
-log.addHandler(handler)
-
-log.info("Hello")
-
 slFilePath = ICSFileInterfaceLibrary.get_config_file()
 inputFilePaths = ICSFileInterfaceLibrary.get_input_file_list()
 
-log.info(slFilePath)
-
 ReportGenTimeStamp = datetime.now().strftime("%m-%d-%y_%H-%M-%S")
+
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
+loggingPath = "IPA.log"
+print(slFilePath)
+is_wivi35 = ICSFileInterfaceLibrary.is_running_on_wivi_server() and os.path.splitext(sys.argv[1])[1].lower() == '.json'
+
+if is_wivi35:	
+	config = json.loads(slFilePath)
+	ipaInstanceConfig = json.load(open(sys.argv[1]))
+	config['output_dir'] = ipaInstanceConfig['output_dir']
+	loggingPath = os.path.join(ipaInstanceConfig["output_dir"], "IPA.log")
+	OutputFilePath = config['output_dir']
+	OutputFilename = "vsbFileInfoSummary_" + str(ReportGenTimeStamp) + ".xlsx"
+	OutputFilenameAndPath = os.path.join(OutputFilePath ,OutputFilename)
+else:
+	configFile = open(slFilePath)
+	config = json.load(configFile)
+	config['output_dir'] = os.getcwd()
+	OutputFilePath = config['output_dir']
+	OutputFilename = "vsbFileInfoSummary_" + str(ReportGenTimeStamp) + ".xlsx"
+	OutputFilenameAndPath = os.path.join(OutputFilePath ,OutputFilename)
+
+DeleteTempDB2FileAfterExecution = config['DeleteTempDB2FileAfterExecution']
+log.info("Hello") 
 log.info("Analyzing input files")
-msg_Files = msgFiles(inputFilePaths, ReportGenTimeStamp)
+
+msg_Files = msgFiles(inputFilePaths, ReportGenTimeStamp, OutputFilePath, log)
 
 with open(slFilePath) as configFile:
     config = json.load(configFile)
@@ -142,11 +154,6 @@ for i in range(len(MsgIDsPerNetwork)):
 		else:
 			NetworkAndMsgIDQueryString += ")"
 
-#now name output files
-if ICSFileInterfaceLibrary.is_running_on_wivi_server():
-	OutputFilePath = os.path.dirname(sys.argv[0])
-else:
-	OutputFilePath = os.path.dirname(sys.argv[0])
 
 # now go through each file and split using NetworkAndMsgIDQueryString
 for msg_File in msg_Files.FilesListSorted:
@@ -159,40 +166,44 @@ for msg_File in msg_Files.FilesListSorted:
 		conn.text_factory = lambda x: str(x, 'utf-8', 'ignore')
 
 		# Read the file start and end timestamp from the Networks table
-		cursor = conn.cursor()    
-		cursor.execute("SELECT Min(FirstTime), Max(LastTime) FROM Network")
+		cursor = conn.cursor()
+		try:
+			cursor.execute("SELECT Min(FirstTime), Max(LastTime) FROM Network")
 
-		row = cursor.fetchone()
-	
-		if row is not None:
-			startTimeAbsoluteNumeric = row[0]
-			startTimeAbsoluteString = datetime.fromtimestamp(startTimeAbsoluteNumeric / 1e9, timezone.utc).isoformat()
-			endTimeAbsoluteNumeric = row[1]
-			endTimeAbsoluteString = datetime.fromtimestamp(endTimeAbsoluteNumeric / 1e9, timezone.utc).isoformat()
-			if not(math.isnan(config["StartTimeInSecondsFromStartOfFile"])):
-				FilteredStartTime = str(int(startTimeAbsoluteNumeric + config["StartTimeInSecondsFromStartOfFile"] * 1e9)) 
-				FilteredEndTime = str(int(endTimeAbsoluteNumeric + config["EndTimeInSecondsFromStartOfFile"] * 1e9)) 
+			row = cursor.fetchone()
+		
+			if row is not None:
+				startTimeAbsoluteNumeric = row[0]
+				startTimeAbsoluteString = datetime.fromtimestamp(startTimeAbsoluteNumeric / 1e9, timezone.utc).isoformat()
+				endTimeAbsoluteNumeric = row[1]
+				endTimeAbsoluteString = datetime.fromtimestamp(endTimeAbsoluteNumeric / 1e9, timezone.utc).isoformat()
+				if not(math.isnan(config["StartTimeInSecondsFromStartOfFile"])):
+					FilteredStartTime = str(int(startTimeAbsoluteNumeric + config["StartTimeInSecondsFromStartOfFile"] * 1e9)) 
+					FilteredEndTime = str(int(endTimeAbsoluteNumeric + config["EndTimeInSecondsFromStartOfFile"] * 1e9)) 
+				else:
+					FilteredStartTime = str(int(datetime.fromisoformat(config["StartTimeAbsolute"]).timestamp() * 1e9)) 
+					FilteredEndTime = str(int(datetime.fromisoformat(config["EndTimeAbsolute"]).timestamp() * 1e9)) 
+				if len(MsgIDsPerNetwork) > 0:
+					TimeFilterString = " AND ((MessageTime > " + FilteredStartTime + ") AND (MessageTime < " + FilteredEndTime + "))"
+				else:
+					TimeFilterString = "((MessageTime > " + FilteredStartTime + ") AND (MessageTime < " + FilteredEndTime + "))"
+
+			log.info("Generate filtered vsb file")
+			if len(NetworkAndMsgIDQueryString) > 0:
+				TempQueryString = "(" + NetworkAndMsgIDQueryString + ")"
 			else:
-				FilteredStartTime = str(int(datetime.fromisoformat(config["StartTimeAbsolute"]).timestamp() * 1e9)) 
-				FilteredEndTime = str(int(datetime.fromisoformat(config["EndTimeAbsolute"]).timestamp() * 1e9)) 
-			if len(MsgIDsPerNetwork) > 0:
-				TimeFilterString = " AND ((MessageTime > " + FilteredStartTime + ") AND (MessageTime < " + FilteredEndTime + "))"
+				TempQueryString = ""
+
+			msg_File.NumberOfRecordsInFilteredVSB = vsb.WriteFilteredVsb(msg_File.DB_FileName, msg_File.FilteredVSBFilename, TempQueryString + TimeFilterString, None)
+			if msg_File.NumberOfRecordsInFilteredVSB > 0:
+				sys.stdout.write("VSB file was created! with " + str(msg_File.NumberOfRecordsInFilteredVSB) + " in it. \n")
+				log.info("Finished generating filtered vsb file")
 			else:
-				TimeFilterString = "((MessageTime > " + FilteredStartTime + ") AND (MessageTime < " + FilteredEndTime + "))"
+				sys.stdout.write('VSB file has no records for output.\n')
+				log.info('VSB file has no records for output.')
 
-		log.info("Generate filtered vsb file")
-		if len(NetworkAndMsgIDQueryString) > 0:
-			TempQueryString = "(" + NetworkAndMsgIDQueryString + ")"
-		else:
-			TempQueryString = ""
-
-		msg_File.NumberOfRecordsInFilteredVSB = vsb.WriteFilteredVsb(msg_File.DB_FileName, msg_File.FilteredVSBFilename, TempQueryString + TimeFilterString, None)
-		if msg_File.NumberOfRecordsInFilteredVSB > 0:
-			sys.stdout.write("VSB file was created! with " + str(msg_File.NumberOfRecordsInFilteredVSB) + " in it. \n")
-			log.info("Finished generating filtered vsb file")
-		else:
-			sys.stdout.write('VSB file has no records for output.\n')
-			log.info('VSB file has no records for output.')
+		except sqlite3.Error as er:
+			log.info("Error in sqlite file" + msg_File.InputFileName)
 
 		conn.close()
 		if ( os.path.isfile(msg_File.DB_FileName) and (msg_File.FileCreatedByClass) \
@@ -235,9 +246,7 @@ if config["CombineResultingFilesToASingleVSB"] == "TRUE":
 	if ( os.path.isfile(OutputDatabaseFilename) and (config["DeleteTempDB2FileAfterExecution"] == "TRUE")  ):
 		os.remove(OutputDatabaseFilename)
 		log.info("Removed file: " + OutputDatabaseFilename )
-
-#now compress output files
-if config["CombineResultingFilesToASingleVSB"] == "FALSE":
+else:
 	if ICSFileInterfaceLibrary.is_running_on_wivi_server():
 		VSBOutputZipFilename = "AllOutputVsbFiles_" + ReportGenTimeStamp + ".zip"
 	else:
