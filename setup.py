@@ -26,11 +26,13 @@ def which(program):
 
     return None
 
+DEFINE_MACROS = [('PYD', None), ('SQLITE_ENABLE_COLUMN_METADATA', None)]
 if platform.system() == 'Windows':
-    DEFINE_MACROS = [('_WIN32', None), ('VSBIODLL_EXPORTS', None)]
+    DEFINE_MACROS += [('_WIN32', None), ('VSBIODLL_EXPORTS', None)]
 elif platform.system() == 'Linux':
-    DEFINE_MACROS = [('LINUXSO', None)]
-DEFINE_MACROS += [('PYD', None), ('SQLITE_ENABLE_COLUMN_METADATA', None)]
+    DEFINE_MACROS += [('LINUXSO', None)]
+elif platform.system() == 'Darwin':
+    DEFINE_MACROS += [('DARWINSO', None)]
 
 if which('swig') or which('swig.exe'):
     SWIG_OPTS = ['-c++', '-py3']
