@@ -36,7 +36,7 @@ else:
 	config['output_dir'] = os.getcwd()
 	OutputFilePath = config['output_dir']
 
-VSDBFilenameAndPath = config['VSDBFilenameAndPath']
+#VSDBFilenameAndPath = config['VSDBFilenameAndPath']
 handler = logging.FileHandler(loggingPath)
 handler.setLevel(logging.INFO)
 # create a logging format
@@ -52,13 +52,15 @@ log.info(slFilePath)
 
 #now write the vsbFiles info to the template Excel Spreadsheet
 log.info("Converting files to db")
+FileTypesList = config["FileTypesList"]
 
 for inputFilePath in inputFilePaths:
 	InputFileName = os.path.basename(inputFilePath["path"])
 	InputFilePath = os.path.dirname(inputFilePath["path"])
 	filename, fileExtension = os.path.splitext(str(InputFileName))
-	DB_FileName = os.path.join(OutputFilePath, filename + "_" + ReportGenTimeStamp + "_Filtrd.db2") 
-	OutputFilePath = OutputFilePath
+	DB2_FileName = os.path.join(OutputFilePath, filename + "_" + ReportGenTimeStamp + ".db2") 
+	PCAP_FileName = os.path.join(OutputFilePath, filename + "_" + ReportGenTimeStamp + ".pcap") 
+	PCAPNG_FileName = os.path.join(OutputFilePath, filename + "_" + ReportGenTimeStamp + ".pcapng") 
 	FileExtension = fileExtension
 	FileCreatedByClass = False
 	FileStartTime = ""
@@ -116,33 +118,29 @@ for inputFilePath in inputFilePaths:
 		try:
 			# Open the message database
 			log.info("Create database for file " + str(os.path.join(InputFilePath, InputFileName)))
-			vsb.CreateDatabase(os.path.join(InputFilePath, InputFileName), DB_FileName, None)
-			log.info("Finished making message db2 file")
-			OutputFilename = os.path.basename(DB_FileName) + ".db"
+			for a in range(len(FileTypesList)):
+				if FileTypesList[a] == "db2":
+					CreateDB2Result = vsb.CreateDatabase(os.path.join(InputFilePath, InputFileName), DB2_FileName, None)
+					log.info("Result of DB2 creation was: " + str(CreateDB2Result))
+				elif FileTypesList[a] == "pcap":
+					CreatePCAPResult = vsb.CreateDatabase(os.path.join(InputFilePath, InputFileName), PCAP_FileName, None)
+					log.info("Result of pcap creation was: " + str(CreatePCAPResult))
+				elif FileTypesList[a] == "pcapng":
+					CreatePCAPNGResult = vsb.CreateDatabase(os.path.join(InputFilePath, InputFileName), PCAPNG_FileName, None)
+					log.info("Result of pcapng creation was: " + str(CreatePCAPNGResult))
+			
+			"""
+			OutputFilename = os.path.basename(DB2_FileName) + ".db"
 			OutputFilenameAndPath = os.path.join(OutputFilePath ,OutputFilename)	
-			ResultOfAddDecodings = vsb.AddVsdbDecodings(VSDBFilenameAndPath, DB_FileName)
+			ResultOfAddDecodings = vsb.AddVsdbDecodings(VSDBFilenameAndPath, DB2_FileName)
 			log.info("Finished adding vsdb decodings to message db2 file")
 			log.info("ResultOfAddDecodings = " + str(ResultOfAddDecodings))
 			log.info("Starting to make signal db file")
-			ResultOfCreateSignalDatabase = vsb.CreateSignalDatabase(DB_FileName, OutputFilenameAndPath)
+			ResultOfCreateSignalDatabase = vsb.CreateSignalDatabase(DB2_FileName, OutputFilenameAndPath)
 			log.info("ResultOfCreateSignalDatabase = " + str(ResultOfCreateSignalDatabase))
 			log.info("Finished making signal db file")
-
-#			if ((TempVSBExtracted == True) and (os.path.isfile(os.path.join(InputFilePath, InputFileName)))):
-#				os.remove(os.path.join(InputFilePath, InputFileName))
-#				log.info("Removed temp input vsb file")
-
-#			conn = sqlite3.connect(DB_FileName, timeout=10)
-
+			"""
 		except ValueError as e:
 			print(str(e))
 
-#for a in range(len(input_msg_Files.FilesListSorted)):
-#	OutputFilename = os.path.basename(DB_FileName) + ".db"
-#	OutputFilenameAndPath = os.path.join(OutputFilePath ,OutputFilename)	
-#	ResultOfAddDecodings = vsb.AddVsdbDecodings(VSDBFilenameAndPath, DB_FileName)
-#	log.info("ResultOfAddDecodings = " + str(ResultOfAddDecodings))
-#	ResultOfCreateSignalDatabase = vsb.CreateSignalDatabase(DB_FileName, OutputFilenameAndPath)
-#	log.info("ResultOfCreateSignalDatabase = " + str(ResultOfCreateSignalDatabase))
-#
 log.info("Goodbye")
