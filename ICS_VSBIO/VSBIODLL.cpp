@@ -4,6 +4,7 @@
 #include "VSBIODLL.h"
 #include "VSBIO/VSBIO.h"
 #include "VSBIO/VSBDatabase.h"
+#include "CMPNetworkMap.h"
 #include <string>
 #include <locale>
 
@@ -152,4 +153,13 @@ extern "C" VSBIODLL_API int WriteFilteredVsb(const char* inputFilePath, const ch
 	return WriteVsb(inputFilePath, outputFileName, filter, prog);
 }
 
+extern "C" VSBIODLL_API bool UnwrapCMPToNativeVSBNetIDs(const char* inputFilePath, const char* outputFilePath, int sortOutput, int timestampSource, ProgressFunc prog, int outputInfoToTxt)
+{
+	return UnwrapCMPToNative(inputFilePath, outputFilePath, sortOutput, timestampSource, prog, outputInfoToTxt);
+}
+
+extern "C" VSBIODLL_API bool UnwrapCMPToNativeVSBNetIDsW(const wchar_t* inputFilePath, const wchar_t* outputFilePath, int sortOutput, int timestampSource, ProgressFunc prog, int outputInfoToTxt)
+{
+	return UnwrapCMPToNativeVSBNetIDs(mbstring(inputFilePath).c_str(), mbstring(outputFilePath).c_str(), sortOutput, timestampSource, prog, outputInfoToTxt);
+}
 

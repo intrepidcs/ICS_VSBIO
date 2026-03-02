@@ -22,6 +22,10 @@ struct wrapped_array {
 	Type data[N];
 };
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable : 4201 )  // Naming the union and struct confuses SWIG, which then omits the items
+#endif
 typedef struct _icsSpyMessageVSB
 {
 	uint32_t StatusBitField;
@@ -56,6 +60,10 @@ typedef struct _icsSpyMessageVSB
 	wrapped_array<uint8_t, 3> Reserved;
 } icsSpyMessageVSB;
 #define icsSpyMessageVSB_SIZE 64
+
+#if defined(_MSC_VER)
+#pragma warning( pop )  // turning it back on
+#endif
 
 typedef bool (*ProgressFunc)(int);
 
