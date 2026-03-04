@@ -251,6 +251,66 @@ VSBIODLL_API int WriteFilteredVsbW(const wchar_t* inputFilePath, const wchar_t* 
 VSBIODLL_API int WriteFilteredVsb(const char* inputFilePath, const char* outputFileName, const char* filter, ProgressFunc prog);
 
 
+/// <summary>
+/// Unwrap CMP (ASAM Capture Module Protocol) encapsulated messages into native VSB network messages.
+/// This function processes VSB files containing CMP-wrapped Ethernet frames and extracts the underlying
+/// CAN, CAN FD, LIN, and Ethernet messages, mapping them to their appropriate native VSB Network IDs
+/// based on CMP Device ID and Interface ID combinations defined in CMPNetworkMap.cpp.
+/// </summary>
+/// <param name="inputFilePath">
+/// Full path to the input VSB file containing CMP-encapsulated Ethernet messages (ethertype 0x99FE).
+/// The file must be a valid VSB format file readable by VSBIORead.
+/// </param>
+/// <param name="outputFilePath">
+/// Full path where the unwrapped VSB file will be written. The output file will contain:
+/// - Native VSB messages (CAN, CAN FD, LIN, Ethernet) with proper Network IDs for successfully unwrapped CMP messages
+/// - Original pass-through messages for non-CMP Ethernet frames and all other protocols
+/// - CMP messages are filtered out from the output (only unwrapped results are written)
+/// </param>
+/// <param name="sortOutput">
+/// Controls whether output frames are sorted by timestamp:
+/// - 0 = Sort frames by timestamp (default) - messages written in chronological order based on hardware timestamp
+/// - 1 = No sorting - preserve input order, writing frames as they are processed
+/// Sorting ensures proper time-ordered playback but may increase memory usage for large files.
+/// </param>
+/// <param name="timestampSource">
+/// Controls which timestamp is applied to the unwrapped messages:
+/// - 0 = Use CMP header timestamp (64-bit hardware timestamp from CMP Data Message Header, offset +0)
+/// - 1 = Use outer Ethernet timestamp (default/recommended) - preserves timeline consistency with surrounding traffic
+/// For most use cases, use 1 to maintain chronological order with other logged messages.
+/// </param>
+/// <param name="prog">
+/// Optional progress callback function pointer (can be NULL). If provided, this function is called approximately
+/// every 100,000 messages with the current progress percentage (0-100). The callback should return true to continue
+/// processing or false to abort. Signature: bool ProgressFunc(int percentComplete)
+/// </param>
+/// <returns>
+/// True if the operation completed successfully (file was processed and output written).
+/// False if an I/O error occurred (e.g., input file not found, output file cannot be created, disk full).
+/// Note: Messages that fail to unwrap due to unsupported payload types or missing network mappings are
+/// passed through as-is, and do not cause the function to return false.
+/// </returns>
+/// <remarks>
+/// Supported CMP payload types:
+/// - 0x01: CAN (up to 8 bytes data)
+/// - 0x02: CAN FD (up to 64 bytes data)
+/// - 0x03: LIN (up to 8 bytes data)
+/// - 0x08: Ethernet (with segmentation support for large frames)
+/// 
+/// Network mapping is performed via CMPNetworkMap.cpp lookup table using CMP DeviceId (BE16 at CMP offset +2)
+/// and InterfaceId (LE32 at Data Message Header offset +8). Messages without valid mappings are skipped.
+/// 
+/// Only CMP version 0x01 and CAP_DATA_MSG (message type 0x01) are processed. Other CMP messages are filtered out.
+/// </remarks>
+VSBIODLL_API bool UnwrapCMPToNativeVSBNetIDs(const char* inputFilePath, const char* outputFilePath, int sortOutput, int timestampSource, ProgressFunc prog, int outputInfoToTxt = 0);
+
+/// <summary>
+/// Wide-char (Unicode) variant of UnwrapCMPToNativeVSBNetIDs.
+/// See UnwrapCMPToNativeVSBNetIDs for detailed parameter and usage documentation.
+/// </summary>
+VSBIODLL_API bool UnwrapCMPToNativeVSBNetIDsW(const wchar_t* inputFilePath, const wchar_t* outputFilePath, int sortOutput, int timestampSource, ProgressFunc prog, int outputInfoToTxt = 0);
+
+
 #ifdef __cplusplus
 }
 #endif

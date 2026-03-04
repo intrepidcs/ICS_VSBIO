@@ -25,6 +25,8 @@ endif()
 
 set( SOURCES
 	./VSBIODLL.cpp
+	./CMPNetworkMap.cpp
+	./UnwrapCMP.cpp
 	./VSBIO/OFile.cpp
 	./VSBIO/VSBIO.cpp
 	./VSBIO/MessageTimeDecoderVSB.cpp
@@ -35,12 +37,14 @@ set( SOURCES
 	./VSBIO/sqlite/KompexSQLiteDatabase.cpp
 	./VSBIO/sqlite/KompexSQLiteStatement.cpp
 	./VSBIO/sqlite/KompexSQLiteBlob.cpp
+	./VSBIO/pugixml/pugixml.cpp
 )
 
 include_directories(
 	.
 	./VSBIO
 	./VSBIO/sqlite
+	./VSBIO/pugixml
 )
 
 #Create test command line program

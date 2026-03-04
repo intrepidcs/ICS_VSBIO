@@ -113,7 +113,7 @@ uint64_t CMessageTimeDecoderVSB::CalcEpoch64(const icsSpyMessageVSB& obMsg)
 		return (uint64_t)obMsg.TimeSystem * 1000000;
 	}
 }
-
+#define OTIME_NS_BETWEEN_1970_2007    1167609600000000000ULL // Nanoseconds
 /// <summary>
 /// Sets the message time from the time64_t value
 /// </summary>
@@ -121,11 +121,13 @@ uint64_t CMessageTimeDecoderVSB::CalcEpoch64(const icsSpyMessageVSB& obMsg)
 /// <param name="timeVal">Epoch value: number of nanoseconds since Jan 1, 1970</param>
 void CMessageTimeDecoderVSB::SetMessageTime(icsSpyMessageVSB& msg, uint64_t timeVal)
 {
-	msg.TimeStampHardwareID = HARDWARE_TIMESTAMP_ID_NEORED_25NS;
-	timeVal -= ICS_EPOCH_OFFSET;
-	timeVal /= 25;
-	msg.TimeHardware = (uint32_t)timeVal;
-	msg.TimeHardware2 = (uint32_t)(timeVal >> 32);
+    msg.TimeStampHardwareID = HARDWARE_TIMESTAMP_ID_NEORED_25NS;
+    uint64_t ics_nano_second = (timeVal - OTIME_NS_BETWEEN_1970_2007) / 25;
+    msg.TimeHardware2 = ics_nano_second >> 32;
+    msg.TimeHardware = ics_nano_second & 0xFFFFFFFF;
+    msg.TimeStampSystemID = 0;
+    msg.TimeSystem = 0;
+    msg.TimeSystem2 = 0;
 }
 
 int CMessageTimeDecoderVSB::GetSpyTimeType(const icsSpyMessageVSB& msg)
