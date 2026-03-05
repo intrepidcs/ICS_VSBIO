@@ -1,5 +1,12 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.15)
 project (VSBIO)
+
+include(FetchContent)
+FetchContent_Declare(
+	pugixml
+	GIT_REPOSITORY https://github.com/zeux/pugixml.git
+	GIT_TAG        v1.14
+)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules)
 set(CPACK_PACKAGE_VERSION_MAJOR 1)
@@ -12,7 +19,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -DSQLITE_ENABLE_COLUMN_METADATA")
 
 if( MSVC )
 	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /EHsc /MP /W4")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+	set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 	ADD_DEFINITIONS(-DUNICODE -D_UNICODE -D_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS -D_CRT_SECURE_NO_WARNINGS)
 elseif ( CMAKE_COMPILER_IS_GNUCC )
 	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fpermissive -fexceptions -std=c++11 -Wno-everything" -O3)
@@ -21,6 +28,8 @@ if (WIN32)
 	ADD_DEFINITIONS(-DUNICODE -D_UNICODE)
 endif()
 endif()
+
+FetchContent_MakeAvailable(pugixml)
 
 
 set( SOURCES
@@ -37,14 +46,12 @@ set( SOURCES
 	./VSBIO/sqlite/KompexSQLiteDatabase.cpp
 	./VSBIO/sqlite/KompexSQLiteStatement.cpp
 	./VSBIO/sqlite/KompexSQLiteBlob.cpp
-	./VSBIO/pugixml/pugixml.cpp
 )
 
 include_directories(
 	.
 	./VSBIO
 	./VSBIO/sqlite
-	./VSBIO/pugixml
 )
 
 #Create test command line program
@@ -66,8 +73,7 @@ include_directories(
 
 add_library(VSBIO SHARED ${SOURCES})
 target_include_directories(VSBIO PUBLIC include)
-if(WIN32)
-	target_link_libraries(VSBIO)
-else()
-	target_link_libraries(VSBIO "-static -static-libstdc++")
+target_link_libraries(VSBIO PRIVATE pugixml::pugixml)
+if(NOT WIN32)
+	target_link_libraries(VSBIO PRIVATE "-static -static-libstdc++")
 endif()

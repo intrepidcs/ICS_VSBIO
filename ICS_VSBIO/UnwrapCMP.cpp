@@ -53,7 +53,7 @@ static inline void CopyTimestampFromOuter(const icsSpyMessageVSB& outer, icsSpyM
 	out.TimeStampSystemID = outer.TimeStampSystemID;
 }
 
-static inline void SetNetworkID16(icsSpyMessageVSB& msg, unsigned short netid16)
+static inline void SetNetworkID16(icsSpyMessageVSB& msg, const unsigned short netid16)
 {
 	msg.NetworkID = (unsigned char)(netid16 & 0xFF);
 	msg.NetworkID2 = (unsigned char)((netid16 >> 8) & 0xFF);
@@ -62,7 +62,7 @@ static inline void SetNetworkID16(icsSpyMessageVSB& msg, unsigned short netid16)
 // Generic CMP→VSB network mapping: try DeviceId+InterfaceId mapping table,
 // then fall back to a provided 16-bit NetworkID when available.
 // Returns true if a valid network mapping was found or fallback was applied; false otherwise.
-static inline bool SetCmpNetworkFromMap(icsSpyMessageVSB& msg, uint16_t cmpDeviceId, uint32_t cmpInterfaceId, unsigned short fallbackNetId)
+static inline bool SetCmpNetworkFromMap(icsSpyMessageVSB& msg, const uint16_t cmpDeviceId, const uint32_t cmpInterfaceId, const unsigned short fallbackNetId)
 {
 	uint16_t netid16 = 0;
 	if (CmpMapLookup16(cmpDeviceId, cmpInterfaceId, netid16)) {
@@ -77,50 +77,97 @@ static inline bool SetCmpNetworkFromMap(icsSpyMessageVSB& msg, uint16_t cmpDevic
 }
 
 // CMP constants derived from coremini_lib definitions
-#define CMP_HEADER_OFFSET 14
-#define CMP_HEADER_SIZE 8
-#define CMP_DATA_MESSAGE_HEADER_SIZE 16
-#define CMP_DATA_MESSAGE_PAYLOAD_TYPE_CAN 0x01
-#define CMP_DATA_MESSAGE_PAYLOAD_TYPE_CANFD 0x02
-#define CMP_DATA_MESSAGE_PAYLOAD_TYPE_LIN 0x03
-#define CMP_DATA_MESSAGE_PAYLOAD_TYPE_ETHERNET 0x08
+static constexpr size_t   CMP_HEADER_OFFSET                    = 14;
+static constexpr size_t   CMP_HEADER_SIZE                      = 8;
+static constexpr size_t   CMP_DATA_MESSAGE_HEADER_SIZE         = 16;
+static constexpr uint8_t  CMP_DATA_MESSAGE_PAYLOAD_TYPE_CAN      = 0x01;
+static constexpr uint8_t  CMP_DATA_MESSAGE_PAYLOAD_TYPE_CANFD    = 0x02;
+static constexpr uint8_t  CMP_DATA_MESSAGE_PAYLOAD_TYPE_LIN      = 0x03;
+static constexpr uint8_t  CMP_DATA_MESSAGE_PAYLOAD_TYPE_ETHERNET = 0x08;
 
 // SEG field values (bits 6-7 of Common Flags)
-#define CMP_SEG_UNSEGMENTED 0x00
-#define CMP_SEG_START 0x40       // 0b01000000
-#define CMP_SEG_CONTINUATION 0x80 // 0b10000000
-#define CMP_SEG_END 0xC0          // 0b11000000
-#define CMP_SEG_MASK 0xC0
+static constexpr uint8_t  CMP_SEG_UNSEGMENTED  = 0x00;
+static constexpr uint8_t  CMP_SEG_START        = 0x40; // 0b01000000
+static constexpr uint8_t  CMP_SEG_CONTINUATION = 0x80; // 0b10000000
+static constexpr uint8_t  CMP_SEG_END          = 0xC0; // 0b11000000
+static constexpr uint8_t  CMP_SEG_MASK         = 0xC0;
+
+// CMP protocol constants
+static constexpr uint16_t CMP_ETHERTYPE            = 0x99FE;
+static constexpr uint8_t  CMP_VERSION              = 0x01;
+static constexpr uint8_t  CMP_MESSAGE_TYPE_CAP_DATA = 0x01;
+static constexpr uint8_t  CMP_COMMON_FLAG_DIR_ON_IF = 0x10;
+
+// Ethernet frame offsets
+static constexpr size_t   ETH_ETHERTYPE_OFFSET = 12;
+
+// CMP header field offsets (relative to CMP header start)
+static constexpr size_t   CMP_HDR_VERSION_OFFSET    = 0;
+static constexpr size_t   CMP_HDR_DEVICE_ID_OFFSET  = 2;
+static constexpr size_t   CMP_HDR_MSG_TYPE_OFFSET   = 4;
+static constexpr size_t   CMP_HDR_STREAM_ID_OFFSET  = 5;
+static constexpr size_t   CMP_HDR_SEQ_COUNTER_OFFSET = 6;
+
+// CMP data message header field offsets (relative to data header start)
+static constexpr size_t   CMP_DATA_HDR_TIMESTAMP_OFFSET    = 0;
+static constexpr size_t   CMP_DATA_HDR_INTERFACE_ID_OFFSET = 8;
+static constexpr size_t   CMP_DATA_HDR_COMMON_FLAGS_OFFSET = 12;
+static constexpr size_t   CMP_DATA_HDR_PAYLOAD_TYPE_OFFSET = 13;
+static constexpr size_t   CMP_DATA_HDR_PAYLOAD_LEN_OFFSET  = 14;
+
+// CAN/CANFD payload header offsets and size (relative to payload header start)
+static constexpr size_t   CMP_CAN_HDR_FLAGS_OFFSET    = 0;
+static constexpr size_t   CMP_CAN_HDR_ID_OFFSET       = 4;
+static constexpr size_t   CMP_CAN_HDR_DLC_OFFSET      = 14;
+static constexpr size_t   CMP_CAN_HDR_DATA_LEN_OFFSET = 15;
+static constexpr size_t   CMP_CAN_HDR_SIZE            = 16;
+
+// CANFD-specific payload header offsets
+static constexpr size_t   CMP_CANFD_HDR_RESERVED_OFFSET = 2;
+static constexpr size_t   CMP_CANFD_HDR_ERR_POS_OFFSET  = 12;
+
+// LIN payload header offsets and size (relative to payload header start)
+static constexpr size_t   CMP_LIN_HDR_FLAGS_OFFSET    = 0;
+static constexpr size_t   CMP_LIN_HDR_PID_OFFSET      = 4;
+static constexpr size_t   CMP_LIN_HDR_CRC_OFFSET      = 6;
+static constexpr size_t   CMP_LIN_HDR_DATA_LEN_OFFSET = 7;
+static constexpr size_t   CMP_LIN_HDR_SIZE            = 8;
+
+// Ethernet payload header offsets and minimum size (relative to payload start)
+static constexpr size_t   CMP_ETH_HDR_FLAGS_OFFSET    = 0;
+static constexpr size_t   CMP_ETH_HDR_DATA_LEN_OFFSET = 4;
+static constexpr size_t   CMP_ETH_HDR_DATA_OFFSET     = 6;
+static constexpr size_t   CMP_ETH_HDR_MIN_SIZE        = 6;
 
 // Heuristic stub: we currently only detect CMP ethertype and version; detailed LIN payload parsing will follow.
-static bool TryUnwrapCmpLin(const icsSpyMessageVSB& inEth, const unsigned char* edp, size_t edpLen,
-	int timestampSource, icsSpyMessageVSB& outLin)
+static bool TryUnwrapCmpLin(const icsSpyMessageVSB& inEth, const unsigned char* edp, const size_t edpLen,
+	const int timestampSource, icsSpyMessageVSB& outLin)
 {
-	const unsigned short ethertype = ReadBE16(edp + 12);
-	if (ethertype != 0x99FE) return false;
+	const unsigned short ethertype = ReadBE16(edp + ETH_ETHERTYPE_OFFSET);
+	if (ethertype != CMP_ETHERTYPE) return false;
 
 	auto parseAtOffset = [&](size_t cmpOffset) -> bool {
 		if (edpLen < (cmpOffset + CMP_HEADER_SIZE + CMP_DATA_MESSAGE_HEADER_SIZE)) return false;
 
-		const unsigned char cmpVersion = edp[cmpOffset + 0];
-		if (cmpVersion != 0x01) return false;
+		const unsigned char cmpVersion = edp[cmpOffset + CMP_HDR_VERSION_OFFSET];
+		if (cmpVersion != CMP_VERSION) return false;
 
 		const size_t dataHdrOffset = cmpOffset + CMP_HEADER_SIZE;
-		const uint16_t cmpDeviceId = ReadBE16(edp + cmpOffset + 2); // BE16 DeviceId
-		const uint32_t cmpInterfaceId = ReadLE32(edp + dataHdrOffset + 8); // LE32 InterfaceId
-		const unsigned char commonFlags = edp[dataHdrOffset + 12];
-		const unsigned char payloadType = edp[dataHdrOffset + 13];
+		const uint16_t cmpDeviceId = ReadBE16(edp + cmpOffset + CMP_HDR_DEVICE_ID_OFFSET);
+		const uint32_t cmpInterfaceId = ReadLE32(edp + dataHdrOffset + CMP_DATA_HDR_INTERFACE_ID_OFFSET);
+		const unsigned char commonFlags = edp[dataHdrOffset + CMP_DATA_HDR_COMMON_FLAGS_OFFSET];
+		const unsigned char payloadType = edp[dataHdrOffset + CMP_DATA_HDR_PAYLOAD_TYPE_OFFSET];
 		if (payloadType != CMP_DATA_MESSAGE_PAYLOAD_TYPE_LIN) return false;
 
 		const size_t linHdrOffset = dataHdrOffset + CMP_DATA_MESSAGE_HEADER_SIZE;
-		if (edpLen < (linHdrOffset + 8)) return false;
+		if (edpLen < (linHdrOffset + CMP_LIN_HDR_SIZE)) return false;
 
-		const uint16_t linFlags = ReadLE16(edp + linHdrOffset + 0);
-		const unsigned char pid = edp[linHdrOffset + 4];
-		const unsigned char crc = edp[linHdrOffset + 6];
-		const unsigned char dataLen = edp[linHdrOffset + 7];
+		const uint16_t linFlags = ReadLE16(edp + linHdrOffset + CMP_LIN_HDR_FLAGS_OFFSET);
+		const unsigned char pid = edp[linHdrOffset + CMP_LIN_HDR_PID_OFFSET];
+		const unsigned char crc = edp[linHdrOffset + CMP_LIN_HDR_CRC_OFFSET];
+		const unsigned char dataLen = edp[linHdrOffset + CMP_LIN_HDR_DATA_LEN_OFFSET];
 
-		const size_t linDataOffset = linHdrOffset + 8;
+		const size_t linDataOffset = linHdrOffset + CMP_LIN_HDR_SIZE;
 		if (edpLen < (linDataOffset + (size_t)dataLen)) return false;
 
 		// Prepare output LIN VSB message
@@ -144,12 +191,12 @@ static bool TryUnwrapCmpLin(const icsSpyMessageVSB& inEth, const unsigned char* 
 		if (!SetCmpNetworkFromMap(outLin, cmpDeviceId, cmpInterfaceId, NETID_INVALID)) return false;
 
 		// Store LIN ID (6-bit, no parity) in first header byte
-		unsigned char linId = (unsigned char)(pid & 0x3F);
+		const unsigned char linId = (unsigned char)(pid & 0x3F);
 		unsigned char* hdrBytes = reinterpret_cast<unsigned char*>(&outLin.ArbIDOrHeader);
 		hdrBytes[0] = linId;
 
 		// Historical VSPY behavior: store up to first 2 data bytes in header after ID
-		unsigned char headerDataBytes = (dataLen < 2) ? dataLen : 2;
+		const unsigned char headerDataBytes = (dataLen < 2) ? dataLen : 2;
 		if (headerDataBytes > 0)
 		{
 			for (unsigned int i = 0; i < headerDataBytes; ++i)
@@ -166,7 +213,7 @@ static bool TryUnwrapCmpLin(const icsSpyMessageVSB& inEth, const unsigned char* 
 		else
 		{
 			// Copy remaining payload after the bytes stored in header
-			unsigned int remaining = (unsigned int)dataLen - headerDataBytes;
+			const unsigned int remaining = (unsigned int)dataLen - headerDataBytes;
 			for (unsigned int i = 0; i < remaining && i < 8; ++i)
 				outLin.Data.data[i] = edp[linDataOffset + headerDataBytes + i];
 			outLin.NumberBytesData = (unsigned char)remaining;
@@ -179,7 +226,7 @@ static bool TryUnwrapCmpLin(const icsSpyMessageVSB& inEth, const unsigned char* 
 		if (checksumErr) outLin.StatusBitField |= SPY_STATUS_CHECKSUM_ERROR;
 
 		// Direction: if dirOnIf flag set in CMP commonFlags, mark as TX
-		if ((commonFlags & 0x10) != 0)
+		if ((commonFlags & CMP_COMMON_FLAG_DIR_ON_IF) != 0)
 			outLin.StatusBitField |= SPY_STATUS_TX_MSG;
 
 		// Place checksum in AckBytes[0] per BLF import convention
@@ -188,7 +235,7 @@ static bool TryUnwrapCmpLin(const icsSpyMessageVSB& inEth, const unsigned char* 
 		// Set timestamp based on timestampSource
 		if (timestampSource == 0) {
 			// Use CMP timestamp (LIN does not have its own, so use the one from the CMP header)
-			const uint64_t cmpTimestamp = ReadBE64(edp + dataHdrOffset + 0);
+			const uint64_t cmpTimestamp = ReadBE64(edp + dataHdrOffset + CMP_DATA_HDR_TIMESTAMP_OFFSET);
 			CMessageTimeDecoderVSB::SetMessageTime(outLin, cmpTimestamp);
 		} else {
 			CopyTimestampFromOuter(inEth, outLin);
@@ -202,54 +249,54 @@ static bool TryUnwrapCmpLin(const icsSpyMessageVSB& inEth, const unsigned char* 
 }
 
 // Set CAN network ID using mapping table with fallback to sentinel value
-static inline bool SetCmpCanNetwork(icsSpyMessageVSB& msg, uint16_t cmpDeviceId, uint32_t cmpIf)
+static inline bool SetCmpCanNetwork(icsSpyMessageVSB& msg, const uint16_t cmpDeviceId, const uint32_t cmpIf)
 {
 	return SetCmpNetworkFromMap(msg, cmpDeviceId, cmpIf, NETID_INVALID);
 }
 
-static bool TryUnwrapCmpCan(const icsSpyMessageVSB& inEth, const unsigned char* edp, size_t edpLen,
-	int timestampSource, icsSpyMessageVSB& outCan, std::vector<unsigned char>& extra)
+static bool TryUnwrapCmpCan(const icsSpyMessageVSB& inEth, const unsigned char* edp, const size_t edpLen,
+	const int timestampSource, icsSpyMessageVSB& outCan, std::vector<unsigned char>& extra)
 {
-	const unsigned short ethertype = ReadBE16(edp + 12);
-	if (ethertype != 0x99FE) return false;
+	const unsigned short ethertype = ReadBE16(edp + ETH_ETHERTYPE_OFFSET);
+	if (ethertype != CMP_ETHERTYPE) return false;
 
 	auto parseAtOffset = [&](size_t cmpOffset) -> bool {
 		if (edpLen < (cmpOffset + CMP_HEADER_SIZE + CMP_DATA_MESSAGE_HEADER_SIZE)) return false;
 
-		const unsigned char cmpVersion = edp[cmpOffset + 0];
-		if (cmpVersion != 0x01) return false;
+		const unsigned char cmpVersion = edp[cmpOffset + CMP_HDR_VERSION_OFFSET];
+		if (cmpVersion != CMP_VERSION) return false;
 
 		const size_t dataHdrOffset = cmpOffset + CMP_HEADER_SIZE;
-		const uint16_t cmpDeviceId = ReadBE16(edp + cmpOffset + 2); // BE16 DeviceId
-		const uint32_t cmpInterfaceId = ReadLE32(edp + dataHdrOffset + 8); // LE32 InterfaceId
-		const unsigned char commonFlags = edp[dataHdrOffset + 12];
-		const unsigned char payloadType = edp[dataHdrOffset + 13];
+		const uint16_t cmpDeviceId = ReadBE16(edp + cmpOffset + CMP_HDR_DEVICE_ID_OFFSET);
+		const uint32_t cmpInterfaceId = ReadLE32(edp + dataHdrOffset + CMP_DATA_HDR_INTERFACE_ID_OFFSET);
+		const unsigned char commonFlags = edp[dataHdrOffset + CMP_DATA_HDR_COMMON_FLAGS_OFFSET];
+		const unsigned char payloadType = edp[dataHdrOffset + CMP_DATA_HDR_PAYLOAD_TYPE_OFFSET];
 		if (payloadType != CMP_DATA_MESSAGE_PAYLOAD_TYPE_CAN) return false;
 
 		const size_t canHdrOffset = dataHdrOffset + CMP_DATA_MESSAGE_HEADER_SIZE;
-		if (edpLen < (canHdrOffset + 16)) return false;
+		if (edpLen < (canHdrOffset + CMP_CAN_HDR_SIZE)) return false;
 
-		// const uint16_t canFlags = ReadLE16(edp + canHdrOffset + 0); // Reserved for future use
+		// const uint16_t canFlags = ReadLE16(edp + canHdrOffset + CMP_CAN_HDR_FLAGS_OFFSET); // Reserved for future use
 		// CAN ID word: bytes appear reversed on transmit; interpret as big-endian here
-		const uint32_t idWordBE = (uint32_t)((edp[canHdrOffset + 4] << 24) |
-			     (edp[canHdrOffset + 5] << 16) |
-			     (edp[canHdrOffset + 6] << 8) |
-			     (edp[canHdrOffset + 7]));
-		// const unsigned char dlc = edp[canHdrOffset + 14]; // Reserved for future use
-		const unsigned char dataLen = edp[canHdrOffset + 15];
+		const uint32_t idWordBE = (uint32_t)((edp[canHdrOffset + CMP_CAN_HDR_ID_OFFSET] << 24) |
+			     (edp[canHdrOffset + CMP_CAN_HDR_ID_OFFSET + 1] << 16) |
+			     (edp[canHdrOffset + CMP_CAN_HDR_ID_OFFSET + 2] << 8) |
+			     (edp[canHdrOffset + CMP_CAN_HDR_ID_OFFSET + 3]));
+		// const unsigned char dlc = edp[canHdrOffset + CMP_CAN_HDR_DLC_OFFSET]; // Reserved for future use
+		const unsigned char dataLen = edp[canHdrOffset + CMP_CAN_HDR_DATA_LEN_OFFSET];
 
 		// CAN max 8 bytes
 		if (dataLen > 8) return false;
 
-		const size_t dataOffset = canHdrOffset + 16;
+		const size_t dataOffset = canHdrOffset + CMP_CAN_HDR_SIZE;
 		if (edpLen < (dataOffset + (size_t)dataLen)) return false;
 
 		// Extract CAN ID: lower 29 bits of big-endian ID word
-		uint32_t canId = (idWordBE & 0x1FFFFFFFu);
+		const uint32_t canId = (idWordBE & 0x1FFFFFFFu);
 		// IDE bit is carried in the ID word; read explicitly (MSB)
-		bool ide = ((idWordBE & 0x80000000u) != 0);
+		const bool ide = ((idWordBE & 0x80000000u) != 0);
 		// RTR bit for remote frames
-		bool rtr = ((idWordBE & 0x40000000u) != 0);
+		const bool rtr = ((idWordBE & 0x40000000u) != 0);
 
 		// Prepare output CAN VSB message
 		memset(&outCan, 0, sizeof(outCan));
@@ -268,7 +315,7 @@ static bool TryUnwrapCmpCan(const icsSpyMessageVSB& inEth, const unsigned char* 
 			outCan.StatusBitField |= SPY_STATUS_REMOTE_FRAME;
 		}
 		// Direction: TX when dirOnIf set
-		if ((commonFlags & 0x10) != 0) {
+		if ((commonFlags & CMP_COMMON_FLAG_DIR_ON_IF) != 0) {
 			outCan.StatusBitField |= SPY_STATUS_TX_MSG;
 		}
 
@@ -292,7 +339,7 @@ static bool TryUnwrapCmpCan(const icsSpyMessageVSB& inEth, const unsigned char* 
 
 		// Set timestamp based on timestampSource
 		if (timestampSource == 0) {
-			const uint64_t cmpTimestamp = ReadBE64(edp + dataHdrOffset + 0);
+			const uint64_t cmpTimestamp = ReadBE64(edp + dataHdrOffset + CMP_DATA_HDR_TIMESTAMP_OFFSET);
 			CMessageTimeDecoderVSB::SetMessageTime(outCan, cmpTimestamp);
 		} else {
 			CopyTimestampFromOuter(inEth, outCan);
@@ -305,47 +352,47 @@ static bool TryUnwrapCmpCan(const icsSpyMessageVSB& inEth, const unsigned char* 
 	return parseAtOffset(CMP_HEADER_OFFSET);
 }
 
-static bool TryUnwrapCmpCanFd(const icsSpyMessageVSB& inEth, const unsigned char* edp, size_t edpLen,
-	int timestampSource, icsSpyMessageVSB& outCan, std::vector<unsigned char>& extra)
+static bool TryUnwrapCmpCanFd(const icsSpyMessageVSB& inEth, const unsigned char* edp, const size_t edpLen,
+	const int timestampSource, icsSpyMessageVSB& outCan, std::vector<unsigned char>& extra)
 {
 	// timestampSource is now used below
-	const unsigned short ethertype = ReadBE16(edp + 12);
-	if (ethertype != 0x99FE) return false;
+	const unsigned short ethertype = ReadBE16(edp + ETH_ETHERTYPE_OFFSET);
+	if (ethertype != CMP_ETHERTYPE) return false;
 
 	auto parseAtOffset = [&](size_t cmpOffset) -> bool {
 		if (edpLen < (cmpOffset + CMP_HEADER_SIZE + CMP_DATA_MESSAGE_HEADER_SIZE)) return false;
 
-		const unsigned char cmpVersion = edp[cmpOffset + 0];
-		if (cmpVersion != 0x01) return false;
+		const unsigned char cmpVersion = edp[cmpOffset + CMP_HDR_VERSION_OFFSET];
+		if (cmpVersion != CMP_VERSION) return false;
 
 		const size_t dataHdrOffset = cmpOffset + CMP_HEADER_SIZE;
-		const uint16_t cmpDeviceId = ReadBE16(edp + cmpOffset + 2); // BE16 DeviceId
-		const uint32_t cmpInterfaceId = ReadLE32(edp + dataHdrOffset + 8); // LE32 InterfaceId
-		const unsigned char commonFlags = edp[dataHdrOffset + 12];
-		const unsigned char payloadType = edp[dataHdrOffset + 13];
+		const uint16_t cmpDeviceId = ReadBE16(edp + cmpOffset + CMP_HDR_DEVICE_ID_OFFSET);
+		const uint32_t cmpInterfaceId = ReadLE32(edp + dataHdrOffset + CMP_DATA_HDR_INTERFACE_ID_OFFSET);
+		const unsigned char commonFlags = edp[dataHdrOffset + CMP_DATA_HDR_COMMON_FLAGS_OFFSET];
+		const unsigned char payloadType = edp[dataHdrOffset + CMP_DATA_HDR_PAYLOAD_TYPE_OFFSET];
 		if (payloadType != CMP_DATA_MESSAGE_PAYLOAD_TYPE_CANFD) return false;
 
 		const size_t canHdrOffset = dataHdrOffset + CMP_DATA_MESSAGE_HEADER_SIZE;
-		if (edpLen < (canHdrOffset + 16)) return false;
+		if (edpLen < (canHdrOffset + CMP_CAN_HDR_SIZE)) return false;
 
-		const uint16_t canfdFlags = ReadLE16(edp + canHdrOffset + 0);
-		// const uint16_t reserved = ReadLE16(edp + canHdrOffset + 2);
+		const uint16_t canfdFlags = ReadLE16(edp + canHdrOffset + CMP_CAN_HDR_FLAGS_OFFSET);
+		// const uint16_t reserved = ReadLE16(edp + canHdrOffset + CMP_CANFD_HDR_RESERVED_OFFSET);
 		// CAN FD ID word: bytes appear reversed on transmit; interpret as big-endian here
-		const uint32_t idWordBE = (uint32_t)((edp[canHdrOffset + 4] << 24) |
-			     (edp[canHdrOffset + 5] << 16) |
-			     (edp[canHdrOffset + 6] << 8) |
-			     (edp[canHdrOffset + 7]));
-		// const uint16_t errPos = ReadLE16(edp + canHdrOffset + 12); // Reserved for future use
-		// const unsigned char dlc = edp[canHdrOffset + 14]; // Reserved for future use
-		const unsigned char dataLen = edp[canHdrOffset + 15];
+		const uint32_t idWordBE = (uint32_t)((edp[canHdrOffset + CMP_CAN_HDR_ID_OFFSET] << 24) |
+			     (edp[canHdrOffset + CMP_CAN_HDR_ID_OFFSET + 1] << 16) |
+			     (edp[canHdrOffset + CMP_CAN_HDR_ID_OFFSET + 2] << 8) |
+			     (edp[canHdrOffset + CMP_CAN_HDR_ID_OFFSET + 3]));
+		// const uint16_t errPos = ReadLE16(edp + canHdrOffset + CMP_CANFD_HDR_ERR_POS_OFFSET); // Reserved for future use
+		// const unsigned char dlc = edp[canHdrOffset + CMP_CAN_HDR_DLC_OFFSET]; // Reserved for future use
+		const unsigned char dataLen = edp[canHdrOffset + CMP_CAN_HDR_DATA_LEN_OFFSET];
 
-		const size_t dataOffset = canHdrOffset + 16;
+		const size_t dataOffset = canHdrOffset + CMP_CAN_HDR_SIZE;
 		if (edpLen < (dataOffset + (size_t)dataLen)) return false;
 
 		// Extract CAN ID: lower 29 bits of big-endian ID word
-		uint32_t canId = (idWordBE & 0x1FFFFFFFu);
+		const uint32_t canId = (idWordBE & 0x1FFFFFFFu);
 		// IDE bit is carried in the ID word; read explicitly (MSB)
-		bool ide = ((idWordBE & 0x80000000u) != 0);
+		const bool ide = ((idWordBE & 0x80000000u) != 0);
 
 		// Prepare output CAN FD VSB message
 		memset(&outCan, 0, sizeof(outCan));
@@ -363,7 +410,7 @@ static bool TryUnwrapCmpCanFd(const icsSpyMessageVSB& inEth, const unsigned char
 			outCan.StatusBitField3 |= SPY_STATUS3_CANFD_IDE;
 		}
 		// Direction: TX when dirOnIf set
-		if ((commonFlags & 0x10) != 0) {
+		if ((commonFlags & CMP_COMMON_FLAG_DIR_ON_IF) != 0) {
 			outCan.StatusBitField |= SPY_STATUS_TX_MSG;
 		}
 
@@ -381,7 +428,7 @@ static bool TryUnwrapCmpCanFd(const icsSpyMessageVSB& inEth, const unsigned char
 		outCan.ArbIDOrHeader = canId;
 
 		// First up to 8 bytes in Data[8] (mirror first bytes)
-		unsigned int dataInHeader = (dataLen >= 8) ? 8u : (unsigned int)dataLen;
+		const unsigned int dataInHeader = (dataLen >= 8) ? 8u : (unsigned int)dataLen;
 		for (unsigned int i = 0; i < dataInHeader; ++i)
 			outCan.Data.data[i] = edp[dataOffset + i];
 		// Per GOLDEN, NumberBytesData reflects total payload length
@@ -399,7 +446,7 @@ static bool TryUnwrapCmpCanFd(const icsSpyMessageVSB& inEth, const unsigned char
 
 		// Set timestamp based on timestampSource
 		if (timestampSource == 0) {
-			const uint64_t cmpTimestamp = ReadBE64(edp + dataHdrOffset + 0);
+			const uint64_t cmpTimestamp = ReadBE64(edp + dataHdrOffset + CMP_DATA_HDR_TIMESTAMP_OFFSET);
 			CMessageTimeDecoderVSB::SetMessageTime(outCan, cmpTimestamp);
 		} else {
 			CopyTimestampFromOuter(inEth, outCan);
@@ -458,8 +505,8 @@ struct DroppedFrameEvent {
 };
 
 static bool TryUnwrapCmpEthernet(const icsSpyMessageVSB& srcMsg,
-	const unsigned char* edp, size_t edpLen,
-	int timestampSource,
+	const unsigned char* edp, const size_t edpLen,
+	const int timestampSource,
 	icsSpyMessageVSB& outMsg,
 	std::vector<unsigned char>& outExtra,
 	std::map<uint8_t, EthernetSegmentContext>& segmentContexts)
@@ -470,34 +517,34 @@ static bool TryUnwrapCmpEthernet(const icsSpyMessageVSB& srcMsg,
 
 	const size_t dataHdrOffset = cmpOffset + CMP_HEADER_SIZE;
 
-	const uint16_t cmpDeviceId = ReadBE16(edp + cmpOffset + 2);
-	const uint8_t streamId = edp[cmpOffset + 5];
-	const uint16_t streamSeqCounter = ReadBE16(edp + cmpOffset + 6);
-	const uint32_t cmpInterfaceId = ReadLE32(edp + dataHdrOffset + 8); // LE32 InterfaceId
-	const uint64_t cmpTimestamp = ReadBE64(edp + dataHdrOffset + 0);
-	const uint8_t commonFlags = edp[dataHdrOffset + 12];
-	const uint8_t payloadType = edp[dataHdrOffset + 13];
+	const uint16_t cmpDeviceId = ReadBE16(edp + cmpOffset + CMP_HDR_DEVICE_ID_OFFSET);
+	const uint8_t streamId = edp[cmpOffset + CMP_HDR_STREAM_ID_OFFSET];
+	const uint16_t streamSeqCounter = ReadBE16(edp + cmpOffset + CMP_HDR_SEQ_COUNTER_OFFSET);
+	const uint32_t cmpInterfaceId = ReadLE32(edp + dataHdrOffset + CMP_DATA_HDR_INTERFACE_ID_OFFSET);
+	const uint64_t cmpTimestamp = ReadBE64(edp + dataHdrOffset + CMP_DATA_HDR_TIMESTAMP_OFFSET);
+	const uint8_t commonFlags = edp[dataHdrOffset + CMP_DATA_HDR_COMMON_FLAGS_OFFSET];
+	const uint8_t payloadType = edp[dataHdrOffset + CMP_DATA_HDR_PAYLOAD_TYPE_OFFSET];
 
 	if (payloadType != CMP_DATA_MESSAGE_PAYLOAD_TYPE_ETHERNET)
 		return false;
 
-	const uint16_t msgPayloadLength = ReadBE16(edp + dataHdrOffset + 14);
+	const uint16_t msgPayloadLength = ReadBE16(edp + dataHdrOffset + CMP_DATA_HDR_PAYLOAD_LEN_OFFSET);
 	const size_t ethPayloadOffset = dataHdrOffset + CMP_DATA_MESSAGE_HEADER_SIZE;
 
 	if (edpLen < (ethPayloadOffset + msgPayloadLength))
 		return false;
 
 	// Parse Ethernet payload structure: FLAGS(2) + RESERVED(2) + DATA_LENGTH(2) + DATA[N]
-	if (msgPayloadLength < 6)
+	if (msgPayloadLength < CMP_ETH_HDR_MIN_SIZE)
 		return false;
 
-	// const uint16_t ethFlags = ReadBE16(edp + ethPayloadOffset + 0); // Reserved for future use
-	const uint16_t ethDataLength = ReadBE16(edp + ethPayloadOffset + 4);
+	// const uint16_t ethFlags = ReadBE16(edp + ethPayloadOffset + CMP_ETH_HDR_FLAGS_OFFSET); // Reserved for future use
+	const uint16_t ethDataLength = ReadBE16(edp + ethPayloadOffset + CMP_ETH_HDR_DATA_LEN_OFFSET);
 
-	if (msgPayloadLength < (6 + ethDataLength))
+	if (msgPayloadLength < (CMP_ETH_HDR_MIN_SIZE + ethDataLength))
 		return false;
 
-	const unsigned char* ethData = edp + ethPayloadOffset + 6;
+	const unsigned char* ethData = edp + ethPayloadOffset + CMP_ETH_HDR_DATA_OFFSET;
 
 	// Extract SEG field (bits 6-7 of Common Flags)
 	const uint8_t segType = commonFlags & CMP_SEG_MASK;
@@ -610,7 +657,7 @@ static bool TryUnwrapCmpEthernet(const icsSpyMessageVSB& srcMsg,
 		SetNetworkID16(outMsg, netId16);
 
 		// For Ethernet: Data[8] is EMPTY, all data goes to ExtraData
-		uint32_t totalLen = (uint32_t)ctx.accumulatedData.size();
+		const uint32_t totalLen = (uint32_t)ctx.accumulatedData.size();
 		memset(outMsg.Data.data, 0, 8);
 		outMsg.NumberBytesData = (uint8_t)(totalLen & 0xFF);
 		outMsg.ExtraDataPtrEnabled = 1;
@@ -652,7 +699,7 @@ static bool TryUnwrapCmpEthernet(const icsSpyMessageVSB& srcMsg,
  * @param prog - Optional progress callback (NULL or function returning bool)
  * @return true on success, false on I/O error
  */
-bool UnwrapCMPToNative(const char* inputFilePath, const char* outputFilePath, int sortOutput, int timestampSource, ProgressFunc prog, int outputInfoToTxt)
+bool UnwrapCMPToNative(const char* inputFilePath, const char* outputFilePath, const int sortOutput, const int timestampSource, ProgressFunc prog, const int outputInfoToTxt)
 {
 	VSBIORead reader(inputFilePath);
 	VSBIOWrite writer;
@@ -681,7 +728,7 @@ bool UnwrapCMPToNative(const char* inputFilePath, const char* outputFilePath, in
 		return (static_cast<uint64_t>(m.TimeHardware2) << 32) | static_cast<uint64_t>(m.TimeHardware);
 	};
 
-	auto flushBuffer = [&](bool flushAll) {
+	auto flushBuffer = [&](const bool flushAll) {
 		if (outBuffer.empty()) return;
 		if (sortOutput == 0) { // Sort frames by timestamp
 			std::stable_sort(outBuffer.begin(), outBuffer.end(), [](const PendingMessage& a, const PendingMessage& b) {
@@ -698,7 +745,7 @@ bool UnwrapCMPToNative(const char* inputFilePath, const char* outputFilePath, in
 		uint64_t key = 0;
 		if (bytes.size() >= sizeof(icsSpyMessageVSB))
 		{
-			icsSpyMessageVSB* m = reinterpret_cast<icsSpyMessageVSB*>(&bytes[0]);
+			const icsSpyMessageVSB* m = reinterpret_cast<const icsSpyMessageVSB*>(&bytes[0]);
 			key = makeKey(*m);
 		}
 		PendingMessage pm{ key, std::move(bytes) };
@@ -731,24 +778,24 @@ bool UnwrapCMPToNative(const char* inputFilePath, const char* outputFilePath, in
 			const size_t edpLen = (size_t)pMsg->ExtraDataPtr; //ExtraDataPtr is a size in this context, not a pointer
 
 			// Detect CMP ethertype
-			if (edpLen >= 14)
+			if (edpLen >= CMP_HEADER_OFFSET)
 			{
-				const unsigned short ethertype = ReadBE16(edp + 12);
-				if (ethertype == 0x99FE)
+				const unsigned short ethertype = ReadBE16(edp + ETH_ETHERTYPE_OFFSET);
+				if (ethertype == CMP_ETHERTYPE)
 				{
 					// Parse CMP header at standard offset (after 14-byte Ethernet header)
 					const size_t cmpOffset = CMP_HEADER_OFFSET;
 					if (edpLen >= (cmpOffset + CMP_HEADER_SIZE + CMP_DATA_MESSAGE_HEADER_SIZE))
 					{
-						const unsigned char cmpVersion = edp[cmpOffset + 0];
-						if (cmpVersion == 0x01)
+						const unsigned char cmpVersion = edp[cmpOffset + CMP_HDR_VERSION_OFFSET];
+						if (cmpVersion == CMP_VERSION)
 						{
 							// Extract stream information for dropped frame detection
 							// NOTE: Sequence counter increments for ALL CMP message types, not just CAP_DATA_MSG
-							const uint16_t cmpDeviceId = ReadBE16(edp + cmpOffset + 2);
-							const unsigned char cmpMessageType = edp[cmpOffset + 4];
-							const uint8_t streamId = edp[cmpOffset + 5];
-							const uint16_t streamSeqCounter = ReadBE16(edp + cmpOffset + 6);
+							const uint16_t cmpDeviceId = ReadBE16(edp + cmpOffset + CMP_HDR_DEVICE_ID_OFFSET);
+							const unsigned char cmpMessageType = edp[cmpOffset + CMP_HDR_MSG_TYPE_OFFSET];
+							const uint8_t streamId = edp[cmpOffset + CMP_HDR_STREAM_ID_OFFSET];
+							const uint16_t streamSeqCounter = ReadBE16(edp + cmpOffset + CMP_HDR_SEQ_COUNTER_OFFSET);
 
 							// Check for dropped frames (sequence counter is per DeviceId+StreamId)
 							// Track ALL CMP message types to detect drops correctly
@@ -757,15 +804,13 @@ bool UnwrapCMPToNative(const char* inputFilePath, const char* outputFilePath, in
 							if (tracker.initialized)
 							{
 								// Expected next sequence counter (wraps at 65536)
-								uint16_t expectedSeq = (uint16_t)(tracker.lastSeqCounter + 1);
-								if (streamSeqCounter != expectedSeq)
-								{
-									// Detected a gap - calculate number of dropped frames
-									uint16_t droppedCount;
-									if (streamSeqCounter > expectedSeq)
-										droppedCount = streamSeqCounter - expectedSeq;
-									else // Wrapped around
-										droppedCount = (uint16_t)(0xFFFF - expectedSeq + streamSeqCounter + 1);
+const uint16_t expectedSeq = (uint16_t)(tracker.lastSeqCounter + 1);
+							if (streamSeqCounter != expectedSeq)
+							{
+								// Detected a gap - calculate number of dropped frames
+								const uint16_t droppedCount = (streamSeqCounter > expectedSeq)
+									? (uint16_t)(streamSeqCounter - expectedSeq)
+									: (uint16_t)(0xFFFF - expectedSeq + streamSeqCounter + 1);
 
 									// Record dropped frame event
 									DroppedFrameEvent evt;
@@ -785,8 +830,8 @@ bool UnwrapCMPToNative(const char* inputFilePath, const char* outputFilePath, in
 							}
 							tracker.lastSeqCounter = streamSeqCounter;
 
-							// Only unwrap and export CAP_DATA_MSG (0x01), but pass through all as Ethernet
-							if (cmpMessageType != 0x01)
+							// Only unwrap and export CAP_DATA_MSG, but pass through all as Ethernet
+							if (cmpMessageType != CMP_MESSAGE_TYPE_CAP_DATA)
 							{
 								// Non-data message (e.g., StatusMessage 0x03) - pass through as Ethernet
 								pushMessage(std::vector<unsigned char>(msg));
@@ -794,7 +839,7 @@ bool UnwrapCMPToNative(const char* inputFilePath, const char* outputFilePath, in
 							}
 
 							const size_t dataHdrOffset = cmpOffset + CMP_HEADER_SIZE;
-							const unsigned char payloadType = edp[dataHdrOffset + 13];
+							const unsigned char payloadType = edp[dataHdrOffset + CMP_DATA_HDR_PAYLOAD_TYPE_OFFSET];
 
 							// Dispatch based on payload type
 							switch (payloadType)
@@ -877,7 +922,7 @@ bool UnwrapCMPToNative(const char* inputFilePath, const char* outputFilePath, in
 	{
 		// Create report filename based on output filename: <outputfilename>.txt
 		std::string infoFilePath = outputFilePath;
-		size_t lastDot = infoFilePath.find_last_of(".");
+		const size_t lastDot = infoFilePath.find_last_of(".");
 		if (lastDot != std::string::npos)
 			infoFilePath = infoFilePath.substr(0, lastDot) + ".txt";
 		else
@@ -902,8 +947,8 @@ bool UnwrapCMPToNative(const char* inputFilePath, const char* outputFilePath, in
 			// Calculate percentage of messages dropped (out of total expected messages)
 			if (counter > 0)
 			{
-				unsigned long long totalExpectedFrames = counter + totalDropped;
-				double dropPercentage = (static_cast<double>(totalDropped) / static_cast<double>(totalExpectedFrames)) * 100.0;
+				const unsigned long long totalExpectedFrames = counter + totalDropped;
+				const double dropPercentage = (static_cast<double>(totalDropped) / static_cast<double>(totalExpectedFrames)) * 100.0;
 				infoFile << "Percentage of Messages Dropped: " << std::fixed << std::setprecision(4) << dropPercentage << "%\n";
 			}
 			infoFile << "\n";
@@ -929,105 +974,6 @@ bool UnwrapCMPToNative(const char* inputFilePath, const char* outputFilePath, in
 		}
 	}
 
-	return true;
-}
-
-
-extern "C" VSBIODLL_API bool DumpVSBMessageFields(const char* inputFilePath, const char* outputTextFile, unsigned int maxMessages)
-{
-	VSBIORead reader(inputFilePath);
-	std::ofstream out(outputTextFile, std::ios::out | std::ios::trunc);
-	if (!out)
-		return false;
-
-	auto fmtHex = [](std::ostream& o, uint64_t v, int width) {
-		std::ios_base::fmtflags f = o.flags();
-		o << "0x" << std::uppercase << std::hex << std::setw(width) << std::setfill('0') << v;
-		o.flags(f);
-		o << std::setfill(' ');
-	};
-
-	auto bytesHex = [&](const uint8_t* p, size_t n) {
-		std::ios_base::fmtflags f = out.flags();
-		out << std::uppercase << std::hex;
-		for (size_t i = 0; i < n; ++i) {
-			out << std::setw(2) << std::setfill('0') << (unsigned int)p[i];
-			if (i + 1 < n) out << ' ';
-		}
-		out.flags(f);
-		out << std::setfill(' ');
-	};
-
-	out << "Dump of icsSpyMessageVSB fields\n";
-	out << "Input: " << inputFilePath << "\n";
-	out << "Note: arrays shown in hex, integers shown as dec (hex)\n\n";
-
-	std::vector<unsigned char> msg;
-	unsigned long long index = 0ULL;
-	while (reader.ReadNextMessage(msg) == VSBIORead::eSuccess)
-	{
-		if (maxMessages && index >= maxMessages) break;
-		++index;
-
-		out << "----- Message " << index << " size=" << msg.size() << " -----\n";
-		if (msg.size() < sizeof(icsSpyMessageVSB))
-		{
-			out << "Corrupt: size < icsSpyMessageVSB\n\n";
-			continue;
-		}
-
-		icsSpyMessageVSB* m = reinterpret_cast<icsSpyMessageVSB*>(&msg[0]);
-
-		// Top-level fields
-		out << "StatusBitField: " << (uint32_t)m->StatusBitField << " ("; fmtHex(out, m->StatusBitField, 8); out << ")\n";
-		out << "StatusBitField2: " << (uint32_t)m->StatusBitField2 << " ("; fmtHex(out, m->StatusBitField2, 8); out << ")\n";
-		out << "TimeHardware: " << (uint32_t)m->TimeHardware << " ("; fmtHex(out, m->TimeHardware, 8); out << ")\n";
-		out << "TimeHardware2: " << (uint32_t)m->TimeHardware2 << " ("; fmtHex(out, m->TimeHardware2, 8); out << ")\n";
-		out << "TimeSystem: " << (uint32_t)m->TimeSystem << " ("; fmtHex(out, m->TimeSystem, 8); out << ")\n";
-		out << "TimeSystem2: " << (uint32_t)m->TimeSystem2 << " ("; fmtHex(out, m->TimeSystem2, 8); out << ")\n";
-		out << "TimeStampHardwareID: " << (unsigned int)m->TimeStampHardwareID << " ("; fmtHex(out, m->TimeStampHardwareID, 2); out << ")\n";
-		out << "TimeStampSystemID: " << (unsigned int)m->TimeStampSystemID << " ("; fmtHex(out, m->TimeStampSystemID, 2); out << ")\n";
-		out << "NetworkID: " << (unsigned int)m->NetworkID << " ("; fmtHex(out, m->NetworkID, 2); out << ")\n";
-		out << "NodeID: " << (unsigned int)m->NodeID << " ("; fmtHex(out, m->NodeID, 2); out << ")\n";
-		out << "Protocol: " << (unsigned int)m->Protocol << " ("; fmtHex(out, m->Protocol, 2); out << ")\n";
-		out << "MessagePieceID: " << (unsigned int)m->MessagePieceID << " ("; fmtHex(out, m->MessagePieceID, 2); out << ")\n";
-		out << "ExtraDataPtrEnabled: " << (unsigned int)m->ExtraDataPtrEnabled << " ("; fmtHex(out, m->ExtraDataPtrEnabled, 2); out << ")\n";
-		out << "NumberBytesHeader: " << (unsigned int)m->NumberBytesHeader << " ("; fmtHex(out, m->NumberBytesHeader, 2); out << ")\n";
-		out << "NumberBytesData: " << (unsigned int)m->NumberBytesData << " ("; fmtHex(out, m->NumberBytesData, 2); out << ")\n";
-		out << "NetworkID2: " << (unsigned int)m->NetworkID2 << " ("; fmtHex(out, m->NetworkID2, 2); out << ")\n";
-		out << "DescriptionID: " << (int)m->DescriptionID << " ("; fmtHex(out, (uint16_t)m->DescriptionID, 4); out << ")\n";
-		out << "ArbIDOrHeader: " << (uint32_t)m->ArbIDOrHeader << " ("; fmtHex(out, m->ArbIDOrHeader, 8); out << ")\n";
-
-		out << "Data[8]: "; bytesHex(m->Data.data, 8); out << "\n";
-
-		// Union view
-		out << "StatusBitField3: " << (uint32_t)m->StatusBitField3 << " ("; fmtHex(out, m->StatusBitField3, 8); out << ")\n";
-		out << "StatusBitField4: " << (uint32_t)m->StatusBitField4 << " ("; fmtHex(out, m->StatusBitField4, 8); out << ")\n";
-		out << "AckBytes[8]: "; bytesHex(m->AckBytes.data, 8); out << "\n";
-
-		out << "ExtraDataPtr (payload length): " << (uint32_t)m->ExtraDataPtr << " ("; fmtHex(out, m->ExtraDataPtr, 8); out << ")\n";
-		out << "MiscData: " << (unsigned int)m->MiscData << " ("; fmtHex(out, m->MiscData, 2); out << ")\n";
-		out << "Reserved[3]: "; bytesHex(m->Reserved.data, 3); out << "\n";
-
-		// Derived timestamp (seconds since epoch base used by VSB)
-		double ts = CMessageTimeDecoderVSB::CalcTimeStamp(*m);
-		out << "DerivedTimestamp: " << std::fixed << std::setprecision(6) << ts << "\n";
-
-		// Extra payload preview (up to first 64 bytes)
-		if (m->ExtraDataPtrEnabled && m->ExtraDataPtr && msg.size() >= (sizeof(icsSpyMessageVSB) + (size_t)m->ExtraDataPtr))
-		{
-			const uint8_t* payload = &msg[sizeof(icsSpyMessageVSB)];
-			size_t plen = (size_t)m->ExtraDataPtr;
-			size_t sample = plen < 64 ? plen : 64;
-			out << "ExtraData (first " << sample << "/" << plen << " bytes): ";
-			bytesHex(payload, sample);
-			out << "\n";
-		}
-
-		out << "\n";
-	}
-
-	out.flush();
 	return true;
 }
 
